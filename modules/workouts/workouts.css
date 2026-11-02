@@ -1,0 +1,89 @@
+/* Стили модуля «Тренировки» (использует токены ядра). */
+.page > .btn.wide { margin-top: 2px; }
+.section-title { margin-top: 8px; }
+.banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--r); border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); text-align: left; }
+
+/* календарь */
+.cal-card { padding: 0; overflow: hidden; }
+.cal-zone { padding: 16px; cursor: pointer; }
+.cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-dow { text-align: center; font-size: 12px; color: var(--muted); padding: 4px 0; }
+.cal-cell { aspect-ratio: 1.25; max-height: 44px; display: grid; place-items: center; border: 0; border-radius: 9px; background: none; color: var(--text); font-size: 14px; cursor: inherit; }
+.cal-cell.empty { pointer-events: none; }
+.cal-cell.today { box-shadow: inset 0 0 0 1px var(--muted); }
+.cal-cell.marked { background: var(--accent); color: var(--accent-ink); font-weight: 650; }
+.cal-toggle { display: flex; gap: 6px; align-items: center; justify-content: center; margin-top: 10px; }
+.cal.compact .cal-cell { font-size: 12px; max-height: none; aspect-ratio: auto; }
+.cal.compact .cal-dow { font-size: 10.5px; padding: 0; }
+.cal.compact .cal-grid { gap: 2px; }
+.cal.compact .cal-head { margin-bottom: 2px; font-size: 13px; }
+
+.cal-stats { border-top: 1px solid var(--line); padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+.stat-row { display: flex; gap: 32px; }
+.stat-row > div { display: flex; flex-direction: column; }
+.stat-row strong { font-size: 22px; }
+.sess { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.sess.open { border-color: #3a4050; }
+.sess-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: none; border: 0; text-align: left; }
+.sess-date { display: flex; flex-direction: column; min-width: 86px; }
+.sess-body { border-top: 1px solid var(--line); padding: 10px 12px; display: flex; flex-direction: column; gap: 12px; background: var(--bg); }
+.sess-sets { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
+.sess-set { display: grid; grid-template-columns: 90px 110px 1fr; gap: 8px; font-size: 14px; }
+
+/* список тренировок */
+.wk-list { display: flex; flex-direction: column; gap: 10px; }
+.wk-row { position: relative; border-radius: var(--r); overflow: hidden; background: var(--danger); }
+.wk-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding-right: 22px; color: #1a0808; font-weight: 600; }
+.wk-content { position: relative; display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); touch-action: pan-y; transition: transform .2s; user-select: none; }
+.wk-content .grow { cursor: pointer; }
+
+/* редактор */
+.ex-list { display: flex; flex-direction: column; gap: 12px; }
+.ex-card { display: flex; flex-direction: column; gap: 10px; }
+.ex-top { display: flex; align-items: center; gap: 6px; }
+.ex-num { width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--panel-2); display: grid; place-items: center; font-size: 13px; color: var(--muted); }
+.ex-opts { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; }
+.stepper { display: flex; align-items: center; gap: 6px; }
+.stepper .icon-btn { border: 1px solid var(--line); width: 32px; height: 32px; }
+.stepper-val { min-width: 24px; text-align: center; font-weight: 650; }
+
+/* тренировка */
+.run-head { display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 4px 0 10px; }
+.run-total { font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 650; }
+.run-list { display: flex; flex-direction: column; gap: 14px; }
+.run-ex { padding: 14px 14px 10px; }
+.run-ex-head { display: flex; align-items: flex-start; gap: 8px; position: relative; margin-bottom: 6px; }
+.run-ex-head .grow strong { font-size: 17px; }
+.ex-comment { color: var(--muted); margin-left: 8px; font-size: 13.5px; }
+.set-head, .set-row { display: grid; grid-template-columns: 38px minmax(70px, 1fr) 84px 84px 48px; gap: 8px; align-items: center; }
+.set-head { padding: 4px 6px; }
+.set-row { padding: 6px; border-radius: 12px; border: 1px solid transparent; }
+.set-row.current { border-color: color-mix(in srgb, var(--accent) 55%, transparent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.set-row.done { opacity: .6; }
+.set-label { width: 28px; height: 28px; border-radius: 50%; background: var(--panel-2); display: grid; place-items: center; font-size: 13px; font-weight: 650; }
+.set-row.warmup .set-label { color: #f5b14a; }
+.input.num { text-align: center; padding: 9px 4px; }
+.done-btn { width: 44px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); display: grid; place-items: center; }
+.done-btn.on { background: var(--ok); border-color: var(--ok); color: #06210f; }
+.rest-bar { position: sticky; bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-radius: 16px; background: var(--panel-2); border: 1px solid var(--accent); box-shadow: 0 12px 40px rgba(0, 0, 0, .6); z-index: 6; flex-wrap: wrap; }
+.rest-time { font-size: 28px; font-variant-numeric: tabular-nums; color: var(--accent); }
+.rest-bar.over { border-color: var(--ok); }
+.rest-bar.over .rest-time { color: var(--ok); }
+
+/* виджеты Хаба */
+.week-strip { display: flex; justify-content: space-between; margin-top: 8px; }
+.wd { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.wd .dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel-2); }
+.wd.hit .dot { background: var(--accent); border-color: var(--accent); }
+.wd.today .small { color: var(--text); }
+.quick-list { display: flex; flex-direction: column; gap: 6px; }
+.quick-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); text-align: left; }
+.quick-row:hover { border-color: var(--accent); }
+.quick-row.active { border-color: var(--accent); color: var(--accent); }
+
+@media (max-width: 720px) {
+  .set-head, .set-row { grid-template-columns: 30px minmax(52px, 1fr) 68px 62px 44px; gap: 6px; }
+  .sess-set { grid-template-columns: 80px 100px 1fr; }
+  .wk-content { flex-wrap: wrap; }
+}

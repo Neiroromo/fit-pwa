@@ -1,0 +1,37 @@
+{
+  "modules": [
+    {
+      "id": "workouts",
+      "name": "Тренировки",
+      "icon": "dumbbell",
+      "description": "Календарь, программы тренировок, запуск тренировки с таймерами и историей весов.",
+      "version": "0.1.0",
+      "size": "~40 КБ",
+      "available": true
+    },
+    {
+      "id": "nutrition",
+      "name": "Дневник питания",
+      "icon": "nutrition",
+      "description": "Учёт приёмов пищи, калорий и БЖУ.",
+      "version": "0.0.0",
+      "available": false
+    },
+    {
+      "id": "activity",
+      "name": "Активность",
+      "icon": "activity",
+      "description": "Шаги, прогулки, пробежки и ежедневная активность.",
+      "version": "0.0.0",
+      "available": false
+    },
+    {
+      "id": "monitoring",
+      "name": "Мониторинг",
+      "icon": "heart",
+      "description": "Вес, замеры тела и самочувствие.",
+      "version": "0.0.0",
+      "available": false
+    }
+  ]
+}

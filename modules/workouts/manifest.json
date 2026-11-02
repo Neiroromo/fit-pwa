@@ -1,0 +1,14 @@
+{
+  "id": "workouts",
+  "name": "Тренировки",
+  "icon": "dumbbell",
+  "version": "0.1.0",
+  "entry": "index.js",
+  "files": ["data.js", "calendar.js", "editor.js", "runner.js"],
+  "styles": ["workouts.css"],
+  "widgets": [
+    { "id": "week", "title": "Неделя", "description": "Сколько тренировок сделано на этой неделе", "sizes": [[1, 1], [2, 1]] },
+    { "id": "month", "title": "Календарь тренировок", "description": "Месяц с отметками тренировок", "sizes": [[2, 2]] },
+    { "id": "quick", "title": "Быстрый старт", "description": "Запуск тренировки в одно касание", "sizes": [[2, 1], [2, 2]] }
+  ]
+}
