@@ -4,6 +4,7 @@
 // Esc вне полей — выход (новая тренировка сохраняется как черновик).
 
 import { openPicker, displayName, suggest } from './catalog.js';
+import { floatShow, floatHide } from './float.js';
 
 /** Поле растёт вместе с текстом. */
 const autosize = ta => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; };
@@ -28,13 +29,16 @@ export function openEditor(el, ctx, template, { onDone }) {
   }
   const list = h('div', { class: 'ex-list' });
 
+  const dropFloating = () => document.querySelectorAll('body > .ex-sug').forEach(e => e.remove());
+
   function render() {
+    dropFloating();
     list.replaceChildren(...draft.exercises.map((ex, i) => {
       const exName = h('input', { class: 'input fld', placeholder: 'Название упражнения', value: ex.name, maxlength: '60', autocomplete: 'off' });
-      const sug = h('div', { class: 'ex-sug', hidden: true });
+      const sug = h('div', { class: 'ex-sug', hidden: true }); // выпадает поверх окна (float.js)
       // Подсказок может быть больше трёх: показывается окно из 3 штук, которое сдвигается вслед за выбором (Tab / стрелки)
       let sugList = [], sugAt = -1, sugWin = 0, sugToken = 0;
-      const hideSug = () => { sugToken++; sugList = []; sugAt = -1; sugWin = 0; sug.hidden = true; sug.replaceChildren(); };
+      const hideSug = () => { sugToken++; sugList = []; sugAt = -1; sugWin = 0; floatHide(sug); sug.replaceChildren(); };
       const choose = found => { applyPick(ex, found); render(); list.children[i]?.querySelectorAll('.fld')[1]?.focus(); };
       const showSug = async () => {
         const mine = ++sugToken;
@@ -44,14 +48,20 @@ export function openEditor(el, ctx, template, { onDone }) {
         drawSug();
       };
       const drawSug = () => {
-        sug.hidden = !sugList.length;
         const lang = ctx.contentLang('exercises');
         sug.replaceChildren(...sugList.slice(sugWin, sugWin + 3).map((f, k) => h('button', {
           class: 'ex-sug-item' + (sugWin + k === sugAt ? ' on' : ''), tabindex: '-1', onPointerdown: e => { e.preventDefault(); choose(f); },
         },
         raw(displayName(f, lang)),
         f.ru && f.n !== displayName(f, lang) ? h('span', { class: 'muted small' }, raw(f.n)) : null)));
+        if (sugList.length) floatShow(sug, exName); else floatHide(sug);
       };
+      // колесо мыши прокручивает подсказки (окно из трёх скользит по списку)
+      sug.addEventListener('wheel', e => {
+        e.preventDefault();
+        sugWin = Math.min(Math.max(0, sugList.length - 3), Math.max(0, sugWin + (e.deltaY > 0 ? 1 : -1)));
+        drawSug();
+      }, { passive: false });
       /** Сдвигает выбор на d; окно из трёх следует за ним. Возвращает false, если сдвинуться некуда. */
       const moveSug = d => {
         const to = Math.min(sugList.length - 1, Math.max(-1, sugAt + d));
@@ -115,7 +125,6 @@ export function openEditor(el, ctx, template, { onDone }) {
           iconBtn('chevU', 'Выше', () => { move(i, -1); }, i === 0 ? 'off' : ''),
           iconBtn('chevD', 'Ниже', () => { move(i, 1); }, i === draft.exercises.length - 1 ? 'off' : ''),
           iconBtn('trash', 'Удалить упражнение', () => { draft.exercises.splice(i, 1); render(); }, 'danger')),
-        sug,
         comment,
         h('div', { class: 'ex-opts' },
           h('div', { class: 'stepper' }, h('span', { class: 'muted' }, 'Подходов'),
@@ -204,7 +213,7 @@ export function openEditor(el, ctx, template, { onDone }) {
     }
   };
   document.addEventListener('keydown', onKey);
-  function dispose() { document.removeEventListener('keydown', onKey); }
+  function dispose() { document.removeEventListener('keydown', onKey); dropFloating(); }
 
   render();
   el.replaceChildren(
