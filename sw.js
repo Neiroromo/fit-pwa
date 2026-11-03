@@ -1,7 +1,7 @@
 // Service worker.
 //  • Оболочка приложения (ядро + Хаб): network-first с откатом на кэш — онлайн всегда свежая версия, офлайн работает.
 //  • Файлы скачанных модулей лежат в кэше 'fitpwa-modules' (кладёт registry.install) и отдаются cache-first.
-const SHELL = 'fitpwa-shell-v1';
+const SHELL = 'fitpwa-shell-v2';
 const MODULES = 'fitpwa-modules';
 
 const SHELL_FILES = [
@@ -34,7 +34,7 @@ self.addEventListener('fetch', e => {
   }
 
   e.respondWith(
-    fetch(req)
+    fetch(req, { cache: 'no-cache' }) // всегда сверяться с сервером, а не с HTTP-кэшем браузера: иначе ядро и Хаб могут оказаться разных версий
       .then(res => {
         if (res.ok && !isModuleFile) {
           const copy = res.clone();
