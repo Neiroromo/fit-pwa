@@ -74,7 +74,7 @@ export function renderDetail(ctx, ex, { onPick, onBack } = {}) {
 }
 
 /** Модальный список с поиском и фильтрами. */
-export function openPicker(ctx, { onPick }) {
+export function openPicker(ctx, { onPick, current }) {
   const { h, icon, modal, raw } = ctx.ui;
   const lang = ctx.contentLang('exercises');
   const L = labels(lang);
@@ -137,7 +137,13 @@ export function openPicker(ctx, { onPick }) {
     body.replaceChildren(renderDetail(ctx, ex, { onBack: showHome, onPick: e => { m.close(); onPick(e); } }));
   }
 
-  loadCatalog().then(c => { data = c.exercises; showHome(); search.focus(); })
+  loadCatalog().then(c => {
+    data = c.exercises;
+    const cur = current && data.find(e => e.id === current);
+    if (cur) return showDetail(cur);
+    showHome();
+    search.focus();
+  })
     .catch(e => body.replaceChildren(h('p', { class: 'muted' }, e.message)));
 }
 

@@ -50,6 +50,7 @@ export function openEditor(el, ctx, template, { onDone }) {
   /** Подставляет упражнение из каталога в карточку ex (или создаёт новую, если ex не задан). */
   function pick(ex) {
     openPicker(ctx, {
+      current: ex?.ref, // уже выбранное из каталога упражнение: окно сразу покажет его карточку, из неё можно вернуться к списку и выбрать другое
       onPick(found) {
         const target = ex ?? newExercise();
         target.name = displayName(found, ctx.contentLang('exercises'));

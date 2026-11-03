@@ -7,17 +7,14 @@
   "Быстрый старт": "Quick start",
   "Запуск тренировки в одно касание": "Start a workout in one tap",
   "Названия и техника упражнений": "Exercise names and technique",
-
   "тренировка|тренировки|тренировок": "workout|workouts",
   "упражнение|упражнения|упражнений": "exercise|exercises",
   "{h} ч {m} мин": "{h} h {m} min",
   "{m} мин": "{m} min",
   "{kg} кг × {reps}": "{kg} kg × {reps}",
-
   "Тренировок: {n}": "Workouts: {n}",
   "Предыдущий месяц": "Previous month",
   "Следующий месяц": "Next month",
-
   "Настройки модуля": "Module settings",
   "Создать тренировку": "Create a workout",
   "Мои тренировки": "My workouts",
@@ -44,7 +41,6 @@
   "Отдых между подходами, сек": "Rest between sets, sec",
   "Сохранено": "Saved",
   "Сохранить": "Save",
-
   "Название тренировки": "Workout name",
   "Название упражнения": "Exercise name",
   "Комментарий (необязательно)": "Comment (optional)",
@@ -62,7 +58,6 @@
   "Редактирование": "Editing",
   "Добавить упражнение": "Add an exercise",
   "Из каталога": "From catalog",
-
   "Отдых": "Rest",
   "Пропустить": "Skip",
   "Вес, кг": "Weight, kg",
@@ -88,7 +83,6 @@
   "Свернуть (тренировка продолжится)": "Minimize (the workout keeps going)",
   "Тренировка идёт": "Workout in progress",
   "Тренировка «{name}» завершена: {time}": "Workout “{name}” finished: {time}",
-
   "Каталог упражнений": "Exercise catalog",
   "Каталог упражнений недоступен": "The exercise catalog is unavailable",
   "К списку": "Back to the list",
@@ -110,5 +104,23 @@
   "Ничего не найдено": "Nothing found",
   "Упражнение": "Exercise",
   "Техника": "Technique",
-  "Упражнение не найдено в каталоге.": "Exercise not found in the catalog."
+  "Упражнение не найдено в каталоге.": "Exercise not found in the catalog.",
+  "Добавить по коду": "Add by code",
+  "Поделиться тренировкой": "Share workout",
+  "Не удалось создать код": "Could not create the code",
+  "Код скопирован": "Code copied",
+  "Выделено: нажмите Ctrl+C": "Selected: press Ctrl+C",
+  "Покажите QR-код или отправьте код текстом. Получатель добавит тренировку в этом приложении: «Добавить по коду».": "Show the QR code or send the code as text. The recipient adds the workout in this app with “Add by code”.",
+  "Скопировать код": "Copy code",
+  "Вставьте код тренировки (FIT1-…)": "Paste a workout code (FIT1-…)",
+  "Сканировать камерой": "Scan with camera",
+  "QR из картинки": "QR from an image",
+  "Добавить": "Add",
+  "Неверный код тренировки": "Invalid workout code",
+  "Тренировка «{name}» добавлена": "Workout “{name}” added",
+  "QR-код на изображении не найден": "No QR code found in the image",
+  "Не удалось прочитать изображение": "Could not read the image",
+  "Сканирование": "Scanning",
+  "Наведите камеру на QR-код тренировки": "Point the camera at the workout QR code",
+  "Нет доступа к камере": "No camera access"
 }

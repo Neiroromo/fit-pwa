@@ -4,6 +4,7 @@ import { DEFAULT_REST, dayKey, groupByDay, fmtClock, makeFmt, sessionTotals, sta
 import { monthGrid } from './calendar.js';
 import { openEditor } from './editor.js';
 import { openRunner } from './runner.js';
+import { openShare, openImport } from './share.js';
 
 export default {
   async mount(page, ctx, params) {
@@ -33,6 +34,7 @@ export default {
         active ? activeBanner(active) : null,
         calBox,
         h('button', { class: 'btn primary wide', onClick: () => showEditor(null) }, icon('plus', 18), 'Создать тренировку'),
+        h('button', { class: 'btn wide', onClick: () => openImport(ctx, { onDone: showHome }) }, icon('qr', 18), 'Добавить по коду'),
         h('h2', { class: 'section-title' }, 'Мои тренировки'),
         listBox,
       ].filter(Boolean));
@@ -126,6 +128,7 @@ export default {
             h('strong', null, t.name),
             h('span', { class: 'muted small block' },
               `${t.exercises.length} ${plural(t.exercises.length, 'упражнение', 'упражнения', 'упражнений')}` + (last ? ctx.t(' · последняя: {date}', { date: fmt.date(last) }) : ''))),
+          iconBtn('share', 'Поделиться тренировкой', () => openShare(ctx, t)),
           iconBtn('edit', 'Редактировать', () => showEditor(t)),
           iconBtn('trash', 'Удалить тренировку', remove, 'danger desktop-only'),
           h('button', { class: 'btn primary', onClick: () => startWorkout(t, active) }, icon('play', 14), 'Start'));
@@ -135,11 +138,11 @@ export default {
       }));
     }
 
-    /** Зажать и потянуть влево — удалить. */
+    /** Зажать и потянуть влево — удалить. Только для касаний: на ПК (мышь) для этого есть кнопка-корзина. */
     function swipeToDelete(el, onCommit) {
       let sx = 0, dx = 0, down = false, moved = false, suppress = false, pid = 0;
       el.addEventListener('pointerdown', e => {
-        if (e.target.closest('button') || (e.pointerType === 'mouse' && e.button !== 0)) return;
+        if (e.pointerType === 'mouse' || e.target.closest('button')) return;
         sx = e.clientX; dx = 0; down = true; moved = false; pid = e.pointerId;
       });
       el.addEventListener('pointermove', e => {
