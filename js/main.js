@@ -18,7 +18,7 @@ const router = {
   },
 };
 
-const app = { db, registry, router, profile: { name: 'Гость', avatar: null } };
+const app = { db, registry, router, profile: { name: '', avatar: null } };
 
 /** Контекст, который получает каждый модуль. Модуль не знает о ядре ничего сверх этого. */
 function moduleContext(id) {

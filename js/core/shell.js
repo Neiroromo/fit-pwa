@@ -2,7 +2,7 @@
 // магазин модулей («+») и уведомления.
 
 import { h, icon, modal, toast, dismissable } from './ui.js';
-import { openProfile, avatarEl } from './profile.js';
+import { openProfile, avatarEl, shownName } from './profile.js';
 import { translator } from './i18n.js';
 
 export function buildShell(app) {
@@ -34,7 +34,7 @@ export function buildShell(app) {
 
   function renderProfile() {
     const p = app.profile;
-    profileName.textContent = p.name;
+    profileName.textContent = shownName(p);
     profileAv.replaceWith(profileAv = avatarEl(p, 32));
   }
 

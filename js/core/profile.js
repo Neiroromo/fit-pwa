@@ -1,13 +1,16 @@
 // Popup профиля: имя/аватар (локально), вход через Google (заглушка), настройка модулей,
 // подписка (заглушка), резервная копия данных.
 
-import { h, icon, iconBtn, toast, dismissable, confirmDialog } from './ui.js';
+import { h, raw, icon, iconBtn, toast, dismissable, confirmDialog } from './ui.js';
 import { LANGS, getSettings, saveSettings, translator } from './i18n.js';
+
+/** Имя для показа: введённое пользователем как есть; если не задано (или осталось старое «Гость») — «Гость» на языке приложения. */
+export const shownName = p => (p.name && p.name !== 'Гость' ? p.name : translator('app').t('Гость'));
 
 export function avatarEl(profile, size = 36) {
   const el = h('span', { class: 'avatar', style: { width: size + 'px', height: size + 'px', fontSize: size * 0.42 + 'px' } });
   if (profile.avatar) el.append(h('img', { src: profile.avatar, alt: '' }));
-  else el.textContent = (profile.name || '?').trim().charAt(0).toUpperCase();
+  else el.textContent = shownName(profile).trim().charAt(0).toUpperCase();
   return el;
 }
 
@@ -47,7 +50,7 @@ export function openProfile(app, anchor) {
   const views = {
     main: () => [
       h('div', { class: 'profile-card' }, avatarEl(app.profile, 48),
-        h('div', null, h('strong', null, app.profile.name), h('div', { class: 'muted small' }, 'Локальный профиль'))),
+        h('div', null, h('strong', null, raw(shownName(app.profile))), h('div', { class: 'muted small' }, 'Локальный профиль'))),
       row('user', 'Имя и аватар', { onClick: () => go('profile') }),
       row('google', 'Войти через Google', { sub: 'Синхронизация данных между устройствами', soon: true }),
       row('grid', 'Настроить модули', { onClick: () => go('modules') }),
@@ -57,7 +60,7 @@ export function openProfile(app, anchor) {
     ],
 
     profile: () => {
-      const name = h('input', { class: 'input', value: app.profile.name, maxlength: '30', placeholder: 'Ваше имя' });
+      const name = h('input', { class: 'input', value: app.profile.name === 'Гость' ? '' : app.profile.name, maxlength: '30', placeholder: 'Гость' });
       const preview = h('div', { class: 'avatar-preview' }, avatarEl(app.profile, 72));
       const file = h('input', { type: 'file', accept: 'image/*', hidden: true });
       const draft = { ...app.profile };
@@ -78,7 +81,7 @@ export function openProfile(app, anchor) {
           h('label', { class: 'field' }, h('span', null, 'Имя'), name),
           h('p', { class: 'muted small' }, 'Изменение доступно при локальном использовании. После входа через Google имя и аватар подтянутся из аккаунта.'),
           h('button', { class: 'btn primary', onClick: async () => {
-            app.profile = { name: name.value.trim() || 'Гость', avatar: draft.avatar };
+            app.profile = { name: name.value.trim(), avatar: draft.avatar };
             await app.db.kv.set('app/profile', app.profile);
             app.shell.renderProfile();
             stack.pop(); render();
