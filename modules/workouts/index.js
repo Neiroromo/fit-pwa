@@ -1,10 +1,11 @@
-// Модуль «Тренировки»: календарь + статистика, список тренировок, редактор, запуск.
+// Модуль «Тренировки»: список тренировок, история, редактор, запуск. Календарь — виджет для Хаба.
 
-import { DEFAULT_REST, dayKey, groupByDay, fmtClock, makeFmt, sessionTotals, startOfWeek, buildActive } from './data.js';
+import { DEFAULT_REST, dayKey, groupByDay, fmtClock, makeFmt, startOfWeek, buildActive } from './data.js';
 import { monthGrid } from './calendar.js';
 import { openEditor } from './editor.js';
 import { openRunner } from './runner.js';
 import { openShare, openImport } from './share.js';
+import { openHistory } from './history.js';
 
 export default {
   async mount(page, ctx, params) {
@@ -15,8 +16,6 @@ export default {
     const sessionsCol = ctx.db.collection('sessions');
 
     let disposeRunner = null;
-    const now = new Date();
-    const calState = { year: now.getFullYear(), month: now.getMonth(), expanded: false, day: null, openSession: null };
 
     // ---------- главный экран ----------
     async function showHome() {
@@ -25,21 +24,21 @@ export default {
       const [templates, sessions, active] = await Promise.all([templatesCol.list(), sessionsCol.list(), ctx.db.kv.get('active')]);
       templates.sort((a, b) => a.createdAt - b.createdAt);
 
-      const calBox = h('div', { class: 'card cal-card' });
       const listBox = h('div', { class: 'wk-list' });
 
       page.replaceChildren(...[
         h('header', { class: 'page-head' }, h('h1', null, 'Тренировки'),
           iconBtn('sliders', 'Настройки модуля', openSettings)),
         active ? activeBanner(active) : null,
-        calBox,
-        h('button', { class: 'btn primary wide', onClick: () => showEditor(null) }, icon('plus', 18), 'Создать тренировку'),
-        h('button', { class: 'btn wide', onClick: () => openImport(ctx, { onDone: showHome }) }, icon('qr', 18), 'Добавить по коду'),
-        h('h2', { class: 'section-title' }, 'Мои тренировки'),
+        h('div', { class: 'section-head' },
+          h('h2', { class: 'section-title' }, 'Мои тренировки'),
+          h('div', { class: 'row-gap' },
+            iconBtn('history', 'История', showHistory),
+            iconBtn('plus', 'Создать тренировку', () => showEditor(null), 'solid'),
+            iconBtn('qr', 'Добавить по коду', () => openImport(ctx, { onDone: showHome })))),
         listBox,
       ].filter(Boolean));
 
-      drawCalendar(calBox, sessions);
       drawList(listBox, templates, sessions, active);
     }
 
@@ -50,60 +49,6 @@ export default {
       const iv = setInterval(() => (t.isConnected ? upd() : clearInterval(iv)), 1000);
       return h('button', { class: 'banner', onClick: () => showRunner(active) },
         icon('play', 18), h('span', { class: 'grow' }, ctx.t('Идёт тренировка «{name}»', { name: active.name })), t, icon('chevR', 18));
-    }
-
-    // ---------- календарь ----------
-    function drawCalendar(box, sessions) {
-      const marks = new Map([...groupByDay(sessions)].map(([k, v]) => [k, v.length]));
-      const { year, month, expanded } = calState;
-      const shift = d => {
-        const dt = new Date(year, month + d, 1);
-        calState.year = dt.getFullYear(); calState.month = dt.getMonth(); calState.day = null; calState.openSession = null;
-        drawCalendar(box, sessions);
-      };
-      const zone = h('div', { class: 'cal-zone', role: 'button', tabindex: '0', 'aria-expanded': String(expanded), onClick: toggle },
-        monthGrid(ctx, {
-          year, month, marks, nav: { onPrev: () => shift(-1), onNext: () => shift(1) },
-          onDay: expanded ? (key, n) => { calState.day = calState.day === key ? null : key; drawCalendar(box, sessions); } : null,
-        }),
-        h('div', { class: 'cal-toggle muted small' }, expanded ? 'Свернуть' : 'Нажмите, чтобы увидеть статистику', icon(expanded ? 'chevU' : 'chevD', 16)));
-      zone.addEventListener('keydown', e => (e.key === 'Enter' || e.key === ' ') && e.target === zone && (e.preventDefault(), toggle()));
-      function toggle() { calState.expanded = !calState.expanded; drawCalendar(box, sessions); }
-
-      box.replaceChildren(zone);
-      if (!expanded) return;
-
-      const monthSessions = sessions
-        .filter(s => { const d = new Date(s.startedAt); return d.getFullYear() === year && d.getMonth() === month; })
-        .sort((a, b) => b.startedAt - a.startedAt);
-      const shown = calState.day ? monthSessions.filter(s => dayKey(s.startedAt) === calState.day) : monthSessions;
-      const totals = sessionTotals(monthSessions);
-
-      box.append(h('div', { class: 'cal-stats' },
-        h('div', { class: 'stat-row' },
-          h('div', null, h('strong', null, String(totals.count)), h('span', { class: 'muted small' }, plural(totals.count, 'тренировка', 'тренировки', 'тренировок'))),
-          h('div', null, h('strong', null, totals.sec ? fmt.human(totals.sec) : '—'), h('span', { class: 'muted small' }, 'всего времени'))),
-        calState.day ? h('button', { class: 'link', onClick: () => { calState.day = null; drawCalendar(box, sessions); } }, ctx.t('Показан день {day} · показать весь месяц', { day: calState.day.split('-').reverse().join('.') })) : null,
-        shown.length ? shown.map(s => sessionItem(s, box, sessions)) : h('p', { class: 'muted empty' }, 'В этом периоде тренировок нет')));
-    }
-
-    function sessionItem(s, box, sessions) {
-      const open = calState.openSession === s.id;
-      return h('div', { class: 'sess' + (open ? ' open' : '') },
-        h('button', { class: 'sess-head', onClick: () => { calState.openSession = open ? null : s.id; drawCalendar(box, sessions); } },
-          h('span', { class: 'sess-date' }, h('strong', null, fmt.date(s.startedAt)), h('span', { class: 'muted small' }, fmt.weekday(s.startedAt))),
-          h('span', { class: 'grow' }, s.name),
-          h('span', { class: 'muted' }, fmt.human(s.durationSec)),
-          icon(open ? 'chevU' : 'chevD', 16)),
-        open ? h('div', { class: 'sess-body' }, s.exercises.map(ex =>
-          h('div', { class: 'sess-ex' },
-            h('strong', null, ex.name), ex.comment ? h('span', { class: 'muted small' }, ' · ' + ex.comment) : null,
-            h('div', { class: 'sess-sets' }, ex.sets.map((x, i) =>
-              h('div', { class: 'sess-set' },
-                h('span', { class: 'muted' }, x.kind === 'warmup' ? 'Разминка' : ctx.t('Сет {n}', { n: ex.sets.slice(0, i + 1).filter(y => y.kind === 'work').length })),
-                h('span', null, fmt.set(x)),
-                h('span', { class: 'muted small' }, x.restSec != null ? ctx.t('отдых {time}', { time: fmtClock(x.restSec) }) : '')))))))
-        : null);
     }
 
     // ---------- список тренировок ----------
@@ -131,7 +76,7 @@ export default {
           iconBtn('share', 'Поделиться тренировкой', () => openShare(ctx, t)),
           iconBtn('edit', 'Редактировать', () => showEditor(t)),
           iconBtn('trash', 'Удалить тренировку', remove, 'danger desktop-only'),
-          h('button', { class: 'btn primary', onClick: () => startWorkout(t, active) }, icon('play', 14), 'Start'));
+          iconBtn('play', 'Начать тренировку', () => startWorkout(t, active), 'solid'));
         const row = h('div', { class: 'wk-row' }, h('div', { class: 'wk-bg' }, icon('trash', 20), 'Удалить'), content);
         swipeToDelete(content, remove);
         return row;
@@ -170,6 +115,11 @@ export default {
     }
 
     // ---------- действия ----------
+    function showHistory() {
+      disposeRunner?.();
+      openHistory(page, ctx, { onBack: showHome });
+    }
+
     function showEditor(tpl) {
       disposeRunner?.();
       openEditor(page, ctx, tpl, { onDone: showHome });

@@ -56,7 +56,6 @@ export function openProfile(app, anchor) {
       row('grid', 'Настроить модули', { onClick: () => go('modules') }),
       row('globe', 'Язык', { sub: LANGS[getSettings().app], onClick: () => go('lang') }),
       row('database', 'Данные на устройстве', { onClick: () => go('data') }),
-      row('star', 'Подписка', { soon: true }),
     ],
 
     profile: () => {

@@ -33,10 +33,30 @@
 
 /* список тренировок */
 .wk-list { display: flex; flex-direction: column; gap: 10px; }
-.wk-row { position: relative; border-radius: var(--r); overflow: hidden; background: var(--danger); }
-.wk-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding-right: 22px; color: #1a0808; font-weight: 600; }
+.wk-row { position: relative; border-radius: var(--r); overflow: hidden; }
+/* красная подложка и подпись «Удалить» нужны только для свайпа на сенсорных экранах */
+.wk-bg { display: none; }
+@media (hover: none), (pointer: coarse) {
+  .wk-row { background: var(--danger); }
+  .wk-bg { display: flex; }
+}
+.wk-bg { position: absolute; inset: 0; align-items: center; justify-content: flex-end; gap: 8px; padding-right: 22px; color: #1a0808; font-weight: 600; }
 .wk-content { position: relative; display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); touch-action: pan-y; transition: transform .2s; user-select: none; }
 .wk-content .grow { cursor: pointer; }
+
+/* заголовок списка с кнопками */
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.section-head .section-title { margin: 0; }
+.icon-btn.solid { background: var(--accent); color: var(--accent-ink); }
+
+/* история */
+.sess-ex-head { display: flex; align-items: center; gap: 8px; }
+.sess-ex-head .icon-btn { width: 30px; height: 30px; }
+.chart { width: 100%; height: auto; display: block; }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .lbl { fill: var(--muted); font-size: 10px; }
+.chart .line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+.chart .dot { fill: var(--accent); }
 
 /* кнопка удаления — только для мыши (ПК); на сенсорных остаётся свайп */
 .desktop-only { display: none; }
@@ -111,6 +131,6 @@
 /* обмен тренировками по коду */
 .share { display: grid; gap: 12px; }
 .qr-box { background: #fff; padding: 8px; border-radius: 12px; width: min(100%, 280px); margin: 0 auto; }
-.qr-box svg { display: block; width: 100%; height: auto; }
+.qr-box img { display: block; width: 100%; height: auto; image-rendering: pixelated; }
 .input.seed { font-family: ui-monospace, Consolas, monospace; font-size: 12px; word-break: break-all; resize: none; }
 .scan-video { width: 100%; border-radius: 12px; background: #000; aspect-ratio: 4 / 3; object-fit: cover; }

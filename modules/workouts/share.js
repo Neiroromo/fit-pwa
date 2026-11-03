@@ -31,8 +31,15 @@ export async function openShare(ctx, tpl) {
   const qr = window.qrcode(0, 'L');
   qr.addData(seed, 'Byte');
   qr.make();
-  const qrBox = h('div', { class: 'qr-box' });
-  qrBox.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 4, scalable: true }); // SVG строит библиотека из ASCII-кода
+  // Картинка (PNG), а не SVG: тогда в меню по правой кнопке мыши есть стандартное «Копировать изображение»
+  const n = qr.getModuleCount(), px = 8, pad = 4;
+  const canvas = Object.assign(document.createElement('canvas'), { width: (n + pad * 2) * px, height: (n + pad * 2) * px });
+  const g = canvas.getContext('2d');
+  g.fillStyle = '#fff';
+  g.fillRect(0, 0, canvas.width, canvas.height);
+  g.fillStyle = '#000';
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) g.fillRect((c + pad) * px, (r + pad) * px, px, px);
+  const qrBox = h('div', { class: 'qr-box' }, h('img', { src: canvas.toDataURL('image/png'), alt: 'QR' }));
 
   const field = h('textarea', { class: 'input seed', readonly: true, rows: '4' }, raw(seed));
   field.addEventListener('focus', () => field.select());
