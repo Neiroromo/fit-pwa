@@ -3,10 +3,25 @@
 
 const track = new WeakMap();
 
-export function floatShow(el, anchor) {
+/**
+ * Показывает список у поля anchor. scroll = {total, start, size}: если элементов больше, чем помещается (size),
+ * справа рисуется тонкая полоса прокрутки — где в списке сейчас окно.
+ */
+export function floatShow(el, anchor, scroll) {
   if (!el.isConnected) document.body.append(el);
   el.hidden = false;
   el.classList.add('float');
+  el.querySelector('.sug-bar')?.remove();
+  if (scroll && scroll.total > scroll.size) {
+    const thumb = document.createElement('span');
+    thumb.className = 'sug-thumb';
+    thumb.style.top = (scroll.start / scroll.total) * 100 + '%';
+    thumb.style.height = (scroll.size / scroll.total) * 100 + '%';
+    const bar = document.createElement('span');
+    bar.className = 'sug-bar';
+    bar.append(thumb);
+    el.append(bar);
+  }
   const place = () => {
     if (!el.isConnected) return;
     const r = anchor.getBoundingClientRect();

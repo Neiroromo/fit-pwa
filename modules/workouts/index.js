@@ -7,6 +7,7 @@ import { openRunner } from './runner.js';
 import { openShare, openImport } from './share.js';
 import { openHistory } from './history.js';
 import { refreshCustom } from './customstore.js';
+import { openPicker } from './catalog.js';
 
 export default {
   async mount(page, ctx, params) {
@@ -30,7 +31,9 @@ export default {
 
       page.replaceChildren(...[
         h('header', { class: 'page-head' }, h('h1', null, 'Тренировки'),
-          iconBtn('sliders', 'Настройки модуля', openSettings)),
+          h('div', { class: 'row-gap' },
+            iconBtn('dumbbell', 'Все упражнения', () => openPicker(ctx, {})),
+            iconBtn('hourglass', 'Настройки модуля', openSettings))),
         active ? activeBanner(active) : null,
         h('div', { class: 'section-head' },
           h('h2', { class: 'section-title' }, 'Мои тренировки'),

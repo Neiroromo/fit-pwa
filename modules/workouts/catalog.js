@@ -223,7 +223,7 @@ export function openPicker(ctx, { onPick, current, query }) {
   }
   function showDetail(ex) {
     m.el.querySelector('h2').textContent = ctx.t('Упражнение');
-    body.replaceChildren(renderDetail(ctx, ex, { onBack: showHome, onPick: (e, l) => { m.close(); onPick(e, l); }, onEdit: showForm, onDelete: removeOwn }));
+    body.replaceChildren(renderDetail(ctx, ex, { onBack: showHome, onPick: onPick ? (e, l) => { m.close(); onPick(e, l); } : undefined, onEdit: showForm, onDelete: removeOwn }));
   }
 
   /** Форма своего упражнения (код формы грузится только когда нужна). */

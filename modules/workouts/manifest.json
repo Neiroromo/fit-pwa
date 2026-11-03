@@ -2,7 +2,7 @@
   "id": "workouts",
   "name": "Тренировки",
   "icon": "dumbbell",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "entry": "index.js",
   "files": ["data.js", "calendar.js", "editor.js", "runner.js", "catalog.js", "exercises.json", "i18n.en.json", "seed.js", "share.js","history.js","customstore.js","custom.js","float.js", "vendor/qrcode.js", "vendor/jsQR.js"],
   "content": [{ "id": "exercises", "title": "Названия и техника упражнений" }],

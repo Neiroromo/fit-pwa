@@ -54,7 +54,7 @@ export function openEditor(el, ctx, template, { onDone }) {
         },
         raw(displayName(f, lang)),
         f.ru && f.n !== displayName(f, lang) ? h('span', { class: 'muted small' }, raw(f.n)) : null)));
-        if (sugList.length) floatShow(sug, exName); else floatHide(sug);
+        if (sugList.length) floatShow(sug, exName, { total: sugList.length, start: sugWin, size: 3 }); else floatHide(sug);
       };
       // колесо мыши прокручивает подсказки (окно из трёх скользит по списку)
       sug.addEventListener('wheel', e => {

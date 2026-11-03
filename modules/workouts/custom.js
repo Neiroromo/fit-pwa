@@ -35,7 +35,7 @@ function tagPicker(ctx, { options, labelOf, selected = [], placeholder }) {
       type: 'button', class: 'ex-sug-item' + (win + i === at ? ' on' : ''), tabindex: '-1',
       onPointerdown: e => { e.preventDefault(); add(k); },
     }, raw(labelOf(k)))));
-    if (list.length) floatShow(sug, box); else floatHide(sug);
+    if (list.length) floatShow(sug, box, { total: list.length, start: win, size: 3 }); else floatHide(sug);
   };
   sug.addEventListener('wheel', e => {
     e.preventDefault();
