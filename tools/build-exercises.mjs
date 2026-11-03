@@ -3,6 +3,7 @@
 //   • wger.de (CC-BY-SA): дополнительные упражнения, фото и русские переводы там, где они есть
 // Запуск: node tools/build-exercises.mjs
 import { writeFile, readFile } from 'node:fs/promises';
+import { overlay } from './translation.mjs';
 
 const FEDB = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json';
 const FEDB_IMG = 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercises/';
@@ -81,6 +82,9 @@ for (const w of wger) {
 }
 
 out.sort((a, b) => a.n.localeCompare(b.n));
+// накопленные русские переводы (translation/ru.json) накладываются поверх — пересборка их не теряет
+const ruStore = JSON.parse(await readFile(new URL('../translation/ru.json', import.meta.url), 'utf8').catch(() => '{}'));
+overlay(out, ruStore);
 await writeFile(new URL('../modules/workouts/exercises.json', import.meta.url), JSON.stringify({
   generated: new Date().toISOString().slice(0, 10),
   sources: [

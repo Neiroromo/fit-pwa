@@ -5,7 +5,7 @@ import { fmtClock, beep } from './data.js';
 import { openDetail } from './catalog.js';
 
 export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
-  const { h, icon, iconBtn, confirmDialog, modal, toast, dismissable } = ctx.ui;
+  const { h, icon, iconBtn, confirmDialog, modal, toast } = ctx.ui;
 
   let saveTimer;
   const save = () => { clearTimeout(saveTimer); saveTimer = setTimeout(flush, 150); };
@@ -101,34 +101,28 @@ export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
 
   function exerciseCard(ex, exIdx) {
     let work = 0;
-    const menuBtn = iconBtn('more', 'Настройки упражнения', () => openMenu(menuBtn, ex));
     const commentEl = h('span', { class: 'ex-comment' }, ex.comment ? ex.comment : '');
     return h('section', { class: 'card run-ex' },
       h('div', { class: 'run-ex-head' },
         h('div', { class: 'grow' }, h('strong', null, ex.name), commentEl),
-        menuBtn),
+        h('div', { class: 'ex-actions' },
+          ex.ref ? iconBtn('info', 'Техника выполнения', () => openDetail(ctx, ex.ref)) : null,
+          iconBtn('msg', ex.comment ? 'Изменить комментарий' : 'Добавить комментарий', () => editComment(ex), ex.comment ? 'on' : ''),
+          iconBtn('plus', 'Добавить подход', () => addSet(ex)),
+          iconBtn('minus', 'Убрать последний подход', () => removeSet(ex)))),
       h('div', { class: 'set-head muted small' }, h('span', null, 'Сет'), h('span', null, 'Прошлый раз'), h('span', null, 'Кг'), h('span', null, 'Повт.'), h('span')),
       ...ex.sets.map((set, i) => setRow(ex, exIdx, set, i, set.kind === 'warmup' ? 'Р' : String(++work))));
   }
 
-  function openMenu(anchor, ex) {
-    document.querySelector('.menu')?.remove();
-    const menu = h('div', { class: 'menu' });
-    const close = dismissable(menu, { ignore: [anchor] });
-    const item = (text, fn) => h('button', { class: 'menu-row', onClick: () => { close(); fn(); } }, text);
-    menu.append(
-      ex.ref ? item('Техника выполнения', () => openDetail(ctx, ex.ref)) : null,
-      item(ex.comment ? 'Изменить комментарий' : 'Добавить комментарий', () => editComment(ex)),
-      item('Добавить подход', () => {
-        const last = ex.sets.at(-1);
-        ex.sets.push({ kind: 'work', prevKg: null, prevReps: null, kg: last?.kg ?? 0, reps: last?.reps ?? 0, done: false, restSec: null });
-        renderList(); save();
-      }),
-      item('Убрать последний подход', () => {
-        if (ex.sets.length <= 1) return toast('В упражнении должен остаться хотя бы один подход');
-        ex.sets.pop(); renderList(); save();
-      }));
-    anchor.parentElement.append(menu);
+  function addSet(ex) {
+    const last = ex.sets.at(-1);
+    ex.sets.push({ kind: 'work', prevKg: null, prevReps: null, kg: last?.kg ?? 0, reps: last?.reps ?? 0, done: false, restSec: null });
+    renderList(); save();
+  }
+
+  function removeSet(ex) {
+    if (ex.sets.length <= 1) return toast('В упражнении должен остаться хотя бы один подход');
+    ex.sets.pop(); renderList(); save();
   }
 
   function editComment(ex) {

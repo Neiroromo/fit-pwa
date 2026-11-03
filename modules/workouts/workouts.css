@@ -104,3 +104,6 @@
 .ex-imgs img { height: 220px; max-width: 100%; border-radius: 12px; background: #fff; flex: none; object-fit: contain; }
 .ex-steps { margin: 6px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
 .row-gap.wrap { flex-wrap: wrap; }
+
+.ex-actions { display: flex; gap: 2px; flex: none; }
+.ex-actions .icon-btn.on { color: var(--accent); }

@@ -2,7 +2,7 @@
   "id": "workouts",
   "name": "Тренировки",
   "icon": "dumbbell",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "entry": "index.js",
   "files": ["data.js", "calendar.js", "editor.js", "runner.js", "catalog.js", "exercises.json"],
   "styles": ["workouts.css"],
