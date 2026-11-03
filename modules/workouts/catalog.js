@@ -7,15 +7,19 @@ const MUSCLES = {
   abdominals: 'пресс', abductors: 'отводящие бедра', adductors: 'приводящие бедра', biceps: 'бицепс', calves: 'икры', chest: 'грудь',
   forearms: 'предплечья', glutes: 'ягодицы', hamstrings: 'задняя поверхность бедра', lats: 'широчайшие', 'lower back': 'поясница',
   'middle back': 'середина спины', neck: 'шея', quadriceps: 'квадрицепс', shoulders: 'плечи', traps: 'трапеции', triceps: 'трицепс',
+  // названия из wger
+  abs: 'пресс', quads: 'квадрицепс', trapezius: 'трапеции', 'obliquus externus abdominis': 'косые мышцы живота',
+  brachialis: 'плечевая мышца', 'serratus anterior': 'передняя зубчатая', soleus: 'камбаловидная',
 };
 const EQUIP = {
   'body only': 'свой вес', bands: 'резинки', mat: 'коврик', 'exercise ball': 'фитбол', 'foam roll': 'ролл', 'pull-up bar': 'турник',
   bench: 'скамья', barbell: 'штанга', dumbbell: 'гантели', kettlebells: 'гиря', cable: 'блок', machine: 'тренажёр',
   'e-z curl bar': 'EZ-гриф', 'medicine ball': 'медбол', other: 'другое',
+  'cable machine': 'блочный тренажёр', 'resistance band': 'эспандер',
 };
 const LEVEL = { beginner: 'новичок', intermediate: 'средний', expert: 'опытный' };
 
-const label = (dict, k) => dict[k] ?? k;
+const label = (dict, k) => dict[k] ?? dict[String(k).toLowerCase()] ?? k;
 export const displayName = ex => ex.ru || ex.n;
 
 let cache;
