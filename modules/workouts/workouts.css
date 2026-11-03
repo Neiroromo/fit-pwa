@@ -144,3 +144,4 @@
 .ex-sug-item { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; padding: 8px 12px; background: var(--panel-2); border: 0; border-top: 1px solid var(--line); color: var(--text); text-align: left; }
 .ex-sug-item:first-child { border-top: 0; }
 .ex-sug-item:hover, .ex-sug-item.on { background: color-mix(in srgb, var(--accent) 18%, var(--panel-2)); }
+.chip-btn:disabled { opacity: .35; cursor: default; }

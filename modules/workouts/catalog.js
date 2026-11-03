@@ -147,21 +147,33 @@ export function openPicker(ctx, { onPick, current, query }) {
   let data = [];
   let equipOptions = [];
 
-  const chip = (text, on, fn) => h('button', { class: 'chip-btn' + (on ? ' on' : ''), onClick: fn }, text);
+  const chip = (text, on, fn, off = false) => h('button', { class: 'chip-btn' + (on ? ' on' : ''), onClick: fn, disabled: off && !on }, text);
 
   let pq = null;
-  function matches(ex) {
-    if (state.group && !ex.g.includes(state.group)) return false;
-    if (state.place === 'home' && !ex.h) return false;
-    if (state.place === 'gym' && ex.h) return false;
-    if (state.equip.size && !equipKeys(ex).some(k => state.equip.has(k))) return false;
-    if (state.media && !ex.img?.length) return false;
-    return !pq || !!matchExercise(ex, pq);
+  let hits = null; // упражнения, подходящие под текст поиска (считаем один раз на запрос)
+  const setQuery = text => {
+    pq = parseQuery(text);
+    hits = pq ? new Set(data.filter(ex => matchExercise(ex, pq))) : null;
+  };
+  /** Подходит ли упражнение под фильтры s (без текста поиска). */
+  function passes(ex, s) {
+    if (s.group && !ex.g.includes(s.group)) return false;
+    if (s.place === 'home' && !ex.h) return false;
+    if (s.place === 'gym' && ex.h) return false;
+    if (s.equip.size && !equipKeys(ex).some(k => s.equip.has(k))) return false;
+    if (s.media && !ex.img?.length) return false;
+    return true;
   }
+  const matches = ex => passes(ex, state) && (!hits || hits.has(ex));
+  /** Остаются ли упражнения, если к текущему выбору применить изменение patch. Фильтры без результатов делаем неактивными. */
+  const has = patch => {
+    const s = { ...state, ...patch };
+    return data.some(ex => (!hits || hits.has(ex)) && passes(ex, s));
+  };
 
   const search = h('input', { class: 'input', type: 'search', placeholder: 'Поиск по названию…' });
-  search.addEventListener('input', () => { pq = parseQuery(search.value); state.limit = 40; renderList(); });
-  if (query) { search.value = query; pq = parseQuery(query); }
+  search.addEventListener('input', () => { setQuery(search.value); state.limit = 40; renderFilters(); renderList(); });
+  const initialQuery = query;
   const filters = h('div', { class: 'ex-filters' });
   const list = h('div', { class: 'ex-results' });
 
@@ -169,16 +181,16 @@ export function openPicker(ctx, { onPick, current, query }) {
     filters.replaceChildren(
       h('div', { class: 'size-chips' },
         chip('Всё', state.place === 'all', () => { state.place = 'all'; update(); }),
-        chip('Дома', state.place === 'home', () => { state.place = 'home'; update(); }),
-        chip('Зал', state.place === 'gym', () => { state.place = 'gym'; update(); }),
-        chip('С картинками', state.media, () => { state.media = !state.media; update(); })),
+        chip('Дома', state.place === 'home', () => { state.place = 'home'; update(); }, !has({ place: 'home' })),
+        chip('Зал', state.place === 'gym', () => { state.place = 'gym'; update(); }, !has({ place: 'gym' })),
+        chip('С картинками', state.media, () => { state.media = !state.media; update(); }, !has({ media: true }))),
       h('div', { class: 'size-chips' },
         chip('Все мышцы', !state.group, () => { state.group = null; update(); }),
-        Object.keys(GROUPS).map(k => chip(raw(L.group(k)), state.group === k, () => { state.group = k; update(); }))),
+        Object.keys(GROUPS).map(k => chip(raw(L.group(k)), state.group === k, () => { state.group = k; update(); }, !has({ group: k })))),
       // оборудование: можно выбрать несколько (подходит любое из выбранных), по убыванию популярности
       h('div', { class: 'size-chips' },
         chip('Любое оборудование', !state.equip.size, () => { state.equip.clear(); update(); }),
-        equipOptions.map(k => chip(raw(L.equip(k)), state.equip.has(k), () => { state.equip.has(k) ? state.equip.delete(k) : state.equip.add(k); update(); }))));
+        equipOptions.map(k => chip(raw(L.equip(k)), state.equip.has(k), () => { state.equip.has(k) ? state.equip.delete(k) : state.equip.add(k); update(); }, !has({ equip: new Set([k]) })))));
   }
 
   function renderList() {
@@ -210,6 +222,7 @@ export function openPicker(ctx, { onPick, current, query }) {
 
   loadCatalog().then(c => {
     data = c.exercises;
+    if (initialQuery) { search.value = initialQuery; setQuery(initialQuery); }
     const counts = new Map();
     for (const ex of data) for (const k of equipKeys(ex)) counts.set(k, (counts.get(k) ?? 0) + 1);
     equipOptions = [...counts].sort((a, b) => b[1] - a[1]).map(([k]) => k);
