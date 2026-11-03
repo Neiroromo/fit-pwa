@@ -122,5 +122,7 @@
   "Не удалось прочитать изображение": "Could not read the image",
   "Сканирование": "Scanning",
   "Наведите камеру на QR-код тренировки": "Point the camera at the workout QR code",
-  "Нет доступа к камере": "No camera access"
+  "Нет доступа к камере": "No camera access",
+  "С картинками": "With images",
+  "Любое оборудование": "Any equipment"
 }

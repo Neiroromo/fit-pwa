@@ -29,6 +29,11 @@ const labels = lang => (lang === 'en'
   ? { group: g => GROUPS_EN[g] ?? cap(g), muscle: cap, equip: cap, level: cap, place: home => (home ? 'Home' : 'Gym') }
   : { group: g => label(GROUPS, g), muscle: m => label(MUSCLES, m), equip: e => label(EQUIP, e), level: l => LEVEL[l], place: home => (home ? 'дома' : 'зал') });
 
+// У wger и free-exercise-db оборудование названо по-разному — для фильтра сводим к одному значению.
+// Упражнение без указанного оборудования считаем «со своим весом».
+const EQUIP_ALIAS = { 'cable machine': 'cable', 'resistance band': 'bands' };
+const equipKeys = ex => (ex.e?.length ? [...new Set(ex.e.map(e => EQUIP_ALIAS[e] ?? e))] : ['body only']);
+
 /** Название упражнения на языке контента ('en' — оригинал каталога; иначе русский перевод, если есть). */
 export const displayName = (ex, lang = 'ru') => (lang === 'en' ? ex.n : ex.ru || ex.n);
 
@@ -78,10 +83,11 @@ export function openPicker(ctx, { onPick, current }) {
   const { h, icon, modal, raw } = ctx.ui;
   const lang = ctx.contentLang('exercises');
   const L = labels(lang);
-  const state = { q: '', group: null, place: 'all', limit: 40 };
+  const state = { q: '', group: null, place: 'all', equip: new Set(), media: false, limit: 40 };
   const body = h('div', { class: 'picker-ex' }, h('p', { class: 'muted' }, 'Загрузка каталога…'));
   const m = modal({ title: 'Каталог упражнений', body, wide: true });
   let data = [];
+  let equipOptions = [];
 
   const chip = (text, on, fn) => h('button', { class: 'chip-btn' + (on ? ' on' : ''), onClick: fn }, text);
 
@@ -89,6 +95,8 @@ export function openPicker(ctx, { onPick, current }) {
     if (state.group && !ex.g.includes(state.group)) return false;
     if (state.place === 'home' && !ex.h) return false;
     if (state.place === 'gym' && ex.h) return false;
+    if (state.equip.size && !equipKeys(ex).some(k => state.equip.has(k))) return false;
+    if (state.media && !ex.img?.length) return false;
     if (!state.q) return true;
     const q = state.q.toLowerCase();
     return ex.n.toLowerCase().includes(q) || (ex.ru ?? '').toLowerCase().includes(q);
@@ -104,10 +112,15 @@ export function openPicker(ctx, { onPick, current }) {
       h('div', { class: 'size-chips' },
         chip('Всё', state.place === 'all', () => { state.place = 'all'; update(); }),
         chip('Дома', state.place === 'home', () => { state.place = 'home'; update(); }),
-        chip('Зал', state.place === 'gym', () => { state.place = 'gym'; update(); })),
+        chip('Зал', state.place === 'gym', () => { state.place = 'gym'; update(); }),
+        chip('С картинками', state.media, () => { state.media = !state.media; update(); })),
       h('div', { class: 'size-chips' },
         chip('Все мышцы', !state.group, () => { state.group = null; update(); }),
-        Object.keys(GROUPS).map(k => chip(raw(L.group(k)), state.group === k, () => { state.group = k; update(); }))));
+        Object.keys(GROUPS).map(k => chip(raw(L.group(k)), state.group === k, () => { state.group = k; update(); }))),
+      // оборудование: можно выбрать несколько (подходит любое из выбранных), по убыванию популярности
+      h('div', { class: 'size-chips' },
+        chip('Любое оборудование', !state.equip.size, () => { state.equip.clear(); update(); }),
+        equipOptions.map(k => chip(raw(L.equip(k)), state.equip.has(k), () => { state.equip.has(k) ? state.equip.delete(k) : state.equip.add(k); update(); }))));
   }
 
   function renderList() {
@@ -139,6 +152,9 @@ export function openPicker(ctx, { onPick, current }) {
 
   loadCatalog().then(c => {
     data = c.exercises;
+    const counts = new Map();
+    for (const ex of data) for (const k of equipKeys(ex)) counts.set(k, (counts.get(k) ?? 0) + 1);
+    equipOptions = [...counts].sort((a, b) => b[1] - a[1]).map(([k]) => k);
     const cur = current && data.find(e => e.id === current);
     if (cur) return showDetail(cur);
     showHome();
