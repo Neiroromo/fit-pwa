@@ -1,39 +1,85 @@
 // Форма своего упражнения: название, теги (из существующих или новые), мышцы, техника, картинки.
 // Форма — как карточка упражнения в каталоге. Новые теги не требуют отдельной настройки: фильтры каталога строятся по тегам всех упражнений.
 
-import { GROUPS, MUSCLES, EQUIP, LEVEL, EQUIP_ALIAS, labels, equipKeys } from './catalog.js';
+import { GROUPS, MUSCLES, LEVEL, EQUIP_ALIAS, labels, equipKeys, parseQuery, scoreName } from './catalog.js';
 import { saveCustom } from './customstore.js';
 
 const MAX_IMAGES = 4;
 const IMAGE_SIDE = 800; // длинная сторона после уменьшения, пикселей
 
-/** Выбор тегов: готовые кнопки + поле для нового тега (Enter). get() возвращает выбранные ключи. */
+/**
+ * Поле тегов: выбранные теги — кнопки с крестиком, ниже поле ввода. По фокусу и при вводе показываются 3 подсказки
+ * (окно скользит по длинному списку). Tab / стрелки — перебор, Enter — добавить выбранную подсказку или набранный текст как новый тег,
+ * Esc — убрать подсказки (текст остаётся). get() возвращает выбранные ключи.
+ */
 function tagPicker(ctx, { options, labelOf, selected = [], placeholder }) {
   const { h, icon, raw } = ctx.ui;
-  const sel = new Set(selected);
+  const sel = [...selected];
   const opts = [...new Set([...options, ...selected])];
   const chips = h('div', { class: 'size-chips' });
-  const input = h('input', { class: 'input', placeholder, maxlength: '40' });
-  const draw = () => chips.replaceChildren(...opts.map(k =>
-    h('button', { type: 'button', class: 'chip-btn' + (sel.has(k) ? ' on' : ''), onClick: () => { sel.has(k) ? sel.delete(k) : sel.add(k); draw(); } }, raw(labelOf(k)))));
-  const add = () => {
-    const t = input.value.trim();
-    if (!t) return;
-    // тег, который уже есть (по ключу или по подписи), не дублируем
-    const hit = opts.find(k => k.toLowerCase() === t.toLowerCase() || labelOf(k).toLowerCase() === t.toLowerCase());
-    const key = hit ?? t;
-    if (!hit) opts.push(key);
-    sel.add(key);
+  const sug = h('div', { class: 'ex-sug', hidden: true });
+  const input = h('input', { class: 'input', placeholder, maxlength: '40', autocomplete: 'off' });
+  let list = [], at = -1, win = 0;
+
+  const drawChips = fresh => {
+    chips.hidden = !sel.length;
+    chips.replaceChildren(...sel.map(k => h('button', {
+      type: 'button', class: 'chip-btn on' + (k === fresh ? ' fresh' : ''), title: 'Убрать тег',
+      onClick: () => { sel.splice(sel.indexOf(k), 1); drawChips(); compute(); },
+    }, raw(labelOf(k)), icon('x', 12))));
+  };
+  const drawSug = () => {
+    sug.hidden = !list.length;
+    sug.replaceChildren(...list.slice(win, win + 3).map((k, i) => h('button', {
+      type: 'button', class: 'ex-sug-item' + (win + i === at ? ' on' : ''), tabindex: '-1',
+      onPointerdown: e => { e.preventDefault(); add(k); },
+    }, raw(labelOf(k)))));
+  };
+  /** Пересчитывает подсказки под набранный текст: совпадение по началу любого слова, уже выбранные не предлагаются. */
+  const compute = () => {
+    const pq = parseQuery(input.value);
+    const free = opts.filter(k => !sel.includes(k));
+    list = pq
+      ? free.map(k => ({ k, score: Math.min(...[labelOf(k), k].map(t => scoreName(t, pq) ?? Infinity)) })).filter(x => x.score !== Infinity).sort((a, b) => a.score - b.score).map(x => x.k)
+      : free;
+    at = -1; win = 0;
+    drawSug();
+  };
+  const move = d => {
+    const to = Math.min(list.length - 1, Math.max(-1, at + d));
+    if (to === at) return;
+    at = to;
+    if (at >= win + 3) win = at - 2;
+    if (at >= 0 && at < win) win = at;
+    drawSug();
+  };
+  function add(key) {
+    if (key == null) {
+      const t = input.value.trim().replace(/\s+/g, ' ');
+      if (!t) return;
+      // уже существующий тег (по ключу или подписи) не дублируем, иначе заводим новый
+      key = opts.find(k => k.toLowerCase() === t.toLowerCase() || labelOf(k).toLowerCase() === t.toLowerCase()) ?? t;
+      if (!opts.includes(key)) opts.push(key);
+    }
+    if (!sel.includes(key)) sel.push(key);
     input.value = '';
-    draw();
-  };
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); add(); } });
-  draw();
-  return {
-    el: h('div', { class: 'tag-picker' }, chips, h('div', { class: 'row-gap' }, h('div', { class: 'grow' }, input),
-      h('button', { type: 'button', class: 'btn', 'aria-label': 'Новый тег', onClick: add }, icon('plus', 16)))),
-    get: () => [...sel],
-  };
+    drawChips(key);
+    compute();
+    input.focus();
+  }
+  input.addEventListener('focus', compute);
+  input.addEventListener('input', compute);
+  input.addEventListener('blur', () => { list = []; at = -1; drawSug(); });
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); add(at >= 0 ? list[at] : null); return; }
+    if (!list.length) return;
+    const down = e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey);
+    const up = e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey && at > 0);
+    if (down || up) { e.preventDefault(); move(down ? 1 : -1); }
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); list = []; at = -1; drawSug(); }
+  });
+  drawChips();
+  return { el: h('div', { class: 'tag-picker' }, chips, input, sug), get: () => [...sel] };
 }
 
 async function downscale(file) {
@@ -77,8 +123,6 @@ export function customForm(ctx, { ex, data, onDone }) {
     h('button', { type: 'button', class: 'chip-btn' + (level === k ? ' on' : ''), onClick: () => { level = k; drawLevel(); } }, k ? raw(L.level(k)) : 'Не указан')));
   drawLevel();
 
-  const home = h('input', { type: 'checkbox' });
-  home.checked = !!ex?.h;
   const steps = h('textarea', { class: 'input', rows: '6', placeholder: 'Каждый шаг с новой строки' });
   steps.value = (ex?.d ?? []).join('\n');
 
@@ -105,7 +149,7 @@ export function customForm(ctx, { ex, data, onDone }) {
     const n = name.value.trim();
     if (!n) return toast('Введите название упражнения');
     const rec = {
-      ...(ex ?? {}), n, g: groups.get(), e: equip.get(), m: main.get(), s: sec.get(), l: level, h: home.checked ? 1 : 0,
+      ...(ex ?? {}), n, g: groups.get(), e: equip.get(), m: main.get(), s: sec.get(), l: level,
       d: steps.value.split('\n').map(s => s.trim()).filter(Boolean), img: images,
     };
     const saved = await saveCustom(ctx, rec);
@@ -120,7 +164,6 @@ export function customForm(ctx, { ex, data, onDone }) {
     field('Основные мышцы', main.el),
     field('Дополнительные мышцы', sec.el),
     field('Уровень', levelBox),
-    h('label', { class: 'check' }, home, h('span', null, 'Можно выполнять дома')),
     field('Техника выполнения', steps),
     field('Картинки', thumbs, h('button', { type: 'button', class: 'btn', onClick: () => file.click() }, icon('upload', 16), 'Добавить картинки'), file),
     h('div', { class: 'row-gap' },

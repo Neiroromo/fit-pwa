@@ -15,7 +15,6 @@ const keyOf = name => name.trim().toLowerCase();
 
 export async function openHistory(page, ctx, { onBack }) {
   const { h, iconBtn, raw } = ctx.ui;
-  const { plural } = ctx;
   const fmt = makeFmt(ctx);
   // от самой новой тренировки к самой старой
   const sessions = (await ctx.db.collection('sessions').list()).sort((a, b) => (b.startedAt - a.startedAt) || ((b.endedAt ?? 0) - (a.endedAt ?? 0)));
@@ -35,10 +34,8 @@ export async function openHistory(page, ctx, { onBack }) {
     root.replaceChildren(...cols);
   }
 
-  /** Заголовок колонки: на узких экранах слева стрелка назад на предыдущую ступень. */
-  const colHead = (title, sub, back) => h('div', { class: 'hcol-head' },
-    back ? iconBtn('chevL', 'Назад', back, 'hist-back') : null,
-    h('div', { class: 'grow' }, h('strong', null, title), sub ? h('span', { class: 'muted small block' }, sub) : null));
+  /** Только для узких экранов, где видна одна ступень: стрелка назад на предыдущую. На широких не показывается. */
+  const backBar = back => h('div', { class: 'hback' }, iconBtn('chevL', 'Назад', back));
 
   const holder = text => h('section', { class: 'hcol card holder' }, h('p', { class: 'muted' }, text));
 
@@ -59,8 +56,7 @@ export async function openHistory(page, ctx, { onBack }) {
   // ---------- 2: упражнения тренировки ----------
   function colExercises(s) {
     return h('section', { class: 'hcol card' },
-      colHead(raw(s.name), `${fmt.date(s.startedAt)} · ${s.exercises.length} ${plural(s.exercises.length, 'упражнение', 'упражнения', 'упражнений')} · ${fmt.human(s.durationSec ?? 0)}`,
-        () => { sel = null; exKey = null; draw(); }),
+      backBar(() => { sel = null; exKey = null; draw(); }),
       h('div', { class: 'hlist' }, s.exercises.map(ex =>
         h('button', { class: 'hex' + (keyOf(ex.name) === exKey ? ' on' : ''), onClick: () => { exKey = keyOf(ex.name); draw(); } },
           h('strong', null, raw(ex.name)),
@@ -89,7 +85,7 @@ export async function openHistory(page, ctx, { onBack }) {
     const chips = h('div', { class: 'size-chips' }, PERIODS.map(p =>
       h('button', { class: 'chip-btn' + (p === period ? ' on' : ''), onClick: () => { period = p; draw(); } }, p.label)));
     return h('section', { class: 'hcol card' },
-      colHead(raw(ex.name), 'Динамика максимального веса', () => { exKey = null; draw(); }),
+      backBar(() => { exKey = null; draw(); }),
       h('div', { class: 'hchart' },
         chips,
         pts.length

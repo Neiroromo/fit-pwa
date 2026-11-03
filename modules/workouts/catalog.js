@@ -50,7 +50,7 @@ export function parseQuery(q) {
 }
 
 /** Совпадение названия с запросом по любому слову (не только по началу): «рук» найдёт и «Сгибание рук», и «Разгибание рук». Меньше — лучше, null — не подходит. */
-function scoreName(name, pq) {
+export function scoreName(name, pq) {
   const words = norm(name).split(' ').filter(Boolean);
   let pos = 0;
   for (let i = 0; i < pq.tokens.length; i++) {
@@ -117,8 +117,7 @@ export function renderDetail(ctx, ex, { onPick, onBack, onEdit, onDelete } = {})
       ...(ex.g ?? []).map(L.group),
       ex.l ? L.level(ex.l) : null,
       ...(ex.e?.length ? ex.e.map(L.equip) : []),
-      L.place(!!ex.h),
-    ].filter(Boolean);
+      ].filter(Boolean);
     const mus = list => raw((list ?? []).map(L.muscle).join(', '));
     const langChip = (code, text) => h('button', { class: 'chip-btn' + (lang === code ? ' on' : ''), onClick: () => { lang = code; draw(); } }, text);
     root.replaceChildren(...[
@@ -148,7 +147,7 @@ export function openPicker(ctx, { onPick, current, query }) {
   const { h, icon, modal, raw } = ctx.ui;
   const lang = ctx.contentLang('exercises');
   const L = labels(lang);
-  const state = { group: null, place: 'all', equip: new Set(), media: false, limit: 40 };
+  const state = { group: null, equip: new Set(), media: false, limit: 40 };
   const body = h('div', { class: 'picker-ex' }, h('p', { class: 'muted' }, 'Загрузка каталога…'));
   const m = modal({ title: 'Каталог упражнений', body, wide: true });
   let data = [];
@@ -166,8 +165,6 @@ export function openPicker(ctx, { onPick, current, query }) {
   /** Подходит ли упражнение под фильтры s (без текста поиска). */
   function passes(ex, s) {
     if (s.group && !(ex.g ?? []).includes(s.group)) return false;
-    if (s.place === 'home' && !ex.h) return false;
-    if (s.place === 'gym' && ex.h) return false;
     if (s.equip.size && !equipKeys(ex).some(k => s.equip.has(k))) return false;
     if (s.media && !ex.img?.length) return false;
     return true;
@@ -188,10 +185,6 @@ export function openPicker(ctx, { onPick, current, query }) {
   function renderFilters() {
     const group = (title, ...rows) => h('div', { class: 'filter-group' }, h('div', { class: 'filter-title' }, title), ...rows);
     filters.replaceChildren(
-      group('Место', h('div', { class: 'size-chips' },
-        chip('Всё', state.place === 'all', () => { state.place = 'all'; update(); }),
-        chip('Дома', state.place === 'home', () => { state.place = 'home'; update(); }, !has({ place: 'home' })),
-        chip('Зал', state.place === 'gym', () => { state.place = 'gym'; update(); }, !has({ place: 'gym' })))),
       group('Визуализация', h('div', { class: 'size-chips' },
         chip('С картинками', state.media, () => { state.media = !state.media; update(); }, !has({ media: true })))),
       group('Группа мышц', h('div', { class: 'size-chips' },
