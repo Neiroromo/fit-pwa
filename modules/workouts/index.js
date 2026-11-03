@@ -6,12 +6,14 @@ import { openEditor } from './editor.js';
 import { openRunner } from './runner.js';
 import { openShare, openImport } from './share.js';
 import { openHistory } from './history.js';
+import { refreshCustom } from './customstore.js';
 
 export default {
   async mount(page, ctx, params) {
     const { h, icon, iconBtn, confirmDialog, toast, modal } = ctx.ui;
     const { plural } = ctx;
     const fmt = makeFmt(ctx);
+    await refreshCustom(ctx); // свои упражнения нужны каталогу, подсказкам, карточкам и импорту
     const templatesCol = ctx.db.collection('templates');
     const sessionsCol = ctx.db.collection('sessions');
 

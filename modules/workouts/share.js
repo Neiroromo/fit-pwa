@@ -2,6 +2,7 @@
 
 import { encodeSeed, decodeSeed } from './seed.js';
 import { getExercise, displayName } from './catalog.js';
+import { customExercises, saveCustom } from './customstore.js';
 
 // Библиотеки QR лежат в vendor/ и скачиваются вместе с модулем (работают офлайн), грузятся только когда нужны.
 const scripts = new Map();
@@ -17,29 +18,55 @@ function loadScript(file) {
   return scripts.get(file);
 }
 
+/** Строит QR для кода; null, если код не помещается в один QR. Коды FIT2/FIT3 — base45, поэтому режим «Alphanumeric» (плотнее байтового). */
+function makeQr(seed) {
+  const qr = window.qrcode(0, 'L');
+  qr.addData(seed, /^FIT[23]-/.test(seed) ? 'Alphanumeric' : 'Byte');
+  try { qr.make(); return qr; } catch { return null; }
+}
+
 /** Окно «Поделиться»: QR-код и текстовый код тренировки. */
 export async function openShare(ctx, tpl) {
   const { h, icon, modal, toast, raw } = ctx.ui;
-  let seed;
+  // определения своих упражнений прикладываются к коду, чтобы у получателя появились и они, и их теги
+  const custom = new Map();
+  for (const e of tpl.exercises) {
+    if (!String(e.ref ?? '').startsWith('cx:') || custom.has(e.ref)) continue;
+    const def = await getExercise(e.ref);
+    if (def) custom.set(def.id, def);
+  }
+  let seed, qr = null, level = 0;
   try {
-    seed = await encodeSeed(tpl);
     await loadScript('vendor/qrcode.js');
+    // Если с полной информацией не помещается в один QR — по очереди отбрасываем шаги техники, затем мышцы
+    for (; level <= 2; level++) {
+      seed = await encodeSeed(tpl, { custom, level });
+      qr = makeQr(seed);
+      if (qr || !custom.size) break;
+    }
+    level = Math.min(level, 2);
   } catch (e) {
     console.error(e);
     return toast('Не удалось создать код');
   }
-  const qr = window.qrcode(0, 'L');
-  qr.addData(seed, 'Byte');
-  qr.make();
-  // Картинка (PNG), а не SVG: тогда в меню по правой кнопке мыши есть стандартное «Копировать изображение»
-  const n = qr.getModuleCount(), px = 8, pad = 4;
-  const canvas = Object.assign(document.createElement('canvas'), { width: (n + pad * 2) * px, height: (n + pad * 2) * px });
-  const g = canvas.getContext('2d');
-  g.fillStyle = '#fff';
-  g.fillRect(0, 0, canvas.width, canvas.height);
-  g.fillStyle = '#000';
-  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) g.fillRect((c + pad) * px, (r + pad) * px, px, px);
-  const qrBox = h('div', { class: 'qr-box' }, h('img', { src: canvas.toDataURL('image/png'), alt: 'QR' }));
+  const notes = [];
+  if (custom.size) notes.push(ctx.t('Свои упражнения передаются без картинок.'));
+  if (custom.size && level === 1) notes.push(ctx.t('Шаги техники не поместились в QR и не переданы.'));
+  if (custom.size && level >= 2) notes.push(ctx.t('Шаги техники и мышцы не поместились в QR и не переданы.'));
+  if (!qr) notes.push(ctx.t('Код слишком длинный для QR — отправьте его текстом.'));
+
+  let qrBox = null;
+  if (qr) {
+    // Картинка (PNG), а не SVG: тогда в меню по правой кнопке мыши есть стандартное «Копировать изображение»
+    const n = qr.getModuleCount(), px = 8, pad = 4;
+    const canvas = Object.assign(document.createElement('canvas'), { width: (n + pad * 2) * px, height: (n + pad * 2) * px });
+    const g = canvas.getContext('2d');
+    g.fillStyle = '#fff';
+    g.fillRect(0, 0, canvas.width, canvas.height);
+    g.fillStyle = '#000';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) g.fillRect((c + pad) * px, (r + pad) * px, px, px);
+    qrBox = h('div', { class: 'qr-box' }, h('img', { src: canvas.toDataURL('image/png'), alt: 'QR' }));
+  }
 
   const field = h('textarea', { class: 'input seed', readonly: true, rows: '4' }, raw(seed));
   field.addEventListener('focus', () => field.select());
@@ -52,6 +79,7 @@ export async function openShare(ctx, tpl) {
       h('strong', null, raw(tpl.name)),
       qrBox,
       h('p', { class: 'muted small' }, 'Покажите QR-код или отправьте код текстом. Получатель добавит тренировку в этом приложении: «Добавить по коду».'),
+      ...notes.map(t => h('p', { class: 'warn small' }, t)),
       field,
       h('button', { class: 'btn primary wide', onClick: copy }, icon('check', 16), 'Скопировать код')),
   });
@@ -60,7 +88,7 @@ export async function openShare(ctx, tpl) {
 /** Окно «Добавить по коду». onDone вызывается после добавления тренировки. */
 export function openImport(ctx, { onDone }) {
   const { h, icon, modal, toast, raw } = ctx.ui;
-  const input = h('textarea', { class: 'input seed', rows: '4', placeholder: 'Вставьте код тренировки (FIT1-…)' });
+  const input = h('textarea', { class: 'input seed', rows: '4', placeholder: 'Вставьте код тренировки (FIT2-…)' });
   const file = h('input', { type: 'file', accept: 'image/*', hidden: true });
   const m = modal({
     title: 'Добавить по коду',
@@ -74,12 +102,28 @@ export function openImport(ctx, { onDone }) {
   });
   input.focus();
 
+  /** Своё упражнение из кода: такое же (название + группы + оборудование) уже есть — берём его, иначе создаём с теми же тегами. */
+  async function importCustom(def) {
+    const same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+    const found = customExercises().find(e => e.n.toLowerCase() === def.n.toLowerCase() && same(e.g ?? [], def.g) && same(e.e ?? [], def.e));
+    if (found) return found;
+    return saveCustom(ctx, { n: def.n, g: def.g, e: def.e, m: def.m, s: def.s, h: def.h, l: def.l, d: def.d, img: [] });
+  }
+
   async function add(text) {
-    let tpl;
-    try { tpl = await decodeSeed(text); } catch { return toast('Неверный код тренировки'); }
+    let tpl, defs;
+    try { ({ defs, ...tpl } = await decodeSeed(text)); } catch { return toast('Неверный код тренировки'); }
     const lang = ctx.contentLang('exercises');
+    const own = [];
+    for (const def of defs) own.push(await importCustom(def));
     for (const ex of tpl.exercises) {
       ex.id = ctx.ui.uid();
+      if (ex.custom != null) {
+        const c = own[ex.custom];
+        ex.ref = c.id; ex.name = c.n; ex.refName = c.n;
+        delete ex.custom;
+        continue;
+      }
       if (!ex.ref) continue;
       // название берём из каталога на языке получателя; нет такого упражнения — оставляем как есть, без связи с каталогом
       const found = await getExercise(ex.ref).catch(() => null);
@@ -159,7 +203,7 @@ function openScanner(ctx, onText) {
           }
         }
       } catch { /* кадр не распознан */ }
-      if (text && /^FIT[01]-/.test(text.trim())) { m.close(); onText(text.trim()); return; }
+      if (text && /^FIT[0-3]-/.test(text.trim())) { m.close(); onText(text.trim()); return; }
       timer = setTimeout(tick, 200);
     };
     tick();

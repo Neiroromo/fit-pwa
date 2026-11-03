@@ -17,7 +17,8 @@ export async function openHistory(page, ctx, { onBack }) {
   const { h, iconBtn, raw } = ctx.ui;
   const { plural } = ctx;
   const fmt = makeFmt(ctx);
-  const sessions = (await ctx.db.collection('sessions').list()).sort((a, b) => b.startedAt - a.startedAt);
+  // от самой новой тренировки к самой старой
+  const sessions = (await ctx.db.collection('sessions').list()).sort((a, b) => (b.startedAt - a.startedAt) || ((b.endedAt ?? 0) - (a.endedAt ?? 0)));
   let sel = null; // выбранная тренировка
   let exKey = null; // выбранное упражнение (по названию)
   let period = PERIODS[1];
@@ -27,9 +28,10 @@ export async function openHistory(page, ctx, { onBack }) {
   function draw() {
     const session = sessions.find(s => s.id === sel) ?? null;
     const exercise = session?.exercises.find(e => keyOf(e.name) === exKey) ?? null;
-    const cols = [colSessions(), session ? colExercises(session) : null, exercise ? colChart(exercise) : null].filter(Boolean);
-    cols.forEach((c, i) => c.classList.toggle('last', i === cols.length - 1));
-    root.className = 'hist cols-' + cols.length;
+    // Три колонки есть всегда и не меняют размер; пока ничего не выбрано, правые показывают подсказку
+    const cols = [colSessions(), session ? colExercises(session) : holder('Выберите тренировку'), exercise ? colChart(exercise) : holder('Выберите упражнение')];
+    const deepest = exercise ? 2 : session ? 1 : 0; // на узких экранах виден только самый глубокий открытый уровень
+    cols.forEach((c, i) => c.classList.toggle('last', i === deepest));
     root.replaceChildren(...cols);
   }
 
@@ -38,6 +40,8 @@ export async function openHistory(page, ctx, { onBack }) {
     back ? iconBtn('chevL', 'Назад', back, 'hist-back') : null,
     h('div', { class: 'grow' }, h('strong', null, title), sub ? h('span', { class: 'muted small block' }, sub) : null));
 
+  const holder = text => h('section', { class: 'hcol card holder' }, h('p', { class: 'muted' }, text));
+
   // ---------- 1: тренировки ----------
   function colSessions() {
     const year = new Date().getFullYear();
@@ -45,9 +49,10 @@ export async function openHistory(page, ctx, { onBack }) {
       sessions.length ? h('div', { class: 'hlist' }, sessions.map(s => {
         const y = new Date(s.startedAt).getFullYear();
         return h('button', { class: 'hrow' + (s.id === sel ? ' on' : ''), onClick: () => { sel = s.id; exKey = null; draw(); } },
-          h('span', { class: 'hrow-date' }, h('strong', null, fmt.date(s.startedAt) + (y !== year ? ' ' + y : '')), h('span', { class: 'muted small' }, fmt.weekday(s.startedAt))),
-          h('span', { class: 'grow' }, raw(s.name)),
-          h('span', { class: 'muted small' }, fmt.human(s.durationSec ?? 0)));
+          h('span', { class: 'hrow-top' },
+            h('strong', null, fmt.date(s.startedAt) + (y !== year ? ' ' + y : '')), h('span', { class: 'muted small' }, fmt.weekday(s.startedAt)),
+            h('span', { class: 'grow' }), h('span', { class: 'muted small' }, fmt.human(s.durationSec ?? 0))),
+          h('span', { class: 'hrow-name' }, raw(s.name)));
       })) : h('p', { class: 'muted empty' }, 'Нет выполненных тренировок'));
   }
 
