@@ -1,12 +1,12 @@
 // Редактор тренировки: название и список упражнений.
 // Незавершённая новая тренировка сохраняется как черновик (draft: true) — её можно только редактировать.
 // Клавиши: Enter — принять поле и перейти к следующему; Esc в поле — отменить ввод и выйти из поля;
-// Esc вне полей — окно «Отмена / Сохранить как черновик».
+// Esc вне полей — выход (новая тренировка сохраняется как черновик).
 
 import { openPicker, displayName, suggest } from './catalog.js';
 
 export function openEditor(el, ctx, template, { onDone }) {
-  const { h, icon, iconBtn, uid, toast, raw, modal } = ctx.ui;
+  const { h, icon, iconBtn, uid, toast, raw } = ctx.ui;
   const isNew = !template;
   const keepsDraft = isNew || !!template?.draft; // новая тренировка и черновик при выходе без сохранения остаются черновиками
   const draft = structuredClone(template ?? { name: '', exercises: [] });
@@ -193,19 +193,9 @@ export function openEditor(el, ctx, template, { onDone }) {
       const all = [...el.querySelectorAll('.fld')], next = all[all.indexOf(t) + 1];
       if (next) next.focus(); else t.blur();
     } else if (e.key === 'Escape' && !e.defaultPrevented && !document.querySelector('.overlay') && !t.classList?.contains('fld')) { // в текстовых полях Esc обрабатывают сами поля; чекбокс, кнопки и пр. — как «вне полей»
-      askLeave();
+      leave(); // новая тренировка и черновик сохраняются как черновик сразу, без вопросов
     }
   };
-  function askLeave() {
-    const m = modal({
-      title: 'Выйти из редактирования?',
-      body: h('p', { class: 'muted' }, keepsDraft ? 'Тренировка не сохранена.' : 'Изменения не сохранены.'),
-      actions: [
-        h('button', { class: 'btn', onClick: () => m.close() }, 'Отмена'),
-        h('button', { class: 'btn primary', onClick: () => { m.close(); leave(); } }, keepsDraft ? 'Сохранить как черновик' : 'Не сохранять'),
-      ],
-    });
-  }
   document.addEventListener('keydown', onKey);
   function dispose() { document.removeEventListener('keydown', onKey); }
 
