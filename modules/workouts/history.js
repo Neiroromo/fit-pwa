@@ -14,7 +14,7 @@ const DAY = 86_400_000;
 const keyOf = name => name.trim().toLowerCase();
 
 export async function openHistory(page, ctx, { onBack }) {
-  const { h, iconBtn, raw } = ctx.ui;
+  const { h, iconBtn, raw, confirmDialog, toast } = ctx.ui;
   const fmt = makeFmt(ctx);
   // от самой новой тренировки к самой старой
   const sessions = (await ctx.db.collection('sessions').list()).sort((a, b) => (b.startedAt - a.startedAt) || ((b.endedAt ?? 0) - (a.endedAt ?? 0)));
@@ -39,16 +39,29 @@ export async function openHistory(page, ctx, { onBack }) {
 
   const holder = text => h('section', { class: 'hcol card holder' }, h('p', { class: 'muted' }, text));
 
+  async function removeSession(s) {
+    const ok = await confirmDialog(ctx.t('Удалить из истории тренировку «{name}» от {date}? Это действие нельзя отменить.', { name: s.name, date: fmt.date(s.startedAt) }), { okText: 'Удалить', danger: true });
+    if (!ok) return;
+    await ctx.db.collection('sessions').remove(s.id);
+    sessions.splice(sessions.indexOf(s), 1);
+    if (sel === s.id) { sel = null; exKey = null; }
+    toast('Тренировка удалена из истории');
+    draw();
+  }
+
   // ---------- 1: тренировки ----------
   function colSessions() {
     const year = new Date().getFullYear();
     return h('section', { class: 'hcol card' },
       sessions.length ? h('div', { class: 'hlist' }, sessions.map(s => {
         const y = new Date(s.startedAt).getFullYear();
-        return h('button', { class: 'hrow' + (s.id === sel ? ' on' : ''), onClick: () => { sel = s.id; exKey = null; draw(); } },
+        const open = () => { sel = s.id; exKey = null; draw(); };
+        return h('div', { class: 'hrow' + (s.id === sel ? ' on' : ''), role: 'button', tabindex: '0', onClick: open,
+          onKeydown: e => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(); } } },
           h('span', { class: 'hrow-top' },
             h('strong', null, fmt.date(s.startedAt) + (y !== year ? ' ' + y : '')), h('span', { class: 'muted small' }, fmt.weekday(s.startedAt)),
-            h('span', { class: 'grow' }), h('span', { class: 'muted small' }, fmt.human(s.durationSec ?? 0))),
+            h('span', { class: 'grow' }), h('span', { class: 'muted small' }, fmt.human(s.durationSec ?? 0)),
+            iconBtn('trash', 'Удалить из истории', e => { e.stopPropagation(); removeSession(s); }, 'danger hist-del')),
           h('span', { class: 'hrow-name' }, raw(s.name)));
       })) : h('p', { class: 'muted empty' }, 'Нет выполненных тренировок'));
   }
