@@ -1,5 +1,7 @@
 // Редактор тренировки: название и список упражнений.
 
+import { openPicker, displayName } from './catalog.js';
+
 export function openEditor(el, ctx, template, { onDone }) {
   const { h, icon, iconBtn, uid, toast } = ctx.ui;
   const isNew = !template;
@@ -17,7 +19,10 @@ export function openEditor(el, ctx, template, { onDone }) {
   function render() {
     list.replaceChildren(...draft.exercises.map((ex, i) => {
       const exName = h('input', { class: 'input', placeholder: 'Название упражнения', value: ex.name, maxlength: '60' });
-      exName.addEventListener('input', () => (ex.name = exName.value));
+      exName.addEventListener('input', () => {
+        ex.name = exName.value;
+        if (ex.ref && ex.name !== ex.refName) { delete ex.ref; delete ex.refName; } // название изменили вручную — связь с каталогом снимаем
+      });
       const comment = h('input', { class: 'input', placeholder: 'Комментарий (необязательно)', value: ex.comment, maxlength: '120' });
       comment.addEventListener('input', () => (ex.comment = comment.value));
       const setsVal = h('span', { class: 'stepper-val' }, String(ex.sets));
@@ -29,6 +34,7 @@ export function openEditor(el, ctx, template, { onDone }) {
         h('div', { class: 'ex-top' },
           h('span', { class: 'ex-num' }, String(i + 1)),
           exName,
+          iconBtn('search', 'Выбрать из каталога', () => pick(ex)),
           iconBtn('chevU', 'Выше', () => { move(i, -1); }, i === 0 ? 'off' : ''),
           iconBtn('chevD', 'Ниже', () => { move(i, 1); }, i === draft.exercises.length - 1 ? 'off' : ''),
           iconBtn('trash', 'Удалить упражнение', () => { draft.exercises.splice(i, 1); render(); }, 'danger')),
@@ -39,6 +45,24 @@ export function openEditor(el, ctx, template, { onDone }) {
             h('button', { class: 'icon-btn', onClick: () => step(1) }, icon('plus', 16))),
           h('label', { class: 'check' }, warm, h('span', null, 'Разминочный подход'))));
     }));
+  }
+
+  /** Подставляет упражнение из каталога в карточку ex (или создаёт новую, если ex не задан). */
+  function pick(ex) {
+    openPicker(ctx, {
+      onPick(found) {
+        const target = ex ?? newExercise();
+        target.name = displayName(found);
+        target.ref = found.id;
+        target.refName = target.name;
+        if (!ex) {
+          const last = draft.exercises.at(-1);
+          if (last && !last.name.trim()) draft.exercises.pop(); // пустую заготовку заменяем
+          draft.exercises.push(target);
+        }
+        render();
+      },
+    });
   }
 
   function move(i, d) {
@@ -64,8 +88,10 @@ export function openEditor(el, ctx, template, { onDone }) {
       h('button', { class: 'btn primary', onClick: save }, icon('check', 16), 'Сохранить')),
     name,
     list,
-    h('button', { class: 'btn', onClick: () => { draft.exercises.push(newExercise()); render(); list.lastElementChild?.querySelector('input')?.focus(); } },
-      icon('plus', 16), 'Добавить упражнение'),
+    h('div', { class: 'row-gap' },
+      h('button', { class: 'btn', onClick: () => { draft.exercises.push(newExercise()); render(); list.lastElementChild?.querySelector('input')?.focus(); } },
+        icon('plus', 16), 'Добавить упражнение'),
+      h('button', { class: 'btn', onClick: () => pick(null) }, icon('search', 16), 'Из каталога')),
   );
   if (isNew) name.focus();
 }

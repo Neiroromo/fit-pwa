@@ -2,9 +2,9 @@
   "id": "workouts",
   "name": "Тренировки",
   "icon": "dumbbell",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "entry": "index.js",
-  "files": ["data.js", "calendar.js", "editor.js", "runner.js"],
+  "files": ["data.js", "calendar.js", "editor.js", "runner.js", "catalog.js", "exercises.json"],
   "styles": ["workouts.css"],
   "widgets": [
     { "id": "week", "title": "Неделя", "description": "Сколько тренировок сделано на этой неделе", "sizes": [[1, 1], [2, 1]] },

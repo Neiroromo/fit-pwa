@@ -2,6 +2,7 @@
 // Состояние (active) сохраняется в kv после каждого изменения — тренировка переживает перезагрузку.
 
 import { fmtClock, beep } from './data.js';
+import { openDetail } from './catalog.js';
 
 export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
   const { h, icon, iconBtn, confirmDialog, modal, toast, dismissable } = ctx.ui;
@@ -116,6 +117,7 @@ export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
     const close = dismissable(menu, { ignore: [anchor] });
     const item = (text, fn) => h('button', { class: 'menu-row', onClick: () => { close(); fn(); } }, text);
     menu.append(
+      ex.ref ? item('Техника выполнения', () => openDetail(ctx, ex.ref)) : null,
       item(ex.comment ? 'Изменить комментарий' : 'Добавить комментарий', () => editComment(ex)),
       item('Добавить подход', () => {
         const last = ex.sets.at(-1);

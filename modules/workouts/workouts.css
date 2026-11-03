@@ -91,3 +91,16 @@
   .sess-set { grid-template-columns: 80px 100px 1fr; }
   .wk-content { flex-wrap: wrap; }
 }
+
+/* каталог упражнений */
+.picker-ex { display: flex; flex-direction: column; gap: 10px; }
+.ex-filters { display: flex; flex-direction: column; gap: 8px; }
+.ex-results { display: flex; flex-direction: column; gap: 6px; }
+.ex-item { display: flex; align-items: center; gap: 12px; padding: 8px; border: 1px solid var(--line); border-radius: 12px; background: none; text-align: left; }
+.ex-item:hover { border-color: var(--accent); }
+.ex-item img, .ex-noimg { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; background: var(--panel-2); flex: none; display: grid; place-items: center; color: var(--muted); }
+.ex-detail { display: flex; flex-direction: column; gap: 12px; }
+.ex-imgs { display: flex; gap: 8px; overflow-x: auto; }
+.ex-imgs img { height: 220px; max-width: 100%; border-radius: 12px; background: #fff; flex: none; object-fit: contain; }
+.ex-steps { margin: 6px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.row-gap.wrap { flex-wrap: wrap; }

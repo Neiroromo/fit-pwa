@@ -82,6 +82,7 @@ export function buildActive(template, sessions) {
       const mk = (kind, p, base = p) => ({ kind, prevKg: p?.kg ?? null, prevReps: p?.reps ?? null, kg: base?.kg ?? 0, reps: base?.reps ?? 0, done: false, restSec: null });
       return {
         name: ex.name,
+        ref: ex.ref ?? null,
         comment: ex.comment ?? '',
         sets: [
           ...(ex.warmup ? [mk('warmup', oldWarm[0])] : []),
