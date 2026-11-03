@@ -1,0 +1,5348 @@
+{
+ "app": "fit-pwa",
+ "version": 1,
+ "exportedAt": "2026-11-03T17:30:19.476Z",
+ "records": [
+  {
+   "c": "workouts/templates",
+   "id": "7c331d5e-2f20-4cba-b3dd-37eb4d8a72a6",
+   "name": "Понедельник: грудь, плечи, трицепс",
+   "createdAt": 1788224400000,
+   "updatedAt": 1788224400000,
+   "deleted": false,
+   "exercises": [
+    {
+     "id": "0383a625-c3e9-45ab-a11c-fb05217a3fb0",
+     "name": "Жим штанги лёжа средним хватом",
+     "comment": "Лопатки сведены, штанга касается груди",
+     "sets": 4,
+     "warmup": true,
+     "ref": "fe:Barbell_Bench_Press_-_Medium_Grip",
+     "refName": "Жим штанги лёжа средним хватом"
+    },
+    {
+     "id": "f144f968-7345-41f2-a39e-6adcf8c72ebc",
+     "name": "Жим гантелей на наклонной скамье",
+     "comment": "Вес указан на одну гантель",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Incline_Dumbbell_Press",
+     "refName": "Жим гантелей на наклонной скамье"
+    },
+    {
+     "id": "f86cf2d2-3cb0-431b-bf88-a63499b31d9b",
+     "name": "Бабочка (тренажёр пек-дек)",
+     "comment": "",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Butterfly",
+     "refName": "Бабочка (тренажёр пек-дек)"
+    },
+    {
+     "id": "a9af4623-45aa-42cc-9067-9b19322d188f",
+     "name": "Жим гантелей сидя",
+     "comment": "Вес указан на одну гантель",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Dumbbell_Shoulder_Press",
+     "refName": "Жим гантелей сидя"
+    },
+    {
+     "id": "a3b3ee7d-4b5b-458a-8735-21902975865f",
+     "name": "Махи гантелями в стороны стоя",
+     "comment": "",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Side_Lateral_Raise",
+     "refName": "Махи гантелями в стороны стоя"
+    },
+    {
+     "id": "47ada76e-f879-49c8-967e-ccc7f04e74aa",
+     "name": "Разгибания рук на верхнем блоке",
+     "comment": "",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Triceps_Pushdown",
+     "refName": "Разгибания рук на верхнем блоке"
+    }
+   ]
+  },
+  {
+   "c": "workouts/templates",
+   "id": "444ef92a-ff6f-4c90-8384-4fc18bfa8e40",
+   "name": "Среда: спина, бицепс",
+   "createdAt": 1788224460000,
+   "updatedAt": 1788224460000,
+   "deleted": false,
+   "exercises": [
+    {
+     "id": "6323d80c-f8d5-4e51-9fe0-b136cefc2769",
+     "name": "Тяга верхнего блока к груди широким хватом",
+     "comment": "Тянуть к верху груди, без рывков",
+     "sets": 4,
+     "warmup": true,
+     "ref": "fe:Wide-Grip_Lat_Pulldown",
+     "refName": "Тяга верхнего блока к груди широким хватом"
+    },
+    {
+     "id": "38763898-71c1-4dc7-acb2-52a544906429",
+     "name": "Тяга штанги в наклоне",
+     "comment": "Спина прямая, корпус под углом 45°",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Bent_Over_Barbell_Row",
+     "refName": "Тяга штанги в наклоне"
+    },
+    {
+     "id": "4a7d1624-a5f6-4c8c-8aed-c7389e4684f7",
+     "name": "Тяга горизонтального блока сидя узким хватом",
+     "comment": "",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Seated_Cable_Rows",
+     "refName": "Тяга горизонтального блока сидя узким хватом"
+    },
+    {
+     "id": "7156a13b-8f7f-4ded-a9ea-1135d55018f9",
+     "name": "Тяга гантели в наклоне одной рукой",
+     "comment": "Вес указан на одну гантель",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:One-Arm_Dumbbell_Row",
+     "refName": "Тяга гантели в наклоне одной рукой"
+    },
+    {
+     "id": "01c06548-b4fc-4b11-bd01-f0514e33153f",
+     "name": "Тяга к лицу",
+     "comment": "",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Face_Pull",
+     "refName": "Тяга к лицу"
+    },
+    {
+     "id": "b91dc22c-a5ee-4814-bfb4-930796f8cb8f",
+     "name": "Подъём штанги на бицепс",
+     "comment": "",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Barbell_Curl",
+     "refName": "Подъём штанги на бицепс"
+    },
+    {
+     "id": "df1fee00-dbc8-40f8-abf1-c887883241a1",
+     "name": "Попеременные сгибания рук «Молотки»",
+     "comment": "Вес указан на одну гантель",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Alternate_Hammer_Curl",
+     "refName": "Попеременные сгибания рук «Молотки»"
+    }
+   ]
+  },
+  {
+   "c": "workouts/templates",
+   "id": "6bff0a7b-ade0-4bde-89a8-cf8fb72c8336",
+   "name": "Пятница: ноги и пресс",
+   "createdAt": 1788224520000,
+   "updatedAt": 1788224520000,
+   "deleted": false,
+   "exercises": [
+    {
+     "id": "29e36ae5-5849-4dcc-89c2-83326dd3129b",
+     "name": "Приседания со штангой",
+     "comment": "Колени по линии носков, спина прямая",
+     "sets": 4,
+     "warmup": true,
+     "ref": "fe:Barbell_Squat",
+     "refName": "Приседания со штангой"
+    },
+    {
+     "id": "e8a955c9-3361-42b4-8ac7-400ece7ef203",
+     "name": "Жим ногами",
+     "comment": "",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Leg_Press",
+     "refName": "Жим ногами"
+    },
+    {
+     "id": "c8f57ce1-b259-44ec-a9c6-f0c4b5af27c9",
+     "name": "Румынская тяга со штангой",
+     "comment": "Штанга близко к ногам, таз назад",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Romanian_Deadlift",
+     "refName": "Румынская тяга со штангой"
+    },
+    {
+     "id": "d0a0cc20-73e1-4bfa-b10d-0a29cc23a019",
+     "name": "Сгибание ног лёжа",
+     "comment": "",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Lying_Leg_Curls",
+     "refName": "Сгибание ног лёжа"
+    },
+    {
+     "id": "a27c6d62-7b7b-421f-ab65-27999332433a",
+     "name": "Разгибания ног в тренажёре",
+     "comment": "",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Leg_Extensions",
+     "refName": "Разгибания ног в тренажёре"
+    },
+    {
+     "id": "e57186ba-48a9-4b77-8de2-e7247ce87acc",
+     "name": "Подъемы на носки стоя",
+     "comment": "",
+     "sets": 4,
+     "warmup": false,
+     "ref": "fe:Standing_Calf_Raises",
+     "refName": "Подъемы на носки стоя"
+    },
+    {
+     "id": "2245f380-afa0-4449-9bae-5eca831e8e5b",
+     "name": "Скручивания на блоке",
+     "comment": "",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Cable_Crunch",
+     "refName": "Скручивания на блоке"
+    },
+    {
+     "id": "b86757cc-387e-47c5-aaa4-3795b70c520e",
+     "name": "Подъём ног в висе",
+     "comment": "",
+     "sets": 3,
+     "warmup": false,
+     "ref": "fe:Hanging_Leg_Raise",
+     "refName": "Подъём ног в висе"
+    }
+   ]
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "b730f99d-19dc-4d59-96b3-78fbe5bfa19d",
+   "workoutId": "444ef92a-ff6f-4c90-8384-4fc18bfa8e40",
+   "name": "Среда: спина, бицепс",
+   "startedAt": 1788345660000,
+   "endedAt": 1788349413000,
+   "durationSec": 3753,
+   "exercises": [
+    {
+     "name": "Тяга верхнего блока к груди широким хватом",
+     "comment": "Тянуть к верху груди, без рывков",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 59
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 8,
+       "restSec": 105
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 7,
+       "restSec": 94
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 8,
+       "restSec": 97
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 6,
+       "restSec": 127
+      }
+     ]
+    },
+    {
+     "name": "Тяга штанги в наклоне",
+     "comment": "Спина прямая, корпус под углом 45°",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 8,
+       "restSec": 121
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 8,
+       "restSec": 98
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 8,
+       "restSec": 151
+      }
+     ]
+    },
+    {
+     "name": "Тяга горизонтального блока сидя узким хватом",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 102
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 108
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 135
+      }
+     ]
+    },
+    {
+     "name": "Тяга гантели в наклоне одной рукой",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 8,
+       "restSec": 83
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 8,
+       "restSec": 86
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 7,
+       "restSec": 124
+      }
+     ]
+    },
+    {
+     "name": "Тяга к лицу",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 12,
+       "restSec": 80
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 12,
+       "restSec": 61
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 11,
+       "restSec": 81
+      }
+     ]
+    },
+    {
+     "name": "Подъём штанги на бицепс",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 8,
+       "restSec": 83
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 8,
+       "restSec": 71
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 8,
+       "restSec": 120
+      }
+     ]
+    },
+    {
+     "name": "Попеременные сгибания рук «Молотки»",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 6,
+       "reps": 10,
+       "restSec": 70
+      },
+      {
+       "kind": "work",
+       "kg": 6,
+       "reps": 10,
+       "restSec": 69
+      },
+      {
+       "kind": "work",
+       "kg": 6,
+       "reps": 10,
+       "restSec": 37
+      }
+     ]
+    }
+   ],
+   "createdAt": 1788349413000,
+   "updatedAt": 1788349413000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "2bd88c3b-12e2-4754-8746-2ad86de9511c",
+   "workoutId": "6bff0a7b-ade0-4bde-89a8-cf8fb72c8336",
+   "name": "Пятница: ноги и пресс",
+   "startedAt": 1788518760000,
+   "endedAt": 1788523203000,
+   "durationSec": 4443,
+   "exercises": [
+    {
+     "name": "Приседания со штангой",
+     "comment": "Колени по линии носков, спина прямая",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 41
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 131
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 138
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 140
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 6,
+       "restSec": 166
+      }
+     ]
+    },
+    {
+     "name": "Жим ногами",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 60,
+       "reps": 10,
+       "restSec": 106
+      },
+      {
+       "kind": "work",
+       "kg": 60,
+       "reps": 10,
+       "restSec": 106
+      },
+      {
+       "kind": "work",
+       "kg": 60,
+       "reps": 9,
+       "restSec": 151
+      }
+     ]
+    },
+    {
+     "name": "Румынская тяга со штангой",
+     "comment": "Штанга близко к ногам, таз назад",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 125
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 101
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 7,
+       "restSec": 136
+      }
+     ]
+    },
+    {
+     "name": "Сгибание ног лёжа",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 10,
+       "restSec": 92
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 10,
+       "restSec": 93
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 9,
+       "restSec": 120
+      }
+     ]
+    },
+    {
+     "name": "Разгибания ног в тренажёре",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 10,
+       "restSec": 92
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 10,
+       "restSec": 65
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 9,
+       "restSec": 95
+      }
+     ]
+    },
+    {
+     "name": "Подъемы на носки стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 12,
+       "restSec": 59
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 12,
+       "restSec": 53
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 12,
+       "restSec": 58
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 12,
+       "restSec": 106
+      }
+     ]
+    },
+    {
+     "name": "Скручивания на блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 12,
+       "restSec": 60
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 12,
+       "restSec": 76
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 12,
+       "restSec": 103
+      }
+     ]
+    },
+    {
+     "name": "Подъём ног в висе",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 6,
+       "restSec": 72
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 6,
+       "restSec": 78
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 6,
+       "restSec": 38
+      }
+     ]
+    }
+   ],
+   "createdAt": 1788523203000,
+   "updatedAt": 1788523203000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "80830f44-9ee1-4c61-8167-ba7596cddc45",
+   "workoutId": "7c331d5e-2f20-4cba-b3dd-37eb4d8a72a6",
+   "name": "Понедельник: грудь, плечи, трицепс",
+   "startedAt": 1788777120000,
+   "endedAt": 1788780347000,
+   "durationSec": 3227,
+   "exercises": [
+    {
+     "name": "Жим штанги лёжа средним хватом",
+     "comment": "Лопатки сведены, штанга касается груди",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 45
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 132
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 7,
+       "restSec": 129
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 131
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 157
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей на наклонной скамье",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 8,
+       "restSec": 106
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 8,
+       "restSec": 108
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 7,
+       "restSec": 117
+      }
+     ]
+    },
+    {
+     "name": "Бабочка (тренажёр пек-дек)",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 84
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 90
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 9,
+       "restSec": 105
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей сидя",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 8,
+       "restSec": 99
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 8,
+       "restSec": 104
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 8,
+       "restSec": 113
+      }
+     ]
+    },
+    {
+     "name": "Махи гантелями в стороны стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 12,
+       "restSec": 76
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 11,
+       "restSec": 50
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 12,
+       "restSec": 83
+      }
+     ]
+    },
+    {
+     "name": "Разгибания рук на верхнем блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 73
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 60
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 9,
+       "restSec": 18
+      }
+     ]
+    }
+   ],
+   "createdAt": 1788780347000,
+   "updatedAt": 1788780347000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "18e489cc-e4f3-4953-abfe-af146d6964cd",
+   "workoutId": "444ef92a-ff6f-4c90-8384-4fc18bfa8e40",
+   "name": "Среда: спина, бицепс",
+   "startedAt": 1788949560000,
+   "endedAt": 1788953118000,
+   "durationSec": 3558,
+   "exercises": [
+    {
+     "name": "Тяга верхнего блока к груди широким хватом",
+     "comment": "Тянуть к верху груди, без рывков",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 57
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 118
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 103
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 7,
+       "restSec": 126
+      }
+     ]
+    },
+    {
+     "name": "Тяга штанги в наклоне",
+     "comment": "Спина прямая, корпус под углом 45°",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 9,
+       "restSec": 106
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 9,
+       "restSec": 112
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 7,
+       "restSec": 136
+      }
+     ]
+    },
+    {
+     "name": "Тяга горизонтального блока сидя узким хватом",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 11,
+       "restSec": 100
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 11,
+       "restSec": 109
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 140
+      }
+     ]
+    },
+    {
+     "name": "Тяга гантели в наклоне одной рукой",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 9,
+       "restSec": 84
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 9,
+       "restSec": 85
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 8,
+       "restSec": 105
+      }
+     ]
+    },
+    {
+     "name": "Тяга к лицу",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 13,
+       "restSec": 60
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 13,
+       "restSec": 66
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 11,
+       "restSec": 107
+      }
+     ]
+    },
+    {
+     "name": "Подъём штанги на бицепс",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 9,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 8,
+       "restSec": 81
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 9,
+       "restSec": 119
+      }
+     ]
+    },
+    {
+     "name": "Попеременные сгибания рук «Молотки»",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 6,
+       "reps": 11,
+       "restSec": 64
+      },
+      {
+       "kind": "work",
+       "kg": 6,
+       "reps": 11,
+       "restSec": 72
+      },
+      {
+       "kind": "work",
+       "kg": 6,
+       "reps": 10,
+       "restSec": 38
+      }
+     ]
+    }
+   ],
+   "createdAt": 1788953118000,
+   "updatedAt": 1788953118000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "211cc55d-898d-402d-aee0-d49e99f0f8cb",
+   "workoutId": "6bff0a7b-ade0-4bde-89a8-cf8fb72c8336",
+   "name": "Пятница: ноги и пресс",
+   "startedAt": 1789122060000,
+   "endedAt": 1789126291000,
+   "durationSec": 4231,
+   "exercises": [
+    {
+     "name": "Приседания со штангой",
+     "comment": "Колени по линии носков, спина прямая",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 44
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 147
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 123
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 139
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 153
+      }
+     ]
+    },
+    {
+     "name": "Жим ногами",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 60,
+       "reps": 11,
+       "restSec": 115
+      },
+      {
+       "kind": "work",
+       "kg": 60,
+       "reps": 11,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 60,
+       "reps": 9,
+       "restSec": 134
+      }
+     ]
+    },
+    {
+     "name": "Румынская тяга со штангой",
+     "comment": "Штанга близко к ногам, таз назад",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 122
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 101
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 128
+      }
+     ]
+    },
+    {
+     "name": "Сгибание ног лёжа",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 11,
+       "restSec": 90
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 11,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 11,
+       "restSec": 123
+      }
+     ]
+    },
+    {
+     "name": "Разгибания ног в тренажёре",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 11,
+       "restSec": 65
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 11,
+       "restSec": 81
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 11,
+       "restSec": 97
+      }
+     ]
+    },
+    {
+     "name": "Подъемы на носки стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 13,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 13,
+       "restSec": 66
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 13,
+       "restSec": 65
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 12,
+       "restSec": 83
+      }
+     ]
+    },
+    {
+     "name": "Скручивания на блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 13,
+       "restSec": 54
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 13,
+       "restSec": 64
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 12,
+       "restSec": 87
+      }
+     ]
+    },
+    {
+     "name": "Подъём ног в висе",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 7,
+       "restSec": 70
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 7,
+       "restSec": 77
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 7,
+       "restSec": 11
+      }
+     ]
+    }
+   ],
+   "createdAt": 1789126291000,
+   "updatedAt": 1789126291000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "c7701716-06b6-4644-98d0-f0be447c07ba",
+   "workoutId": "7c331d5e-2f20-4cba-b3dd-37eb4d8a72a6",
+   "name": "Понедельник: грудь, плечи, трицепс",
+   "startedAt": 1789380960000,
+   "endedAt": 1789384058000,
+   "durationSec": 3098,
+   "exercises": [
+    {
+     "name": "Жим штанги лёжа средним хватом",
+     "comment": "Лопатки сведены, штанга касается груди",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 56
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 114
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 115
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 126
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 166
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей на наклонной скамье",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 9,
+       "restSec": 105
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 9,
+       "restSec": 99
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 9,
+       "restSec": 117
+      }
+     ]
+    },
+    {
+     "name": "Бабочка (тренажёр пек-дек)",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 11,
+       "restSec": 82
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 11,
+       "restSec": 86
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 115
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей сидя",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 9,
+       "restSec": 89
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 9,
+       "restSec": 105
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 8,
+       "restSec": 120
+      }
+     ]
+    },
+    {
+     "name": "Махи гантелями в стороны стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 12,
+       "restSec": 50
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 12,
+       "restSec": 65
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 11,
+       "restSec": 102
+      }
+     ]
+    },
+    {
+     "name": "Разгибания рук на верхнем блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 66
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 9,
+       "restSec": 54
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 8,
+       "restSec": 33
+      }
+     ]
+    }
+   ],
+   "createdAt": 1789384058000,
+   "updatedAt": 1789384058000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "300ae9e8-8762-4b7f-9055-5e9374b0ba34",
+   "workoutId": "444ef92a-ff6f-4c90-8384-4fc18bfa8e40",
+   "name": "Среда: спина, бицепс",
+   "startedAt": 1789554120000,
+   "endedAt": 1789557820000,
+   "durationSec": 3700,
+   "exercises": [
+    {
+     "name": "Тяга верхнего блока к груди широким хватом",
+     "comment": "Тянуть к верху груди, без рывков",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 43
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 105
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 116
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 8,
+       "restSec": 104
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 8,
+       "restSec": 140
+      }
+     ]
+    },
+    {
+     "name": "Тяга штанги в наклоне",
+     "comment": "Спина прямая, корпус под углом 45°",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 98
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 111
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 9,
+       "restSec": 126
+      }
+     ]
+    },
+    {
+     "name": "Тяга горизонтального блока сидя узким хватом",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 12,
+       "restSec": 89
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 12,
+       "restSec": 110
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 114
+      }
+     ]
+    },
+    {
+     "name": "Тяга гантели в наклоне одной рукой",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 10,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 10,
+       "restSec": 92
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 9,
+       "restSec": 121
+      }
+     ]
+    },
+    {
+     "name": "Тяга к лицу",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 14,
+       "restSec": 80
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 14,
+       "restSec": 72
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 13,
+       "restSec": 83
+      }
+     ]
+    },
+    {
+     "name": "Подъём штанги на бицепс",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 74
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 92
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 110
+      }
+     ]
+    },
+    {
+     "name": "Попеременные сгибания рук «Молотки»",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 6,
+       "reps": 12,
+       "restSec": 72
+      },
+      {
+       "kind": "work",
+       "kg": 6,
+       "reps": 12,
+       "restSec": 63
+      },
+      {
+       "kind": "work",
+       "kg": 6,
+       "reps": 12,
+       "restSec": 22
+      }
+     ]
+    }
+   ],
+   "createdAt": 1789557820000,
+   "updatedAt": 1789557820000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "62b4d9aa-f00d-4ed3-8144-541b17400bbb",
+   "workoutId": "6bff0a7b-ade0-4bde-89a8-cf8fb72c8336",
+   "name": "Пятница: ноги и пресс",
+   "startedAt": 1789728060000,
+   "endedAt": 1789732242000,
+   "durationSec": 4182,
+   "exercises": [
+    {
+     "name": "Приседания со штангой",
+     "comment": "Колени по линии носков, спина прямая",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 58
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 141
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 145
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 129
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 164
+      }
+     ]
+    },
+    {
+     "name": "Жим ногами",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 60,
+       "reps": 12,
+       "restSec": 121
+      },
+      {
+       "kind": "work",
+       "kg": 60,
+       "reps": 12,
+       "restSec": 97
+      },
+      {
+       "kind": "work",
+       "kg": 60,
+       "reps": 12,
+       "restSec": 134
+      }
+     ]
+    },
+    {
+     "name": "Румынская тяга со штангой",
+     "comment": "Штанга близко к ногам, таз назад",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 122
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 105
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 148
+      }
+     ]
+    },
+    {
+     "name": "Сгибание ног лёжа",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 12,
+       "restSec": 75
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 12,
+       "restSec": 71
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 11,
+       "restSec": 122
+      }
+     ]
+    },
+    {
+     "name": "Разгибания ног в тренажёре",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 12,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 11,
+       "restSec": 74
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 11,
+       "restSec": 105
+      }
+     ]
+    },
+    {
+     "name": "Подъемы на носки стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 14,
+       "restSec": 71
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 14,
+       "restSec": 54
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 14,
+       "restSec": 73
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 13,
+       "restSec": 107
+      }
+     ]
+    },
+    {
+     "name": "Скручивания на блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 14,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 14,
+       "restSec": 79
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 14,
+       "restSec": 93
+      }
+     ]
+    },
+    {
+     "name": "Подъём ног в висе",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 8,
+       "restSec": 77
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 8,
+       "restSec": 61
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 7,
+       "restSec": 14
+      }
+     ]
+    }
+   ],
+   "createdAt": 1789732242000,
+   "updatedAt": 1789732242000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "9c81b979-d1c5-4ebf-b9c8-d46753a7053b",
+   "workoutId": "7c331d5e-2f20-4cba-b3dd-37eb4d8a72a6",
+   "name": "Понедельник: грудь, плечи, трицепс",
+   "startedAt": 1789987920000,
+   "endedAt": 1789991099000,
+   "durationSec": 3179,
+   "exercises": [
+    {
+     "name": "Жим штанги лёжа средним хватом",
+     "comment": "Лопатки сведены, штанга касается груди",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 56
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 126
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 125
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 135
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 151
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей на наклонной скамье",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 10,
+       "restSec": 103
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 10,
+       "restSec": 105
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 9,
+       "restSec": 121
+      }
+     ]
+    },
+    {
+     "name": "Бабочка (тренажёр пек-дек)",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 12,
+       "restSec": 66
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 12,
+       "restSec": 72
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 12,
+       "restSec": 96
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей сидя",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 10,
+       "restSec": 108
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 10,
+       "restSec": 81
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 10,
+       "restSec": 116
+      }
+     ]
+    },
+    {
+     "name": "Махи гантелями в стороны стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 13,
+       "restSec": 79
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 13,
+       "restSec": 78
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 13,
+       "restSec": 91
+      }
+     ]
+    },
+    {
+     "name": "Разгибания рук на верхнем блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 11,
+       "restSec": 78
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 11,
+       "restSec": 62
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 11,
+       "restSec": 18
+      }
+     ]
+    }
+   ],
+   "createdAt": 1789991099000,
+   "updatedAt": 1789991099000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "d08169b5-a89a-477d-9dc9-3a2a9fa5ed5f",
+   "workoutId": "444ef92a-ff6f-4c90-8384-4fc18bfa8e40",
+   "name": "Среда: спина, бицепс",
+   "startedAt": 1790158680000,
+   "endedAt": 1790162364000,
+   "durationSec": 3684,
+   "exercises": [
+    {
+     "name": "Тяга верхнего блока к груди широким хватом",
+     "comment": "Тянуть к верху груди, без рывков",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 56
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 113
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 94
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 103
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 145
+      }
+     ]
+    },
+    {
+     "name": "Тяга штанги в наклоне",
+     "comment": "Спина прямая, корпус под углом 45°",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 8,
+       "restSec": 116
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 8,
+       "restSec": 105
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 8,
+       "restSec": 145
+      }
+     ]
+    },
+    {
+     "name": "Тяга горизонтального блока сидя узким хватом",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 10,
+       "restSec": 83
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 10,
+       "restSec": 108
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 10,
+       "restSec": 140
+      }
+     ]
+    },
+    {
+     "name": "Тяга гантели в наклоне одной рукой",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 88
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 67
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 98
+      }
+     ]
+    },
+    {
+     "name": "Тяга к лицу",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 15,
+       "restSec": 54
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 15,
+       "restSec": 73
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 14,
+       "restSec": 87
+      }
+     ]
+    },
+    {
+     "name": "Подъём штанги на бицепс",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 11,
+       "restSec": 92
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 11,
+       "restSec": 90
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 103
+      }
+     ]
+    },
+    {
+     "name": "Попеременные сгибания рук «Молотки»",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 7,
+       "reps": 10,
+       "restSec": 53
+      },
+      {
+       "kind": "work",
+       "kg": 7,
+       "reps": 10,
+       "restSec": 73
+      },
+      {
+       "kind": "work",
+       "kg": 7,
+       "reps": 9,
+       "restSec": 22
+      }
+     ]
+    }
+   ],
+   "createdAt": 1790162364000,
+   "updatedAt": 1790162364000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "f7cc5576-628b-412b-87ae-d9575baf71e5",
+   "workoutId": "6bff0a7b-ade0-4bde-89a8-cf8fb72c8336",
+   "name": "Пятница: ноги и пресс",
+   "startedAt": 1790331180000,
+   "endedAt": 1790335601000,
+   "durationSec": 4421,
+   "exercises": [
+    {
+     "name": "Приседания со штангой",
+     "comment": "Колени по линии носков, спина прямая",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 42
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 8,
+       "restSec": 141
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 7,
+       "restSec": 127
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 8,
+       "restSec": 149
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 7,
+       "restSec": 164
+      }
+     ]
+    },
+    {
+     "name": "Жим ногами",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 70,
+       "reps": 10,
+       "restSec": 108
+      },
+      {
+       "kind": "work",
+       "kg": 70,
+       "reps": 10,
+       "restSec": 124
+      },
+      {
+       "kind": "work",
+       "kg": 70,
+       "reps": 9,
+       "restSec": 141
+      }
+     ]
+    },
+    {
+     "name": "Румынская тяга со штангой",
+     "comment": "Штанга близко к ногам, таз назад",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 8,
+       "restSec": 98
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 7,
+       "restSec": 119
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 7,
+       "restSec": 143
+      }
+     ]
+    },
+    {
+     "name": "Сгибание ног лёжа",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 10,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 10,
+       "restSec": 71
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 8,
+       "restSec": 95
+      }
+     ]
+    },
+    {
+     "name": "Разгибания ног в тренажёре",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 10,
+       "restSec": 84
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 10,
+       "restSec": 80
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 8,
+       "restSec": 119
+      }
+     ]
+    },
+    {
+     "name": "Подъемы на носки стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 15,
+       "restSec": 61
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 15,
+       "restSec": 73
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 15,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 14,
+       "restSec": 80
+      }
+     ]
+    },
+    {
+     "name": "Скручивания на блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 15,
+       "restSec": 52
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 15,
+       "restSec": 55
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 15,
+       "restSec": 110
+      }
+     ]
+    },
+    {
+     "name": "Подъём ног в висе",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 9,
+       "restSec": 54
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 9,
+       "restSec": 78
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 8,
+       "restSec": 38
+      }
+     ]
+    }
+   ],
+   "createdAt": 1790335601000,
+   "updatedAt": 1790335601000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "f0713677-be6e-4252-be03-33da3ed15c6d",
+   "workoutId": "7c331d5e-2f20-4cba-b3dd-37eb4d8a72a6",
+   "name": "Понедельник: грудь, плечи, трицепс",
+   "startedAt": 1790590140000,
+   "endedAt": 1790593240000,
+   "durationSec": 3100,
+   "exercises": [
+    {
+     "name": "Жим штанги лёжа средним хватом",
+     "comment": "Лопатки сведены, штанга касается груди",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 16.5,
+       "reps": 10,
+       "restSec": 47
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 8,
+       "restSec": 137
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 8,
+       "restSec": 140
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 7,
+       "restSec": 136
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 8,
+       "restSec": 151
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей на наклонной скамье",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 80
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 109
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 10,
+       "restSec": 124
+      }
+     ]
+    },
+    {
+     "name": "Бабочка (тренажёр пек-дек)",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 10,
+       "restSec": 88
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 9,
+       "restSec": 92
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 8,
+       "restSec": 106
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей сидя",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 11,
+       "restSec": 89
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 11,
+       "restSec": 110
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 10,
+       "restSec": 113
+      }
+     ]
+    },
+    {
+     "name": "Махи гантелями в стороны стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 14,
+       "restSec": 51
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 14,
+       "restSec": 79
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 14,
+       "restSec": 80
+      }
+     ]
+    },
+    {
+     "name": "Разгибания рук на верхнем блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 12,
+       "restSec": 54
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 12,
+       "restSec": 54
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 11,
+       "restSec": 11
+      }
+     ]
+    }
+   ],
+   "createdAt": 1790593240000,
+   "updatedAt": 1790593240000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "c695970c-5ce9-4e32-9007-82ec149d9054",
+   "workoutId": "444ef92a-ff6f-4c90-8384-4fc18bfa8e40",
+   "name": "Среда: спина, бицепс",
+   "startedAt": 1790763240000,
+   "endedAt": 1790766892000,
+   "durationSec": 3652,
+   "exercises": [
+    {
+     "name": "Тяга верхнего блока к груди широким хватом",
+     "comment": "Тянуть к верху груди, без рывков",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 19,
+       "reps": 10,
+       "restSec": 49
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 8,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 8,
+       "restSec": 91
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 8,
+       "restSec": 109
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 7,
+       "restSec": 149
+      }
+     ]
+    },
+    {
+     "name": "Тяга штанги в наклоне",
+     "comment": "Спина прямая, корпус под углом 45°",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 9,
+       "restSec": 110
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 9,
+       "restSec": 123
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 7,
+       "restSec": 147
+      }
+     ]
+    },
+    {
+     "name": "Тяга горизонтального блока сидя узким хватом",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 10,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 10,
+       "restSec": 88
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 8,
+       "restSec": 114
+      }
+     ]
+    },
+    {
+     "name": "Тяга гантели в наклоне одной рукой",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 12,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 91
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 115
+      }
+     ]
+    },
+    {
+     "name": "Тяга к лицу",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 15,
+       "restSec": 59
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 15,
+       "restSec": 61
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 15,
+       "restSec": 80
+      }
+     ]
+    },
+    {
+     "name": "Подъём штанги на бицепс",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 12,
+       "restSec": 70
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 12,
+       "restSec": 84
+      },
+      {
+       "kind": "work",
+       "kg": 15,
+       "reps": 10,
+       "restSec": 107
+      }
+     ]
+    },
+    {
+     "name": "Попеременные сгибания рук «Молотки»",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 7,
+       "reps": 11,
+       "restSec": 53
+      },
+      {
+       "kind": "work",
+       "kg": 7,
+       "reps": 11,
+       "restSec": 57
+      },
+      {
+       "kind": "work",
+       "kg": 7,
+       "reps": 11,
+       "restSec": 39
+      }
+     ]
+    }
+   ],
+   "createdAt": 1790766892000,
+   "updatedAt": 1790766892000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "4ba3a270-28d6-4343-90e1-97fe12127e6a",
+   "workoutId": "6bff0a7b-ade0-4bde-89a8-cf8fb72c8336",
+   "name": "Пятница: ноги и пресс",
+   "startedAt": 1790937840000,
+   "endedAt": 1790941951000,
+   "durationSec": 4111,
+   "exercises": [
+    {
+     "name": "Приседания со штангой",
+     "comment": "Колени по линии носков, спина прямая",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 47
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 127
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 121
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 8,
+       "restSec": 142
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 156
+      }
+     ]
+    },
+    {
+     "name": "Жим ногами",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 70,
+       "reps": 11,
+       "restSec": 113
+      },
+      {
+       "kind": "work",
+       "kg": 70,
+       "reps": 11,
+       "restSec": 109
+      },
+      {
+       "kind": "work",
+       "kg": 70,
+       "reps": 11,
+       "restSec": 128
+      }
+     ]
+    },
+    {
+     "name": "Румынская тяга со штангой",
+     "comment": "Штанга близко к ногам, таз назад",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 105
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 104
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 8,
+       "restSec": 152
+      }
+     ]
+    },
+    {
+     "name": "Сгибание ног лёжа",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 11,
+       "restSec": 89
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 11,
+       "restSec": 65
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 10,
+       "restSec": 113
+      }
+     ]
+    },
+    {
+     "name": "Разгибания ног в тренажёре",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 11,
+       "restSec": 85
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 11,
+       "restSec": 78
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 11,
+       "restSec": 116
+      }
+     ]
+    },
+    {
+     "name": "Подъемы на носки стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 12,
+       "restSec": 56
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 12,
+       "restSec": 51
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 12,
+       "restSec": 77
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 11,
+       "restSec": 97
+      }
+     ]
+    },
+    {
+     "name": "Скручивания на блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 15,
+       "restSec": 77
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 15,
+       "restSec": 57
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 15,
+       "restSec": 87
+      }
+     ]
+    },
+    {
+     "name": "Подъём ног в висе",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 10,
+       "restSec": 56
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 10,
+       "restSec": 75
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 9,
+       "restSec": 20
+      }
+     ]
+    }
+   ],
+   "createdAt": 1790941951000,
+   "updatedAt": 1790941951000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "039d2def-9c6e-4f78-b829-878259658866",
+   "workoutId": "7c331d5e-2f20-4cba-b3dd-37eb4d8a72a6",
+   "name": "Понедельник: грудь, плечи, трицепс",
+   "startedAt": 1791196440000,
+   "endedAt": 1791199699000,
+   "durationSec": 3259,
+   "exercises": [
+    {
+     "name": "Жим штанги лёжа средним хватом",
+     "comment": "Лопатки сведены, штанга касается груди",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 16.5,
+       "reps": 10,
+       "restSec": 40
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 8,
+       "restSec": 119
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 7,
+       "restSec": 117
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 8,
+       "restSec": 123
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 8,
+       "restSec": 161
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей на наклонной скамье",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 102
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 86
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 115
+      }
+     ]
+    },
+    {
+     "name": "Бабочка (тренажёр пек-дек)",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 11,
+       "restSec": 83
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 11,
+       "restSec": 79
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 11,
+       "restSec": 120
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей сидя",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 12,
+       "restSec": 107
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 12,
+       "restSec": 102
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 12,
+       "restSec": 125
+      }
+     ]
+    },
+    {
+     "name": "Махи гантелями в стороны стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 14,
+       "restSec": 57
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 14,
+       "restSec": 67
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 13,
+       "restSec": 94
+      }
+     ]
+    },
+    {
+     "name": "Разгибания рук на верхнем блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 80
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 50
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 27
+      }
+     ]
+    }
+   ],
+   "createdAt": 1791199699000,
+   "updatedAt": 1791199699000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "7498d534-c341-49f2-87b5-222976b585f4",
+   "workoutId": "444ef92a-ff6f-4c90-8384-4fc18bfa8e40",
+   "name": "Среда: спина, бицепс",
+   "startedAt": 1791368340000,
+   "endedAt": 1791371961000,
+   "durationSec": 3621,
+   "exercises": [
+    {
+     "name": "Тяга верхнего блока к груди широким хватом",
+     "comment": "Тянуть к верху груди, без рывков",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 19,
+       "reps": 10,
+       "restSec": 46
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 9,
+       "restSec": 99
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 9,
+       "restSec": 110
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 9,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 8,
+       "restSec": 132
+      }
+     ]
+    },
+    {
+     "name": "Тяга штанги в наклоне",
+     "comment": "Спина прямая, корпус под углом 45°",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 10,
+       "restSec": 105
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 10,
+       "restSec": 109
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 10,
+       "restSec": 131
+      }
+     ]
+    },
+    {
+     "name": "Тяга горизонтального блока сидя узким хватом",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 11,
+       "restSec": 88
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 11,
+       "restSec": 96
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 11,
+       "restSec": 119
+      }
+     ]
+    },
+    {
+     "name": "Тяга гантели в наклоне одной рукой",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 8,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 7,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 7,
+       "restSec": 98
+      }
+     ]
+    },
+    {
+     "name": "Тяга к лицу",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 15,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 14,
+       "restSec": 70
+      },
+      {
+       "kind": "work",
+       "kg": 12,
+       "reps": 15,
+       "restSec": 84
+      }
+     ]
+    },
+    {
+     "name": "Подъём штанги на бицепс",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 8,
+       "restSec": 71
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 8,
+       "restSec": 71
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 8,
+       "restSec": 117
+      }
+     ]
+    },
+    {
+     "name": "Попеременные сгибания рук «Молотки»",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 7,
+       "reps": 12,
+       "restSec": 70
+      },
+      {
+       "kind": "work",
+       "kg": 7,
+       "reps": 12,
+       "restSec": 65
+      },
+      {
+       "kind": "work",
+       "kg": 7,
+       "reps": 11,
+       "restSec": 27
+      }
+     ]
+    }
+   ],
+   "createdAt": 1791371961000,
+   "updatedAt": 1791371961000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "aa16230d-70b9-4231-954f-5ae019d8ef73",
+   "workoutId": "6bff0a7b-ade0-4bde-89a8-cf8fb72c8336",
+   "name": "Пятница: ноги и пресс",
+   "startedAt": 1791542460000,
+   "endedAt": 1791546848000,
+   "durationSec": 4388,
+   "exercises": [
+    {
+     "name": "Приседания со штангой",
+     "comment": "Колени по линии носков, спина прямая",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 40
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 126
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 134
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 141
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 162
+      }
+     ]
+    },
+    {
+     "name": "Жим ногами",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 70,
+       "reps": 12,
+       "restSec": 114
+      },
+      {
+       "kind": "work",
+       "kg": 70,
+       "reps": 12,
+       "restSec": 112
+      },
+      {
+       "kind": "work",
+       "kg": 70,
+       "reps": 10,
+       "restSec": 127
+      }
+     ]
+    },
+    {
+     "name": "Румынская тяга со штангой",
+     "comment": "Штанга близко к ногам, таз назад",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 118
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 107
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 9,
+       "restSec": 129
+      }
+     ]
+    },
+    {
+     "name": "Сгибание ног лёжа",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 12,
+       "restSec": 78
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 12,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 10,
+       "restSec": 98
+      }
+     ]
+    },
+    {
+     "name": "Разгибания ног в тренажёре",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 12,
+       "restSec": 71
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 11,
+       "restSec": 86
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 12,
+       "restSec": 124
+      }
+     ]
+    },
+    {
+     "name": "Подъемы на носки стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 13,
+       "restSec": 65
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 13,
+       "restSec": 61
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 13,
+       "restSec": 63
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 13,
+       "restSec": 86
+      }
+     ]
+    },
+    {
+     "name": "Скручивания на блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 15,
+       "restSec": 80
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 14,
+       "restSec": 67
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 15,
+       "restSec": 98
+      }
+     ]
+    },
+    {
+     "name": "Подъём ног в висе",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 11,
+       "restSec": 71
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 11,
+       "restSec": 70
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 9,
+       "restSec": 19
+      }
+     ]
+    }
+   ],
+   "createdAt": 1791546848000,
+   "updatedAt": 1791546848000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "6543ff12-4d00-4771-bf88-b8a268b75381",
+   "workoutId": "7c331d5e-2f20-4cba-b3dd-37eb4d8a72a6",
+   "name": "Понедельник: грудь, плечи, трицепс",
+   "startedAt": 1791800280000,
+   "endedAt": 1791803499000,
+   "durationSec": 3219,
+   "exercises": [
+    {
+     "name": "Жим штанги лёжа средним хватом",
+     "comment": "Лопатки сведены, штанга касается груди",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 16.5,
+       "reps": 10,
+       "restSec": 40
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 9,
+       "restSec": 115
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 9,
+       "restSec": 113
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 9,
+       "restSec": 127
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 7,
+       "restSec": 161
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей на наклонной скамье",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 12,
+       "restSec": 82
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 12,
+       "restSec": 98
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 119
+      }
+     ]
+    },
+    {
+     "name": "Бабочка (тренажёр пек-дек)",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 12,
+       "restSec": 85
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 12,
+       "restSec": 82
+      },
+      {
+       "kind": "work",
+       "kg": 27.5,
+       "reps": 10,
+       "restSec": 109
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей сидя",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 9,
+       "reps": 8,
+       "restSec": 107
+      },
+      {
+       "kind": "work",
+       "kg": 9,
+       "reps": 8,
+       "restSec": 85
+      },
+      {
+       "kind": "work",
+       "kg": 9,
+       "reps": 7,
+       "restSec": 129
+      }
+     ]
+    },
+    {
+     "name": "Махи гантелями в стороны стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 15,
+       "restSec": 79
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 14,
+       "restSec": 66
+      },
+      {
+       "kind": "work",
+       "kg": 4,
+       "reps": 13,
+       "restSec": 88
+      }
+     ]
+    },
+    {
+     "name": "Разгибания рук на верхнем блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 11,
+       "restSec": 58
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 11,
+       "restSec": 66
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 16
+      }
+     ]
+    }
+   ],
+   "createdAt": 1791803499000,
+   "updatedAt": 1791803499000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "4a7a4049-d094-4b0d-9920-a8252ecfcdfc",
+   "workoutId": "444ef92a-ff6f-4c90-8384-4fc18bfa8e40",
+   "name": "Среда: спина, бицепс",
+   "startedAt": 1791972960000,
+   "endedAt": 1791976641000,
+   "durationSec": 3681,
+   "exercises": [
+    {
+     "name": "Тяга верхнего блока к груди широким хватом",
+     "comment": "Тянуть к верху груди, без рывков",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 19,
+       "reps": 10,
+       "restSec": 58
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 10,
+       "restSec": 110
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 9,
+       "restSec": 120
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 10,
+       "restSec": 103
+      },
+      {
+       "kind": "work",
+       "kg": 37.5,
+       "reps": 9,
+       "restSec": 138
+      }
+     ]
+    },
+    {
+     "name": "Тяга штанги в наклоне",
+     "comment": "Спина прямая, корпус под углом 45°",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 125
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 8,
+       "restSec": 103
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 7,
+       "restSec": 144
+      }
+     ]
+    },
+    {
+     "name": "Тяга горизонтального блока сидя узким хватом",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 12,
+       "restSec": 93
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 12,
+       "restSec": 88
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 12,
+       "restSec": 110
+      }
+     ]
+    },
+    {
+     "name": "Тяга гантели в наклоне одной рукой",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 9,
+       "restSec": 72
+      },
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 9,
+       "restSec": 76
+      },
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 8,
+       "restSec": 96
+      }
+     ]
+    },
+    {
+     "name": "Тяга к лицу",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 14.5,
+       "reps": 12,
+       "restSec": 59
+      },
+      {
+       "kind": "work",
+       "kg": 14.5,
+       "reps": 12,
+       "restSec": 60
+      },
+      {
+       "kind": "work",
+       "kg": 14.5,
+       "reps": 10,
+       "restSec": 94
+      }
+     ]
+    },
+    {
+     "name": "Подъём штанги на бицепс",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 9,
+       "restSec": 75
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 9,
+       "restSec": 87
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 8,
+       "restSec": 96
+      }
+     ]
+    },
+    {
+     "name": "Попеременные сгибания рук «Молотки»",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 10,
+       "restSec": 59
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 10,
+       "restSec": 64
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 9,
+       "restSec": 35
+      }
+     ]
+    }
+   ],
+   "createdAt": 1791976641000,
+   "updatedAt": 1791976641000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "1b110705-8165-4a44-8e92-44fc1201c85f",
+   "workoutId": "6bff0a7b-ade0-4bde-89a8-cf8fb72c8336",
+   "name": "Пятница: ноги и пресс",
+   "startedAt": 1792145640000,
+   "endedAt": 1792149946000,
+   "durationSec": 4306,
+   "exercises": [
+    {
+     "name": "Приседания со штангой",
+     "comment": "Колени по линии носков, спина прямая",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 20,
+       "reps": 10,
+       "restSec": 60
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 8,
+       "restSec": 126
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 7,
+       "restSec": 120
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 8,
+       "restSec": 127
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 8,
+       "restSec": 156
+      }
+     ]
+    },
+    {
+     "name": "Жим ногами",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 80,
+       "reps": 10,
+       "restSec": 117
+      },
+      {
+       "kind": "work",
+       "kg": 80,
+       "reps": 10,
+       "restSec": 98
+      },
+      {
+       "kind": "work",
+       "kg": 80,
+       "reps": 10,
+       "restSec": 149
+      }
+     ]
+    },
+    {
+     "name": "Румынская тяга со штангой",
+     "comment": "Штанга близко к ногам, таз назад",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 8,
+       "restSec": 124
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 8,
+       "restSec": 121
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 8,
+       "restSec": 133
+      }
+     ]
+    },
+    {
+     "name": "Сгибание ног лёжа",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 86
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 9,
+       "restSec": 84
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 121
+      }
+     ]
+    },
+    {
+     "name": "Разгибания ног в тренажёре",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 94
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 8,
+       "restSec": 100
+      }
+     ]
+    },
+    {
+     "name": "Подъемы на носки стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 14,
+       "restSec": 76
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 14,
+       "restSec": 57
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 14,
+       "restSec": 51
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 14,
+       "restSec": 81
+      }
+     ]
+    },
+    {
+     "name": "Скручивания на блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 12,
+       "restSec": 73
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 12,
+       "restSec": 79
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 12,
+       "restSec": 96
+      }
+     ]
+    },
+    {
+     "name": "Подъём ног в висе",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 12,
+       "restSec": 78
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 11,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 11,
+       "restSec": 33
+      }
+     ]
+    }
+   ],
+   "createdAt": 1792149946000,
+   "updatedAt": 1792149946000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "111abb94-cba7-48f4-b3c4-be3c0d878c76",
+   "workoutId": "7c331d5e-2f20-4cba-b3dd-37eb4d8a72a6",
+   "name": "Понедельник: грудь, плечи, трицепс",
+   "startedAt": 1792404960000,
+   "endedAt": 1792408139000,
+   "durationSec": 3179,
+   "exercises": [
+    {
+     "name": "Жим штанги лёжа средним хватом",
+     "comment": "Лопатки сведены, штанга касается груди",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 16.5,
+       "reps": 10,
+       "restSec": 40
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 9,
+       "restSec": 130
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 9,
+       "restSec": 136
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 9,
+       "restSec": 111
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 9,
+       "restSec": 169
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей на наклонной скамье",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 12,
+       "restSec": 90
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 12,
+       "restSec": 82
+      },
+      {
+       "kind": "work",
+       "kg": 10,
+       "reps": 11,
+       "restSec": 118
+      }
+     ]
+    },
+    {
+     "name": "Бабочка (тренажёр пек-дек)",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 69
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 100
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей сидя",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 9,
+       "reps": 9,
+       "restSec": 87
+      },
+      {
+       "kind": "work",
+       "kg": 9,
+       "reps": 8,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 9,
+       "reps": 8,
+       "restSec": 111
+      }
+     ]
+    },
+    {
+     "name": "Махи гантелями в стороны стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 5,
+       "reps": 12,
+       "restSec": 53
+      },
+      {
+       "kind": "work",
+       "kg": 5,
+       "reps": 12,
+       "restSec": 61
+      },
+      {
+       "kind": "work",
+       "kg": 5,
+       "reps": 12,
+       "restSec": 89
+      }
+     ]
+    },
+    {
+     "name": "Разгибания рук на верхнем блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 12,
+       "restSec": 65
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 12,
+       "restSec": 54
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 20
+      }
+     ]
+    }
+   ],
+   "createdAt": 1792408139000,
+   "updatedAt": 1792408139000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "474b51b6-ff22-4a98-8fc4-e7d443b0ff13",
+   "workoutId": "444ef92a-ff6f-4c90-8384-4fc18bfa8e40",
+   "name": "Среда: спина, бицепс",
+   "startedAt": 1792577820000,
+   "endedAt": 1792581511000,
+   "durationSec": 3691,
+   "exercises": [
+    {
+     "name": "Тяга верхнего блока к груди широким хватом",
+     "comment": "Тянуть к верху груди, без рывков",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 20,
+       "reps": 10,
+       "restSec": 59
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 8,
+       "restSec": 118
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 8,
+       "restSec": 99
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 8,
+       "restSec": 100
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 7,
+       "restSec": 147
+      }
+     ]
+    },
+    {
+     "name": "Тяга штанги в наклоне",
+     "comment": "Спина прямая, корпус под углом 45°",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 95
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 101
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 147
+      }
+     ]
+    },
+    {
+     "name": "Тяга горизонтального блока сидя узким хватом",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 101
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 91
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 10,
+       "restSec": 114
+      }
+     ]
+    },
+    {
+     "name": "Тяга гантели в наклоне одной рукой",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 10,
+       "restSec": 74
+      },
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 10,
+       "restSec": 77
+      },
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 10,
+       "restSec": 116
+      }
+     ]
+    },
+    {
+     "name": "Тяга к лицу",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 14.5,
+       "reps": 13,
+       "restSec": 79
+      },
+      {
+       "kind": "work",
+       "kg": 14.5,
+       "reps": 13,
+       "restSec": 58
+      },
+      {
+       "kind": "work",
+       "kg": 14.5,
+       "reps": 12,
+       "restSec": 84
+      }
+     ]
+    },
+    {
+     "name": "Подъём штанги на бицепс",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 89
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 78
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 123
+      }
+     ]
+    },
+    {
+     "name": "Попеременные сгибания рук «Молотки»",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 11,
+       "restSec": 66
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 11,
+       "restSec": 58
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 11,
+       "restSec": 26
+      }
+     ]
+    }
+   ],
+   "createdAt": 1792581511000,
+   "updatedAt": 1792581511000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "130ea1e8-ef7d-4cb0-a66b-8fb8bff2d7f3",
+   "workoutId": "6bff0a7b-ade0-4bde-89a8-cf8fb72c8336",
+   "name": "Пятница: ноги и пресс",
+   "startedAt": 1792751280000,
+   "endedAt": 1792755531000,
+   "durationSec": 4251,
+   "exercises": [
+    {
+     "name": "Приседания со штангой",
+     "comment": "Колени по линии носков, спина прямая",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 20,
+       "reps": 10,
+       "restSec": 46
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 130
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 142
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 8,
+       "restSec": 122
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 164
+      }
+     ]
+    },
+    {
+     "name": "Жим ногами",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 80,
+       "reps": 11,
+       "restSec": 114
+      },
+      {
+       "kind": "work",
+       "kg": 80,
+       "reps": 11,
+       "restSec": 98
+      },
+      {
+       "kind": "work",
+       "kg": 80,
+       "reps": 10,
+       "restSec": 146
+      }
+     ]
+    },
+    {
+     "name": "Румынская тяга со штангой",
+     "comment": "Штанга близко к ногам, таз назад",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 104
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 108
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 133
+      }
+     ]
+    },
+    {
+     "name": "Сгибание ног лёжа",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 90
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 9,
+       "restSec": 102
+      }
+     ]
+    },
+    {
+     "name": "Разгибания ног в тренажёре",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 11,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 11,
+       "restSec": 66
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 11,
+       "restSec": 121
+      }
+     ]
+    },
+    {
+     "name": "Подъемы на носки стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 14,
+       "restSec": 66
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 14,
+       "restSec": 51
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 14,
+       "restSec": 68
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 13,
+       "restSec": 80
+      }
+     ]
+    },
+    {
+     "name": "Скручивания на блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 13,
+       "restSec": 54
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 13,
+       "restSec": 61
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 13,
+       "restSec": 103
+      }
+     ]
+    },
+    {
+     "name": "Подъём ног в висе",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 12,
+       "restSec": 57
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 12,
+       "restSec": 66
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 11,
+       "restSec": 17
+      }
+     ]
+    }
+   ],
+   "createdAt": 1792755531000,
+   "updatedAt": 1792755531000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "db2329f0-31dd-4979-b956-0b4ea6133c48",
+   "workoutId": "7c331d5e-2f20-4cba-b3dd-37eb4d8a72a6",
+   "name": "Понедельник: грудь, плечи, трицепс",
+   "startedAt": 1793009700000,
+   "endedAt": 1793012918000,
+   "durationSec": 3218,
+   "exercises": [
+    {
+     "name": "Жим штанги лёжа средним хватом",
+     "comment": "Лопатки сведены, штанга касается груди",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 16.5,
+       "reps": 10,
+       "restSec": 41
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 10,
+       "restSec": 137
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 10,
+       "restSec": 133
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 10,
+       "restSec": 135
+      },
+      {
+       "kind": "work",
+       "kg": 32.5,
+       "reps": 10,
+       "restSec": 161
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей на наклонной скамье",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 8,
+       "restSec": 80
+      },
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 7,
+       "restSec": 100
+      },
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 8,
+       "restSec": 133
+      }
+     ]
+    },
+    {
+     "name": "Бабочка (тренажёр пек-дек)",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 11,
+       "restSec": 88
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 11,
+       "restSec": 65
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 11,
+       "restSec": 108
+      }
+     ]
+    },
+    {
+     "name": "Жим гантелей сидя",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 9,
+       "reps": 10,
+       "restSec": 107
+      },
+      {
+       "kind": "work",
+       "kg": 9,
+       "reps": 10,
+       "restSec": 88
+      },
+      {
+       "kind": "work",
+       "kg": 9,
+       "reps": 9,
+       "restSec": 120
+      }
+     ]
+    },
+    {
+     "name": "Махи гантелями в стороны стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 5,
+       "reps": 13,
+       "restSec": 60
+      },
+      {
+       "kind": "work",
+       "kg": 5,
+       "reps": 13,
+       "restSec": 56
+      },
+      {
+       "kind": "work",
+       "kg": 5,
+       "reps": 13,
+       "restSec": 92
+      }
+     ]
+    },
+    {
+     "name": "Разгибания рук на верхнем блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 10,
+       "restSec": 54
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 10,
+       "restSec": 65
+      },
+      {
+       "kind": "work",
+       "kg": 20,
+       "reps": 9,
+       "restSec": 12
+      }
+     ]
+    }
+   ],
+   "createdAt": 1793012918000,
+   "updatedAt": 1793012918000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "dc96b420-5ae0-4602-a89a-d49ab430a598",
+   "workoutId": "444ef92a-ff6f-4c90-8384-4fc18bfa8e40",
+   "name": "Среда: спина, бицепс",
+   "startedAt": 1793184360000,
+   "endedAt": 1793187983000,
+   "durationSec": 3623,
+   "exercises": [
+    {
+     "name": "Тяга верхнего блока к груди широким хватом",
+     "comment": "Тянуть к верху груди, без рывков",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 20,
+       "reps": 10,
+       "restSec": 49
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 113
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 112
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 101
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 132
+      }
+     ]
+    },
+    {
+     "name": "Тяга штанги в наклоне",
+     "comment": "Спина прямая, корпус под углом 45°",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 109
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 10,
+       "restSec": 114
+      },
+      {
+       "kind": "work",
+       "kg": 30,
+       "reps": 9,
+       "restSec": 151
+      }
+     ]
+    },
+    {
+     "name": "Тяга горизонтального блока сидя узким хватом",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 11,
+       "restSec": 109
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 11,
+       "restSec": 105
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 11,
+       "restSec": 110
+      }
+     ]
+    },
+    {
+     "name": "Тяга гантели в наклоне одной рукой",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 11,
+       "restSec": 79
+      },
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 11,
+       "restSec": 81
+      },
+      {
+       "kind": "work",
+       "kg": 11,
+       "reps": 11,
+       "restSec": 113
+      }
+     ]
+    },
+    {
+     "name": "Тяга к лицу",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 14.5,
+       "reps": 14,
+       "restSec": 66
+      },
+      {
+       "kind": "work",
+       "kg": 14.5,
+       "reps": 14,
+       "restSec": 74
+      },
+      {
+       "kind": "work",
+       "kg": 14.5,
+       "reps": 13,
+       "restSec": 81
+      }
+     ]
+    },
+    {
+     "name": "Подъём штанги на бицепс",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 11,
+       "restSec": 69
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 11,
+       "restSec": 84
+      },
+      {
+       "kind": "work",
+       "kg": 17.5,
+       "reps": 10,
+       "restSec": 107
+      }
+     ]
+    },
+    {
+     "name": "Попеременные сгибания рук «Молотки»",
+     "comment": "Вес указан на одну гантель",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 12,
+       "restSec": 59
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 11,
+       "restSec": 59
+      },
+      {
+       "kind": "work",
+       "kg": 8,
+       "reps": 11,
+       "restSec": 21
+      }
+     ]
+    }
+   ],
+   "createdAt": 1793187983000,
+   "updatedAt": 1793187983000,
+   "deleted": false
+  },
+  {
+   "c": "workouts/sessions",
+   "id": "e28197a3-a8d8-4a49-bbf3-be10f4439379",
+   "workoutId": "6bff0a7b-ade0-4bde-89a8-cf8fb72c8336",
+   "name": "Пятница: ноги и пресс",
+   "startedAt": 1793356680000,
+   "endedAt": 1793360944000,
+   "durationSec": 4264,
+   "exercises": [
+    {
+     "name": "Приседания со штангой",
+     "comment": "Колени по линии носков, спина прямая",
+     "sets": [
+      {
+       "kind": "warmup",
+       "kg": 20,
+       "reps": 10,
+       "restSec": 43
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 10,
+       "restSec": 124
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 10,
+       "restSec": 147
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 10,
+       "restSec": 143
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 175
+      }
+     ]
+    },
+    {
+     "name": "Жим ногами",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 80,
+       "reps": 12,
+       "restSec": 99
+      },
+      {
+       "kind": "work",
+       "kg": 80,
+       "reps": 12,
+       "restSec": 121
+      },
+      {
+       "kind": "work",
+       "kg": 80,
+       "reps": 11,
+       "restSec": 147
+      }
+     ]
+    },
+    {
+     "name": "Румынская тяга со штангой",
+     "comment": "Штанга близко к ногам, таз назад",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 10,
+       "restSec": 119
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 10,
+       "restSec": 119
+      },
+      {
+       "kind": "work",
+       "kg": 40,
+       "reps": 9,
+       "restSec": 130
+      }
+     ]
+    },
+    {
+     "name": "Сгибание ног лёжа",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 11,
+       "restSec": 92
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 69
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 10,
+       "restSec": 98
+      }
+     ]
+    },
+    {
+     "name": "Разгибания ног в тренажёре",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 12,
+       "restSec": 77
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 11,
+       "restSec": 86
+      },
+      {
+       "kind": "work",
+       "kg": 25,
+       "reps": 12,
+       "restSec": 98
+      }
+     ]
+    },
+    {
+     "name": "Подъемы на носки стоя",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 15,
+       "restSec": 53
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 15,
+       "restSec": 61
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 15,
+       "restSec": 76
+      },
+      {
+       "kind": "work",
+       "kg": 35,
+       "reps": 14,
+       "restSec": 86
+      }
+     ]
+    },
+    {
+     "name": "Скручивания на блоке",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 14,
+       "restSec": 58
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 14,
+       "restSec": 57
+      },
+      {
+       "kind": "work",
+       "kg": 22.5,
+       "reps": 12,
+       "restSec": 108
+      }
+     ]
+    },
+    {
+     "name": "Подъём ног в висе",
+     "comment": "",
+     "sets": [
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 12,
+       "restSec": 65
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 12,
+       "restSec": 62
+      },
+      {
+       "kind": "work",
+       "kg": 0,
+       "reps": 11,
+       "restSec": 15
+      }
+     ]
+    }
+   ],
+   "createdAt": 1793360944000,
+   "updatedAt": 1793360944000,
+   "deleted": false
+  }
+ ]
+}
