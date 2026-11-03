@@ -118,20 +118,22 @@ export default {
 
       box.replaceChildren(...templates.map(t => {
         const last = lastDone.get(t.id);
+        const remove = async () => {
+          if (!(await confirmDialog(`Удалить тренировку «${t.name}»? История выполненных тренировок сохранится.`, { okText: 'Удалить', danger: true }))) return false;
+          await templatesCol.remove(t.id);
+          showHome();
+          return true;
+        };
         const content = h('div', { class: 'wk-content' },
           h('div', { class: 'grow', onClick: () => showEditor(t) },
             h('strong', null, t.name),
             h('span', { class: 'muted small block' },
               `${t.exercises.length} ${plural(t.exercises.length, 'упражнение', 'упражнения', 'упражнений')}` + (last ? ` · последняя: ${fmtDate(last)}` : ''))),
           iconBtn('edit', 'Редактировать', () => showEditor(t)),
+          iconBtn('trash', 'Удалить тренировку', remove, 'danger desktop-only'),
           h('button', { class: 'btn primary', onClick: () => startWorkout(t, active) }, icon('play', 14), 'Start'));
         const row = h('div', { class: 'wk-row' }, h('div', { class: 'wk-bg' }, icon('trash', 20), 'Удалить'), content);
-        swipeToDelete(content, async () => {
-          if (!(await confirmDialog(`Удалить тренировку «${t.name}»? История выполненных тренировок сохранится.`, { okText: 'Удалить', danger: true }))) return false;
-          await templatesCol.remove(t.id);
-          showHome();
-          return true;
-        });
+        swipeToDelete(content, remove);
         return row;
       }));
     }

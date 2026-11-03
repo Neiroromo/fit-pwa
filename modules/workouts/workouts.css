@@ -38,6 +38,10 @@
 .wk-content { position: relative; display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); touch-action: pan-y; transition: transform .2s; user-select: none; }
 .wk-content .grow { cursor: pointer; }
 
+/* кнопка удаления — только для мыши (ПК); на сенсорных остаётся свайп */
+.desktop-only { display: none; }
+@media (hover: hover) and (pointer: fine) { .desktop-only { display: inline-grid; } }
+
 /* редактор */
 .ex-list { display: flex; flex-direction: column; gap: 12px; }
 .ex-card { display: flex; flex-direction: column; gap: 10px; }
