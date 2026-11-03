@@ -1,13 +1,12 @@
 // Перевод каталога упражнений на русский.
-//   node tools/translation.mjs batches   — разрезать то, что ещё не переведено, на файлы translation/in/part-NN.json
-//   node tools/translation.mjs apply     — проверить translation/out/part-NN.json и влить переводы в exercises.json
+//   node tools/translation.mjs batches   — собрать всё, что ещё не переведено, в один файл translation/exercises.en.json
+//   node tools/translation.mjs apply     — проверить все translation/out/*.json и влить переводы в exercises.json
 // Накопленные переводы лежат в translation/ru.json ({id: {n, s}}) и переживают пересборку каталога.
 import { readFile, writeFile, readdir, mkdir } from 'node:fs/promises';
 
 const root = new URL('../', import.meta.url);
 const CATALOG = new URL('modules/workouts/exercises.json', root);
 const STORE = new URL('translation/ru.json', root);
-const MAX_CHARS = 45_000; // размер одной порции (≈ 12k токенов на входе)
 
 const readJson = async (u, fallback) => { try { return JSON.parse(await readFile(u, 'utf8')); } catch { return fallback; } };
 
@@ -34,21 +33,9 @@ async function batches() {
       steps: ex.d?.length && !ex.dr?.length ? ex.d : undefined,
     }))
     .filter(it => it.name || it.steps);
-  const parts = [];
-  let cur = [], size = 0;
-  for (const it of items) {
-    const len = JSON.stringify(it).length;
-    if (cur.length && size + len > MAX_CHARS) { parts.push(cur); cur = []; size = 0; }
-    cur.push(it); size += len;
-  }
-  if (cur.length) parts.push(cur);
-  await mkdir(new URL('translation/in/', root), { recursive: true });
   await mkdir(new URL('translation/out/', root), { recursive: true });
-  for (const [i, part] of parts.entries()) {
-    const name = `part-${String(i + 1).padStart(2, '0')}.json`;
-    await writeFile(new URL('translation/in/' + name, root), JSON.stringify(part));
-  }
-  console.log({ exercisesToTranslate: items.length, parts: parts.length });
+  await writeFile(new URL('translation/exercises.en.json', root), JSON.stringify(items));
+  console.log({ exercisesToTranslate: items.length, file: 'translation/exercises.en.json' });
 }
 
 async function apply() {
@@ -58,7 +45,7 @@ async function apply() {
   const problems = [];
   let accepted = 0;
   const dir = new URL('translation/out/', root);
-  const files = (await readdir(dir).catch(() => [])).filter(f => /^part-\d+\.json$/.test(f)).sort();
+  const files = (await readdir(dir).catch(() => [])).filter(f => /\.json$/.test(f)).sort();
   for (const f of files) {
     let data;
     try { data = JSON.parse(await readFile(new URL(f, dir), 'utf8')); } catch (e) { problems.push(`${f}: невалидный JSON (${e.message})`); continue; }
