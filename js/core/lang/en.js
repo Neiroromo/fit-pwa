@@ -14,7 +14,8 @@ export default {
   'Каталог недоступен. Проверьте подключение к интернету.': 'The catalog is unavailable. Check your internet connection.',
   'Скачайте только то, что нужно. Модули загружаются из репозитория проекта и работают офлайн.': 'Download only what you need. Modules are fetched from the project repository and work offline.',
   'Установлен': 'Installed', 'Обновить': 'Update', 'Скачать': 'Download',
-  '«{name}» обновлён. Перезагрузите страницу.': '“{name}” updated. Reload the page.',
+  'Доступно обновление': 'Update available', 'Скачать обновление модуля и перезапустить страницу': 'Download the module update and restart the page',
+  'Доступно обновление «{name}» до версии {version}': 'Update available for “{name}”: version {version}',
   '«{name}» скачан': '“{name}” downloaded',
   'Ошибка загрузки: {msg}': 'Download failed: {msg}',
 

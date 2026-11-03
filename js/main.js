@@ -1,6 +1,6 @@
 import { IdbAdapter, createDb } from './core/db.js';
 import { createRegistry } from './core/registry.js';
-import { buildShell, openStore } from './core/shell.js';
+import { buildShell, openStore, updateButton, notifyUpdates } from './core/shell.js';
 import { ui, createUi, setAppTranslator } from './core/ui.js';
 import { initI18n, preload, translator, contentLang } from './core/i18n.js';
 
@@ -59,6 +59,7 @@ async function boot() {
   app.shell.renderProfile();
   app.shell.refreshBell();
   registry.subscribe(() => app.shell.renderNav());
+  notifyUpdates(app).catch(console.error);
 
   let cleanup = null;
   let token = 0;
@@ -79,7 +80,19 @@ async function boot() {
       const page = document.createElement('div');
       page.className = 'page';
       app.shell.view.replaceChildren(page);
-      cleanup = await mod.mount(page, moduleContext(id), params);
+      const stop = await mod.mount(page, moduleContext(id), params);
+      // кнопка «Обновить» рядом с названием модуля; модуль перерисовывает заголовок сам, поэтому следим за страницей
+      let obs = null;
+      if (registry.needsUpdate(id)) {
+        const put = () => {
+          const h1 = page.querySelector('h1');
+          if (h1 && !h1.querySelector('.upd-btn')) h1.append(updateButton(app, id));
+        };
+        put();
+        obs = new MutationObserver(put);
+        obs.observe(page, { childList: true, subtree: true });
+      }
+      cleanup = () => { obs?.disconnect(); return stop?.(); };
     } catch (e) {
       console.error(e);
       app.shell.view.replaceChildren(ui.h('div', { class: 'page' }, ui.h('p', { class: 'muted' }, app.t('Не удалось открыть модуль: {msg}', { msg: e.message }))));

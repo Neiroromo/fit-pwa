@@ -26,7 +26,8 @@ export function buildShell(app) {
     list.replaceChildren(
       ...registry.navItems().map(m =>
         h('a', { class: 'nav-item' + (m.id === cur ? ' active' : ''), href: '#/' + m.id, title: m.name },
-          icon(m.icon, 22), h('span', { class: 'nav-label' }, m.name))),
+          icon(m.icon, 22), h('span', { class: 'nav-label' }, m.name),
+          registry.needsUpdate(m.id) ? h('span', { class: 'upd-dot', title: 'Доступно обновление' }) : null)),
       h('button', { class: 'nav-item add', title: 'Скачать модуль', onClick: () => openStore(app) },
         icon('plus', 22), h('span', { class: 'nav-label' }, 'Модули')),
     );
@@ -44,6 +45,46 @@ export function buildShell(app) {
   }
 
   return { root, view, renderNav, renderProfile, refreshBell };
+}
+
+// ---------- Обновление модулей ----------
+
+/** Скачивает новую версию модуля и перезапускает страницу, чтобы всё применилось сразу. */
+export async function updateModule(app, id, onProgress) {
+  await app.registry.install(id, onProgress);
+  location.reload();
+  await new Promise(() => {}); // до перезагрузки ничего больше не делаем
+}
+
+/** Кнопка «Обновить» для заголовка модуля. */
+export function updateButton(app, id) {
+  const btn = h('button', { class: 'btn primary upd-btn', title: 'Скачать обновление модуля и перезапустить страницу' }, icon('download', 14), 'Обновить');
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.replaceChildren('0%');
+    try {
+      await updateModule(app, id, p => (btn.textContent = Math.round(p * 100) + '%'));
+    } catch (e) {
+      btn.disabled = false;
+      btn.replaceChildren(icon('download', 14), app.t('Обновить'));
+      toast(app.t('Ошибка загрузки: {msg}', { msg: e.message }));
+    }
+  });
+  return btn;
+}
+
+/** Уведомление о доступных обновлениях (по одному на версию модуля). */
+export async function notifyUpdates(app) {
+  const col = app.db.collection('app/notifications');
+  const have = new Set((await col.list()).map(n => n.upd).filter(Boolean));
+  for (const m of app.registry.installed()) {
+    if (!app.registry.needsUpdate(m.id)) continue;
+    const cat = app.registry.catalog().find(c => c.id === m.id);
+    const key = `${m.id}@${cat.version}`;
+    if (have.has(key)) continue;
+    await col.put({ text: app.t('Доступно обновление «{name}» до версии {version}', { name: translator('app').tr(m.name), version: cat.version }), ts: Date.now(), read: false, upd: key });
+  }
+  app.shell.refreshBell();
 }
 
 // ---------- Магазин модулей ----------
@@ -86,8 +127,9 @@ export function openStore(app) {
       btn.replaceChildren('0%');
       try {
         const updating = registry.isInstalled(item.id);
+        if (updating) return updateModule(app, item.id, p => (btn.textContent = Math.round(p * 100) + '%'));
         await registry.install(item.id, p => (btn.textContent = Math.round(p * 100) + '%'));
-        toast(app.t(updating ? '«{name}» обновлён. Перезагрузите страницу.' : '«{name}» скачан', { name: tr(item.name) }));
+        toast(app.t('«{name}» скачан', { name: tr(item.name) }));
       } catch (e) {
         toast(app.t('Ошибка загрузки: {msg}', { msg: e.message }));
       }
