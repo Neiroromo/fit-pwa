@@ -1,7 +1,7 @@
-// Popup профиля: имя/аватар (локально), вход через Google (заглушка), настройка модулей,
-// подписка (заглушка), резервная копия данных.
+// Popup профиля: имя/аватар (локально), вход через Google (заглушка), язык, резервная копия данных.
+// Настройка модулей — общее окно «Модули» (shell.js, openStore).
 
-import { h, raw, icon, iconBtn, toast, dismissable, confirmDialog } from './ui.js';
+import { h, raw, icon, iconBtn, toast, dismissable } from './ui.js';
 import { LANGS, getSettings, saveSettings, translator } from './i18n.js';
 
 /** Имя для показа: введённое пользователем как есть; если не задано (или осталось старое «Гость») — «Гость» на языке приложения. */
@@ -30,10 +30,13 @@ function resizeImage(file, max = 160) {
 }
 
 export function openProfile(app, anchor) {
-  document.querySelector('.popover')?.remove();
-  const pop = h('div', { class: 'popover profile-pop' });
+  const prev = document.querySelector('.popover');
+  prev?._close?.();
+  if (prev?.dataset.kind === 'profile') return; // повторное нажатие на кнопку профиля закрывает окно
+  const pop = h('div', { class: 'popover profile-pop', 'data-kind': 'profile' });
   document.body.append(pop);
   const close = dismissable(pop, { ignore: [anchor] });
+  pop._close = close;
   const stack = ['main'];
 
   const row = (ico, label, { sub, onClick, soon } = {}) =>
@@ -53,7 +56,7 @@ export function openProfile(app, anchor) {
         h('div', null, h('strong', null, raw(shownName(app.profile))), h('div', { class: 'muted small' }, 'Локальный профиль'))),
       row('user', 'Имя и аватар', { onClick: () => go('profile') }),
       row('google', 'Войти через Google', { sub: 'Синхронизация данных между устройствами', soon: true }),
-      row('grid', 'Настроить модули', { onClick: () => go('modules') }),
+      row('grid', 'Настроить модули', { onClick: () => { close(); app.openStore(); } }), // то же окно, что и кнопка «Модули» в навигации
       row('globe', 'Язык', { sub: LANGS[getSettings().app], onClick: () => go('lang') }),
       row('database', 'Данные на устройстве', { onClick: () => go('data') }),
     ],
@@ -86,28 +89,6 @@ export function openProfile(app, anchor) {
             stack.pop(); render();
             toast('Профиль сохранён');
           } }, 'Сохранить')),
-      ];
-    },
-
-    modules: () => {
-      const items = app.registry.installed();
-      return [
-        head('Модули'),
-        h('div', { class: 'mod-list' },
-          h('div', { class: 'mod-row' }, icon('home', 20), h('span', { class: 'grow' }, 'Хаб'), h('span', { class: 'chip' }, 'основной')),
-          ...items.map((m, i) =>
-            h('div', { class: 'mod-row' }, icon(m.icon, 20), h('span', { class: 'grow' }, m.name),
-              iconBtn('chevU', 'Выше', async () => { await app.registry.move(m.id, -1); render(); }, i === 0 ? 'off' : ''),
-              iconBtn('chevD', 'Ниже', async () => { await app.registry.move(m.id, 1); render(); }, i === items.length - 1 ? 'off' : ''),
-              iconBtn('trash', 'Удалить', async () => {
-                const ok = await confirmDialog(app.t('Удалить модуль «{name}» с устройства? Ваши данные сохранятся и вернутся при повторной установке.', { name: translator(m.id, getSettings().app).tr(m.name) }), { okText: 'Удалить', danger: true });
-                if (!ok) return;
-                await app.registry.uninstall(m.id);
-                if (app.router.current() === m.id) app.router.go('hub');
-                render();
-              }, 'danger')))),
-        items.length ? null : h('p', { class: 'muted empty' }, 'Дополнительные модули не установлены'),
-        h('button', { class: 'btn primary', onClick: () => { close(); app.openStore(); } }, icon('plus', 16), 'Добавить модуль'),
       ];
     },
 

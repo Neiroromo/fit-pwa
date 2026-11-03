@@ -170,3 +170,8 @@ h1 .upd-btn { margin-left: 12px; padding: 4px 10px; font-size: 13px; vertical-al
 }
 
 .lang-mod { margin-top: 10px; }
+
+/* окно «Модули»: разделы */
+.store-section { display: flex; flex-direction: column; gap: 8px; }
+.store-title { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+.store-status .row-gap { flex-wrap: wrap; justify-content: flex-end; }

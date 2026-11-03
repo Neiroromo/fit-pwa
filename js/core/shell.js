@@ -1,9 +1,9 @@
 // Каркас приложения: статичная навигация (слева на ПК, снизу на телефоне),
 // магазин модулей («+») и уведомления.
 
-import { h, icon, modal, toast, dismissable } from './ui.js';
+import { h, icon, iconBtn, modal, toast, dismissable, confirmDialog } from './ui.js';
 import { openProfile, avatarEl, shownName } from './profile.js';
-import { translator } from './i18n.js';
+import { translator, getSettings } from './i18n.js';
 
 export function buildShell(app) {
   const { registry, router } = app;
@@ -94,30 +94,56 @@ export function openStore(app) {
   const { tr } = translator('app');
   const body = h('div', { class: 'store' });
   const m = modal({ title: 'Модули', body, wide: true });
+  const nameOf = mod => translator(mod.id, getSettings().app).tr(mod.name);
+
+  const section = (title, rows) => (rows.length ? h('div', { class: 'store-section' }, h('h3', { class: 'store-title' }, title), ...rows) : null);
+
+  const card = (ico, name, desc, version, actions, disabled = false) =>
+    h('div', { class: 'store-item' + (disabled ? ' disabled' : '') },
+      h('div', { class: 'store-ico' }, icon(ico, 24)),
+      h('div', { class: 'store-info' },
+        h('strong', null, name),
+        desc ? h('span', { class: 'muted' }, desc) : null,
+        version ? h('span', { class: 'muted small' }, version) : null),
+      h('div', { class: 'store-status' }, ...actions));
 
   function render() {
-    const items = registry.catalog();
-    if (!items.length) {
-      body.replaceChildren(h('p', { class: 'muted' }, 'Каталог недоступен. Проверьте подключение к интернету.'));
-      return;
-    }
-    body.replaceChildren(h('p', { class: 'muted' }, 'Скачайте только то, что нужно. Модули загружаются из репозитория проекта и работают офлайн.'),
-      ...items.map(item => {
-        const inst = registry.isInstalled(item.id);
-        const status = h('div', { class: 'store-status' });
-        if (!item.available) status.append(h('span', { class: 'chip' }, 'Скоро'));
-        else if (inst) {
-          status.append(h('span', { class: 'chip ok' }, 'Установлен'));
-          if (registry.needsUpdate(item.id)) status.append(downloadBtn(item, 'Обновить'));
-        } else status.append(downloadBtn(item, 'Скачать'));
-        return h('div', { class: 'store-item' + (item.available ? '' : ' disabled') },
-          h('div', { class: 'store-ico' }, icon(item.icon, 24)),
-          h('div', { class: 'store-info' },
-            h('strong', null, item.name),
-            h('span', { class: 'muted' }, item.description),
-            item.available ? h('span', { class: 'muted small' }, `v${item.version} · ${item.size ?? ''}`) : null),
-          status);
-      }));
+    const installed = registry.installed();
+    const catalog = registry.catalog();
+    const have = new Set(installed.map(x => x.id));
+    const info = id => catalog.find(c => c.id === id);
+
+    const installedRows = [
+      card('home', 'Хаб', 'Виджеты ваших модулей', null, [h('span', { class: 'chip' }, 'основной')]),
+      ...installed.map((mod, i) => {
+        const cat = info(mod.id);
+        return card(mod.icon, nameOf(mod), cat ? tr(cat.description) : '', `v${mod.version}`, [
+          h('div', { class: 'row-gap' },
+            registry.needsUpdate(mod.id) ? downloadBtn(cat, 'Обновить') : null,
+            iconBtn('chevU', 'Выше', () => registry.move(mod.id, -1), i === 0 ? 'off' : ''),
+            iconBtn('chevD', 'Ниже', () => registry.move(mod.id, 1), i === installed.length - 1 ? 'off' : ''),
+            iconBtn('trash', 'Удалить', () => removeModule(mod), 'danger')),
+        ]);
+      }),
+    ];
+    const free = catalog.filter(c => !have.has(c.id));
+    const available = free.filter(c => c.available).map(c => card(c.icon, tr(c.name), tr(c.description), `v${c.version} · ${c.size ?? ''}`, [downloadBtn(c, 'Скачать')]));
+    const soon = free.filter(c => !c.available).map(c => card(c.icon, tr(c.name), tr(c.description), null, [h('span', { class: 'chip' }, 'Скоро')], true));
+
+    body.replaceChildren(...[
+      h('p', { class: 'muted' }, 'Скачайте только то, что нужно. Модули загружаются из репозитория проекта и работают офлайн.'),
+      section('Установленные', installedRows),
+      section('Можно установить', available),
+      section('Скоро', soon),
+      catalog.length ? null : h('p', { class: 'muted' }, 'Каталог недоступен. Проверьте подключение к интернету.'),
+    ].filter(Boolean));
+  }
+
+  async function removeModule(mod) {
+    const ok = await confirmDialog(app.t('Удалить модуль «{name}» с устройства? Ваши данные сохранятся и вернутся при повторной установке.', { name: nameOf(mod) }), { okText: 'Удалить', danger: true });
+    if (!ok) return;
+    await registry.uninstall(mod.id);
+    if (app.router.current() === mod.id) app.router.go('hub');
   }
 
   function downloadBtn(item, label) {
@@ -127,18 +153,19 @@ export function openStore(app) {
       btn.replaceChildren('0%');
       try {
         const updating = registry.isInstalled(item.id);
-        if (updating) return updateModule(app, item.id, p => (btn.textContent = Math.round(p * 100) + '%'));
+        if (updating) return updateModule(app, item.id, p => (btn.textContent = Math.round(p * 100) + '%')); // скачивает и перезапускает страницу
         await registry.install(item.id, p => (btn.textContent = Math.round(p * 100) + '%'));
         toast(app.t('«{name}» скачан', { name: tr(item.name) }));
       } catch (e) {
         toast(app.t('Ошибка загрузки: {msg}', { msg: e.message }));
+        render();
       }
-      render();
     });
     return btn;
   }
 
-  const unsub = registry.subscribe(() => app.shell.renderNav());
+  // любое изменение набора или порядка модулей перерисовывает и навигацию, и это окно
+  const unsub = registry.subscribe(() => { app.shell.renderNav(); render(); });
   render();
   const origClose = m.close;
   m.close = () => { unsub(); origClose(); };
@@ -148,11 +175,14 @@ export function openStore(app) {
 // ---------- Уведомления ----------
 
 export async function openNotifications(app, anchor) {
-  document.querySelector('.popover')?.remove();
+  const prev = document.querySelector('.popover');
+  prev?._close?.();
+  if (prev?.dataset.kind === 'notifications') return; // повторное нажатие на колокольчик закрывает окно
   const col = app.db.collection('app/notifications');
-  const pop = h('div', { class: 'popover' });
+  const pop = h('div', { class: 'popover', 'data-kind': 'notifications' });
   document.body.append(pop);
   const close = dismissable(pop, { ignore: [anchor] });
+  pop._close = close;
 
   async function render() {
     const items = (await col.list()).sort((a, b) => b.ts - a.ts);

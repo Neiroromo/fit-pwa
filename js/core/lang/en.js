@@ -40,7 +40,7 @@ export default {
   'Не удалось открыть изображение': 'Could not open the image',
   'Изменение доступно при локальном использовании. После входа через Google имя и аватар подтянутся из аккаунта.': 'Editing is available in local mode. After signing in with Google, the name and avatar will come from your account.',
   'Профиль сохранён': 'Profile saved',
-  'основной': 'main', 'Выше': 'Move up', 'Ниже': 'Move down',
+  'основной': 'main', 'Установленные': 'Installed', 'Можно установить': 'Available to install', 'Виджеты ваших модулей': 'Widgets from your modules', 'Выше': 'Move up', 'Ниже': 'Move down',
   'Удалить модуль «{name}» с устройства? Ваши данные сохранятся и вернутся при повторной установке.': 'Remove the “{name}” module from this device? Your data will be kept and restored if you install it again.',
   'Дополнительные модули не установлены': 'No additional modules installed', 'Добавить модуль': 'Add a module',
   'Данные восстановлены. Перезагрузка…': 'Data restored. Reloading…',
