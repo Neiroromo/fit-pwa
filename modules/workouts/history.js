@@ -24,7 +24,10 @@ export async function openHistory(page, ctx, { onBack }) {
 
   const root = h('div', { class: 'hist' });
 
+  let shown = { sel: null, exKey: null }; // что было выбрано при прошлой отрисовке
+
   function draw() {
+    const tops = [...root.children].map(c => c.scrollTop); // колонки пересоздаются, поэтому запоминаем, где они были прокручены
     const session = sessions.find(s => s.id === sel) ?? null;
     const exercise = session?.exercises.find(e => keyOf(e.name) === exKey) ?? null;
     // Три колонки есть всегда и не меняют размер; пока ничего не выбрано, правые показывают подсказку
@@ -32,6 +35,10 @@ export async function openHistory(page, ctx, { onBack }) {
     const deepest = exercise ? 2 : session ? 1 : 0; // на узких экранах виден только самый глубокий открытый уровень
     cols.forEach((c, i) => c.classList.toggle('last', i === deepest));
     root.replaceChildren(...cols);
+    // позиция прокрутки сохраняется, пока колонка показывает то же содержимое (список тренировок — всегда; упражнения — для той же тренировки; график — для того же упражнения)
+    const same = [true, sel === shown.sel, sel === shown.sel && exKey === shown.exKey];
+    cols.forEach((c, i) => { if (same[i]) c.scrollTop = tops[i] ?? 0; });
+    shown = { sel, exKey };
   }
 
   /** Только для узких экранов, где видна одна ступень: стрелка назад на предыдущую. На широких не показывается. */
