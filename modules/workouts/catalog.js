@@ -137,7 +137,7 @@ export function renderDetail(ctx, ex, { onPick, onBack } = {}) {
 }
 
 /** Модальный список с поиском и фильтрами. */
-export function openPicker(ctx, { onPick, current }) {
+export function openPicker(ctx, { onPick, current, query }) {
   const { h, icon, modal, raw } = ctx.ui;
   const lang = ctx.contentLang('exercises');
   const L = labels(lang);
@@ -161,6 +161,7 @@ export function openPicker(ctx, { onPick, current }) {
 
   const search = h('input', { class: 'input', type: 'search', placeholder: 'Поиск по названию…' });
   search.addEventListener('input', () => { pq = parseQuery(search.value); state.limit = 40; renderList(); });
+  if (query) { search.value = query; pq = parseQuery(query); }
   const filters = h('div', { class: 'ex-filters' });
   const list = h('div', { class: 'ex-results' });
 

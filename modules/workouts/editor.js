@@ -29,21 +29,36 @@ export function openEditor(el, ctx, template, { onDone }) {
     list.replaceChildren(...draft.exercises.map((ex, i) => {
       const exName = h('input', { class: 'input fld', placeholder: 'Название упражнения', value: ex.name, maxlength: '60', autocomplete: 'off' });
       const sug = h('div', { class: 'ex-sug', hidden: true });
-      let sugList = [], sugAt = -1, sugToken = 0;
-      const hideSug = () => { sugToken++; sugList = []; sugAt = -1; sug.hidden = true; sug.replaceChildren(); };
+      // Подсказок может быть больше трёх: показывается окно из 3 штук, которое сдвигается вслед за выбором (Tab / стрелки)
+      let sugList = [], sugAt = -1, sugWin = 0, sugToken = 0;
+      const hideSug = () => { sugToken++; sugList = []; sugAt = -1; sugWin = 0; sug.hidden = true; sug.replaceChildren(); };
       const choose = found => { applyPick(ex, found); render(); list.children[i]?.querySelectorAll('.fld')[1]?.focus(); };
       const showSug = async () => {
         const mine = ++sugToken;
-        const found = exName.value.trim() ? await suggest(exName.value, 3).catch(() => []) : [];
+        const found = exName.value.trim() ? await suggest(exName.value, 30).catch(() => []) : [];
         if (mine !== sugToken || document.activeElement !== exName) return;
-        sugList = found; sugAt = -1;
-        sug.hidden = !found.length;
-        const lang = ctx.contentLang('exercises');
-        sug.replaceChildren(...found.map(f => h('button', { class: 'ex-sug-item', onPointerdown: e => { e.preventDefault(); choose(f); } },
-          raw(displayName(f, lang)),
-          f.ru && f.n !== displayName(f, lang) ? h('span', { class: 'muted small' }, raw(f.n)) : null)));
+        sugList = found; sugAt = -1; sugWin = 0;
+        drawSug();
       };
-      const mark = () => [...sug.children].forEach((b, k) => b.classList.toggle('on', k === sugAt));
+      const drawSug = () => {
+        sug.hidden = !sugList.length;
+        const lang = ctx.contentLang('exercises');
+        sug.replaceChildren(...sugList.slice(sugWin, sugWin + 3).map((f, k) => h('button', {
+          class: 'ex-sug-item' + (sugWin + k === sugAt ? ' on' : ''), tabindex: '-1', onPointerdown: e => { e.preventDefault(); choose(f); },
+        },
+        raw(displayName(f, lang)),
+        f.ru && f.n !== displayName(f, lang) ? h('span', { class: 'muted small' }, raw(f.n)) : null)));
+      };
+      /** Сдвигает выбор на d; окно из трёх следует за ним. Возвращает false, если сдвинуться некуда. */
+      const moveSug = d => {
+        const to = Math.min(sugList.length - 1, Math.max(-1, sugAt + d));
+        if (to === sugAt) return false;
+        sugAt = to;
+        if (sugAt >= sugWin + 3) sugWin = sugAt - 2;
+        if (sugAt >= 0 && sugAt < sugWin) sugWin = sugAt;
+        drawSug();
+        return true;
+      };
       exName.addEventListener('input', () => {
         ex.name = exName.value;
         if (ex.ref && ex.name !== ex.refName) { delete ex.ref; delete ex.refName; } // название изменили вручную — связь с каталогом снимаем
@@ -52,13 +67,18 @@ export function openEditor(el, ctx, template, { onDone }) {
       exName.addEventListener('focus', showSug);
       exName.addEventListener('blur', hideSug);
       exName.addEventListener('keydown', e => {
-        if (sugList.length && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
-          e.preventDefault();
-          sugAt = ((sugAt + 1 + (e.key === 'ArrowDown' ? 1 : -1) + sugList.length + 1) % (sugList.length + 1)) - 1; // -1 = ничего не выбрано
-          mark();
+        if (!sugList.length) return;
+        const down = e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey);
+        const up = e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey && sugAt > 0);
+        if (down || up) {
+          e.preventDefault(); // подсказки кончились — Tab ничего не делает
+          moveSug(down ? 1 : -1);
         } else if (e.key === 'Enter' && sugAt >= 0) {
           e.preventDefault();
           choose(sugList[sugAt]);
+        } else if (e.key === 'Escape') {
+          e.preventDefault(); // убираем подсказки, текст остаётся; следующий Esc отменит ввод
+          hideSug();
         }
       });
       const comment = h('input', { class: 'input fld', placeholder: 'Комментарий (необязательно)', value: ex.comment, maxlength: '120' });
@@ -68,7 +88,7 @@ export function openEditor(el, ctx, template, { onDone }) {
       const keep = (input, read, write) => {
         let snap;
         input.addEventListener('focus', () => (snap = read()));
-        input.addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); write(snap); input.blur(); } });
+        input.addEventListener('keydown', e => { if (e.key === 'Escape' && !e.defaultPrevented) { e.preventDefault(); write(snap); input.blur(); } });
       };
       keep(exName, () => [ex.name, ex.ref, ex.refName], ([n, r, rn]) => {
         ex.name = n;
@@ -110,7 +130,8 @@ export function openEditor(el, ctx, template, { onDone }) {
   /** Подставляет упражнение из каталога в карточку ex (или создаёт новую, если ex не задан). */
   function pick(ex) {
     openPicker(ctx, {
-      current: ex?.ref, // уже выбранное из каталога упражнение: окно сразу покажет его карточку, из неё можно вернуться к списку и выбрать другое
+      query: ex?.name?.trim(), // введённый текст сразу попадает в поиск каталога
+      current: ex?.ref,// уже выбранное из каталога упражнение: окно сразу покажет его карточку, из неё можно вернуться к списку и выбрать другое
       onPick(found, lang) {
         const target = ex ?? newExercise();
         applyPick(target, found, lang);
@@ -171,7 +192,7 @@ export function openEditor(el, ctx, template, { onDone }) {
       e.preventDefault();
       const all = [...el.querySelectorAll('.fld')], next = all[all.indexOf(t) + 1];
       if (next) next.focus(); else t.blur();
-    } else if (e.key === 'Escape' && !e.defaultPrevented && !document.querySelector('.overlay') && !/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) {
+    } else if (e.key === 'Escape' && !e.defaultPrevented && !document.querySelector('.overlay') && !t.classList?.contains('fld')) { // в текстовых полях Esc обрабатывают сами поля; чекбокс, кнопки и пр. — как «вне полей»
       askLeave();
     }
   };
