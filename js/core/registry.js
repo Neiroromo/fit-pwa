@@ -14,7 +14,7 @@ const baseUrl = id => new URL(`modules/${id}/`, document.baseURI);
 
 export function createRegistry(db) {
   let catalog = [];
-  let installed = []; // [{id, name, icon, version, entry, files, styles, widgets}] — в порядке навигации
+  let installed = []; // [{id, name, icon, version, entry, files, styles, widgets, content}] — в порядке навигации
   const loaded = new Map();
   const subs = new Set();
   const emit = () => subs.forEach(fn => fn());
@@ -61,13 +61,13 @@ export function createRegistry(db) {
       for (const f of files) {
         const url = new URL(f, base);
         const res = await fetch(url, { cache: 'reload' });
-        if (!res.ok) throw new Error(`Не удалось скачать ${f}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${f}`);
         await cache?.put(url, res);
         onProgress(++n / files.length);
       }
       const entry = {
         id: manifest.id, name: manifest.name, icon: manifest.icon, version: manifest.version,
-        entry: manifest.entry, styles: manifest.styles ?? [], files, widgets: manifest.widgets ?? [],
+        entry: manifest.entry, styles: manifest.styles ?? [], files, widgets: manifest.widgets ?? [], content: manifest.content ?? [],
       };
       installed = installed.filter(m => m.id !== id);
       installed.push(entry);
@@ -105,7 +105,7 @@ export function createRegistry(db) {
         p = import('../hub/index.js').then(m => m.default);
       } else {
         const m = installed.find(x => x.id === id);
-        if (!m) return Promise.reject(new Error('Модуль не установлен: ' + id));
+        if (!m) return Promise.reject(new Error('Module not installed: ' + id));
         const base = baseUrl(id);
         for (const css of m.styles) {
           if (document.querySelector(`link[data-module="${id}"][data-f="${css}"]`)) continue;

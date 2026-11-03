@@ -52,7 +52,7 @@ export function openEditor(el, ctx, template, { onDone }) {
     openPicker(ctx, {
       onPick(found) {
         const target = ex ?? newExercise();
-        target.name = displayName(found);
+        target.name = displayName(found, ctx.contentLang('exercises'));
         target.ref = found.id;
         target.refName = target.name;
         if (!ex) {

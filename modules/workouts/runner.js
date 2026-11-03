@@ -159,7 +159,7 @@ export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
           .map(ex => ({ name: ex.name, comment: ex.comment, sets: ex.sets.filter(x => x.done).map(({ kind, kg, reps, restSec }) => ({ kind, kg, reps, restSec })) }))
           .filter(ex => ex.sets.length),
       });
-      ctx.notify(`Тренировка «${s.name}» завершена: ${fmtClock((endedAt - s.startedAt) / 1000)}`);
+      ctx.notify(ctx.t('Тренировка «{name}» завершена: {time}', { name: s.name, time: fmtClock((endedAt - s.startedAt) / 1000) }));
     }
     await ctx.db.kv.set('active', null);
     dispose(false);

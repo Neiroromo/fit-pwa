@@ -1,7 +1,8 @@
 // Хаб — встроенный (неудаляемый) модуль. Показывает виджеты других модулей на сетке.
 // Раскладка хранится как [{id, key: '<moduleId>/<widgetId>', x, y, w, h}].
 
-import { h, icon, iconBtn, modal, clamp, uid } from '../core/ui.js';
+import { clamp, uid } from '../core/ui.js';
+import { translator } from '../core/i18n.js';
 
 const GAP = 12;
 
@@ -32,6 +33,7 @@ function findFree(items, cols, w, hh) {
 
 export default {
   async mount(page, ctx) {
+    const { h, icon, iconBtn, modal } = ctx.ui;
     let layout = await ctx.db.kv.get('layout', []);
     let edit = false;
     let cols = 4;
@@ -47,7 +49,11 @@ export default {
     );
 
     const save = () => ctx.db.kv.set('layout', layout);
-    const installedWidgets = () => ctx.registry.installed().flatMap(m => (m.widgets ?? []).map(w => ({ ...w, key: `${m.id}/${w.id}`, moduleName: m.name })));
+    // названия виджетов и модулей переводятся словарём самого модуля на язык Хаба
+    const installedWidgets = () => ctx.registry.installed().flatMap(m => {
+      const { tr } = translator(m.id, ctx.lang);
+      return (m.widgets ?? []).map(w => ({ ...w, key: `${m.id}/${w.id}`, title: tr(w.title), description: w.description && tr(w.description), moduleName: tr(m.name) }));
+    });
     const widgetMeta = key => installedWidgets().find(w => w.key === key);
 
     function measure() {
@@ -63,7 +69,7 @@ export default {
         const [mid, wid] = item.key.split('/');
         const mod = await ctx.registry.load(mid);
         const def = mod.widgets?.find(w => w.id === wid);
-        if (!def) throw new Error('нет виджета');
+        if (!def) throw new Error('widget not found');
         const dispose = await def.render(body, { ...ctx.moduleContext(mid), size: { w: item.w, h: item.h } });
         if (typeof dispose === 'function') cleanups.push(dispose);
       } catch (e) {
@@ -75,7 +81,7 @@ export default {
     function render() {
       cleanups.forEach(fn => { try { fn(); } catch { /* ignore */ } });
       cleanups = [];
-      editBtn.textContent = edit ? 'Готово' : 'Изменить';
+      editBtn.textContent = ctx.t(edit ? 'Готово' : 'Изменить');
       addBtn.hidden = !edit;
       grid.className = 'hub-grid' + (edit ? ' editing' : '');
       grid.style.gridTemplateColumns = `repeat(${cols}, ${cell}px)`;
@@ -172,7 +178,7 @@ export default {
             h('div', { class: 'grow' }, h('strong', null, w.title), h('span', { class: 'muted small block' }, w.description ?? '')),
             h('div', { class: 'size-chips' }, w.sizes.filter(([sw]) => sw <= cols).map(([sw, sh]) =>
               h('button', {
-                class: 'chip-btn', title: `Добавить ${sw}×${sh}`,
+                class: 'chip-btn', title: ctx.t('Добавить {size}', { size: `${sw}×${sh}` }),
                 onClick: () => {
                   const cur = resolve(layout.filter(l => widgetMeta(l.key)), cols);
                   const pos = findFree(cur, cols, sw, sh);

@@ -1,12 +1,13 @@
-import { MONTHS, DAYS, dayKey } from './data.js';
+import { dayKey, makeFmt } from './data.js';
 
 /**
  * Сетка месяца с отметками тренировок.
  * marks: Map<'YYYY-MM-DD', number> — сколько тренировок в день.
  * nav: {onPrev, onNext} — показать стрелки переключения месяца (необязательно).
  */
-export function monthGrid(ui, { year, month, marks, nav, onDay, compact = false }) {
-  const { h, icon } = ui;
+export function monthGrid(ctx, { year, month, marks, nav, onDay, compact = false }) {
+  const { h, icon } = ctx.ui;
+  const fmt = makeFmt(ctx);
   const first = new Date(year, month, 1);
   const lead = (first.getDay() + 6) % 7;
   const days = new Date(year, month + 1, 0).getDate();
@@ -19,18 +20,18 @@ export function monthGrid(ui, { year, month, marks, nav, onDay, compact = false 
     const n = marks.get(key) ?? 0;
     cells.push(h('button', {
       class: 'cal-cell' + (n ? ' marked' : '') + (key === today ? ' today' : ''),
-      title: n ? `Тренировок: ${n}` : '',
+      title: n ? ctx.t('Тренировок: {n}', { n }) : '',
       onClick: e => { if (onDay) { e.stopPropagation(); onDay(key, n); } },
     }, String(d)));
   }
 
   const head = h('div', { class: 'cal-head' },
-    h('strong', null, `${MONTHS[month]} ${year}`),
+    h('strong', null, `${fmt.month(month)} ${year}`),
     nav ? h('div', { class: 'row-gap' },
       h('button', { class: 'icon-btn', 'aria-label': 'Предыдущий месяц', onClick: e => { e.stopPropagation(); nav.onPrev(); } }, icon('chevL')),
       h('button', { class: 'icon-btn', 'aria-label': 'Следующий месяц', onClick: e => { e.stopPropagation(); nav.onNext(); } }, icon('chevR'))) : null);
 
   return h('div', { class: 'cal' + (compact ? ' compact' : '') },
     head,
-    h('div', { class: 'cal-grid' }, DAYS.map(d => h('span', { class: 'cal-dow' }, d)), cells));
+    h('div', { class: 'cal-grid' }, fmt.dayNames().map(d => h('span', { class: 'cal-dow' }, d)), cells));
 }

@@ -6,7 +6,7 @@ const MODULES = 'fitpwa-modules';
 
 const SHELL_FILES = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
-  'js/main.js', 'js/core/db.js', 'js/core/registry.js', 'js/core/shell.js', 'js/core/profile.js', 'js/core/ui.js',
+  'js/main.js', 'js/core/i18n.js', 'js/core/lang/en.js', 'js/core/db.js', 'js/core/registry.js', 'js/core/shell.js', 'js/core/profile.js', 'js/core/ui.js',
   'js/hub/index.js', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',
 ];
 

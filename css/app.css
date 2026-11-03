@@ -165,3 +165,5 @@ button:disabled { cursor: default; }
   .page { padding: 16px 16px 24px; }
   .popover { left: 8px; right: 8px; width: auto; bottom: 74px; }
 }
+
+.lang-mod { margin-top: 10px; }

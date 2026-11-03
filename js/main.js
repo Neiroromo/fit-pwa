@@ -1,7 +1,8 @@
 import { IdbAdapter, createDb } from './core/db.js';
 import { createRegistry } from './core/registry.js';
 import { buildShell, openStore } from './core/shell.js';
-import { ui } from './core/ui.js';
+import { ui, createUi, setAppTranslator } from './core/ui.js';
+import { initI18n, preload, translator, contentLang } from './core/i18n.js';
 
 const db = createDb(new IdbAdapter());
 const registry = createRegistry(db);
@@ -22,10 +23,17 @@ const app = { db, registry, router, profile: { name: 'Гость', avatar: null 
 /** Контекст, который получает каждый модуль. Модуль не знает о ядре ничего сверх этого. */
 function moduleContext(id) {
   const scoped = db.scope(id);
+  const T = translator(id); // язык этого модуля (может отличаться от языка приложения)
   return {
     id,
     db: scoped,
-    ui,
+    ui: createUi(() => T.tr),
+    t: T.t,
+    plural: T.plural,
+    lang: T.lang,
+    locale: T.locale,
+    /** Язык контента модуля (например, ctx.contentLang('exercises')): отдельная настройка или язык модуля. */
+    contentLang: contentId => contentLang(id, contentId),
     router,
     registry,
     moduleContext,
@@ -41,6 +49,9 @@ async function boot() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 
   await registry.init();
+  await initI18n(db, registry.installed().map(m => m.id));
+  app.t = translator('app').t;
+  setAppTranslator(translator('app').tr);
   app.profile = await db.kv.get('app/profile', app.profile);
   app.shell = buildShell(app);
   app.openStore = () => openStore(app);
@@ -63,6 +74,7 @@ async function boot() {
     app.shell.view.replaceChildren();
     try {
       const mod = await registry.load(id);
+      await preload([id]); // словари только что скачанного модуля
       if (mine !== token) return;
       const page = document.createElement('div');
       page.className = 'page';
@@ -70,7 +82,7 @@ async function boot() {
       cleanup = await mod.mount(page, moduleContext(id), params);
     } catch (e) {
       console.error(e);
-      app.shell.view.replaceChildren(ui.h('div', { class: 'page' }, ui.h('p', { class: 'muted' }, 'Не удалось открыть модуль: ' + e.message)));
+      app.shell.view.replaceChildren(ui.h('div', { class: 'page' }, ui.h('p', { class: 'muted' }, app.t('Не удалось открыть модуль: {msg}', { msg: e.message }))));
     }
   }
   addEventListener('hashchange', route);

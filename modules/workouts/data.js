@@ -7,8 +7,6 @@
 //                exercises:[{name, comment, sets:[{kind:'warmup'|'work', kg, reps, restSec}]}]}
 //   kv: 'active' — идущая сейчас тренировка (переживает перезагрузку), 'settings' — {rest}
 
-export const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-export const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 export const DEFAULT_REST = 90;
 
 const pad = n => String(n).padStart(2, '0');
@@ -25,16 +23,24 @@ export function fmtClock(sec) {
   return hh ? `${hh}:${pad(mm)}:${pad(ss)}` : `${mm}:${pad(ss)}`;
 }
 
-/** 3900 → «1 ч 05 мин» */
-export function fmtHuman(sec) {
-  const m = Math.round(sec / 60);
-  return m >= 60 ? `${Math.floor(m / 60)} ч ${pad(m % 60)} мин` : `${m} мин`;
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+/** Форматирование с учётом языка модуля (ctx.locale / ctx.t). */
+export function makeFmt({ locale, t }) {
+  return {
+    month: m => cap(new Date(2000, m, 1).toLocaleDateString(locale, { month: 'long' })),
+    /** Пн…Вс (неделя с понедельника; 1 января 2024 — понедельник) */
+    dayNames: () => Array.from({ length: 7 }, (_, i) => cap(new Date(2024, 0, 1 + i).toLocaleDateString(locale, { weekday: 'short' }))),
+    /** 3900 → «1 ч 05 мин» */
+    human(sec) {
+      const m = Math.round(sec / 60);
+      return m >= 60 ? t('{h} ч {m} мин', { h: Math.floor(m / 60), m: pad(m % 60) }) : t('{m} мин', { m });
+    },
+    date: ts => new Date(ts).toLocaleDateString(locale, { day: 'numeric', month: 'long' }),
+    weekday: ts => new Date(ts).toLocaleDateString(locale, { weekday: 'short' }),
+    set: s => t('{kg} кг × {reps}', { kg: s.kg ?? 0, reps: s.reps ?? 0 }),
+  };
 }
-
-export const fmtDate = ts => new Date(ts).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
-export const fmtWeekday = ts => new Date(ts).toLocaleDateString('ru-RU', { weekday: 'short' });
-
-export const fmtSet = s => `${s.kg ?? 0} кг × ${s.reps ?? 0}`;
 
 export function startOfWeek(date = new Date()) {
   const d = new Date(date);

@@ -1,18 +1,15 @@
 // Модуль «Тренировки»: календарь + статистика, список тренировок, редактор, запуск.
 
-import { DEFAULT_REST, dayKey, groupByDay, fmtClock, fmtHuman, fmtDate, fmtWeekday, fmtSet, sessionTotals, startOfWeek, buildActive, DAYS } from './data.js';
+import { DEFAULT_REST, dayKey, groupByDay, fmtClock, makeFmt, sessionTotals, startOfWeek, buildActive } from './data.js';
 import { monthGrid } from './calendar.js';
 import { openEditor } from './editor.js';
 import { openRunner } from './runner.js';
 
-const plural = (n, one, few, many) => {
-  const m = n % 100, d = n % 10;
-  return m > 10 && m < 15 ? many : d === 1 ? one : d >= 2 && d <= 4 ? few : many;
-};
-
 export default {
   async mount(page, ctx, params) {
     const { h, icon, iconBtn, confirmDialog, toast, modal } = ctx.ui;
+    const { plural } = ctx;
+    const fmt = makeFmt(ctx);
     const templatesCol = ctx.db.collection('templates');
     const sessionsCol = ctx.db.collection('sessions');
 
@@ -50,7 +47,7 @@ export default {
       upd();
       const iv = setInterval(() => (t.isConnected ? upd() : clearInterval(iv)), 1000);
       return h('button', { class: 'banner', onClick: () => showRunner(active) },
-        icon('play', 18), h('span', { class: 'grow' }, `Идёт тренировка «${active.name}»`), t, icon('chevR', 18));
+        icon('play', 18), h('span', { class: 'grow' }, ctx.t('Идёт тренировка «{name}»', { name: active.name })), t, icon('chevR', 18));
     }
 
     // ---------- календарь ----------
@@ -63,7 +60,7 @@ export default {
         drawCalendar(box, sessions);
       };
       const zone = h('div', { class: 'cal-zone', role: 'button', tabindex: '0', 'aria-expanded': String(expanded), onClick: toggle },
-        monthGrid(ctx.ui, {
+        monthGrid(ctx, {
           year, month, marks, nav: { onPrev: () => shift(-1), onNext: () => shift(1) },
           onDay: expanded ? (key, n) => { calState.day = calState.day === key ? null : key; drawCalendar(box, sessions); } : null,
         }),
@@ -83,8 +80,8 @@ export default {
       box.append(h('div', { class: 'cal-stats' },
         h('div', { class: 'stat-row' },
           h('div', null, h('strong', null, String(totals.count)), h('span', { class: 'muted small' }, plural(totals.count, 'тренировка', 'тренировки', 'тренировок'))),
-          h('div', null, h('strong', null, totals.sec ? fmtHuman(totals.sec) : '—'), h('span', { class: 'muted small' }, 'всего времени'))),
-        calState.day ? h('button', { class: 'link', onClick: () => { calState.day = null; drawCalendar(box, sessions); } }, `Показан день ${calState.day.split('-').reverse().join('.')} · показать весь месяц`) : null,
+          h('div', null, h('strong', null, totals.sec ? fmt.human(totals.sec) : '—'), h('span', { class: 'muted small' }, 'всего времени'))),
+        calState.day ? h('button', { class: 'link', onClick: () => { calState.day = null; drawCalendar(box, sessions); } }, ctx.t('Показан день {day} · показать весь месяц', { day: calState.day.split('-').reverse().join('.') })) : null,
         shown.length ? shown.map(s => sessionItem(s, box, sessions)) : h('p', { class: 'muted empty' }, 'В этом периоде тренировок нет')));
     }
 
@@ -92,18 +89,18 @@ export default {
       const open = calState.openSession === s.id;
       return h('div', { class: 'sess' + (open ? ' open' : '') },
         h('button', { class: 'sess-head', onClick: () => { calState.openSession = open ? null : s.id; drawCalendar(box, sessions); } },
-          h('span', { class: 'sess-date' }, h('strong', null, fmtDate(s.startedAt)), h('span', { class: 'muted small' }, fmtWeekday(s.startedAt))),
+          h('span', { class: 'sess-date' }, h('strong', null, fmt.date(s.startedAt)), h('span', { class: 'muted small' }, fmt.weekday(s.startedAt))),
           h('span', { class: 'grow' }, s.name),
-          h('span', { class: 'muted' }, fmtHuman(s.durationSec)),
+          h('span', { class: 'muted' }, fmt.human(s.durationSec)),
           icon(open ? 'chevU' : 'chevD', 16)),
         open ? h('div', { class: 'sess-body' }, s.exercises.map(ex =>
           h('div', { class: 'sess-ex' },
             h('strong', null, ex.name), ex.comment ? h('span', { class: 'muted small' }, ' · ' + ex.comment) : null,
             h('div', { class: 'sess-sets' }, ex.sets.map((x, i) =>
               h('div', { class: 'sess-set' },
-                h('span', { class: 'muted' }, x.kind === 'warmup' ? 'Разминка' : `Сет ${ex.sets.slice(0, i + 1).filter(y => y.kind === 'work').length}`),
-                h('span', null, fmtSet(x)),
-                h('span', { class: 'muted small' }, x.restSec != null ? `отдых ${fmtClock(x.restSec)}` : '')))))))
+                h('span', { class: 'muted' }, x.kind === 'warmup' ? 'Разминка' : ctx.t('Сет {n}', { n: ex.sets.slice(0, i + 1).filter(y => y.kind === 'work').length })),
+                h('span', null, fmt.set(x)),
+                h('span', { class: 'muted small' }, x.restSec != null ? ctx.t('отдых {time}', { time: fmtClock(x.restSec) }) : '')))))))
         : null);
     }
 
@@ -119,7 +116,7 @@ export default {
       box.replaceChildren(...templates.map(t => {
         const last = lastDone.get(t.id);
         const remove = async () => {
-          if (!(await confirmDialog(`Удалить тренировку «${t.name}»? История выполненных тренировок сохранится.`, { okText: 'Удалить', danger: true }))) return false;
+          if (!(await confirmDialog(ctx.t('Удалить тренировку «{name}»? История выполненных тренировок сохранится.', { name: t.name }), { okText: 'Удалить', danger: true }))) return false;
           await templatesCol.remove(t.id);
           showHome();
           return true;
@@ -128,7 +125,7 @@ export default {
           h('div', { class: 'grow', onClick: () => showEditor(t) },
             h('strong', null, t.name),
             h('span', { class: 'muted small block' },
-              `${t.exercises.length} ${plural(t.exercises.length, 'упражнение', 'упражнения', 'упражнений')}` + (last ? ` · последняя: ${fmtDate(last)}` : ''))),
+              `${t.exercises.length} ${plural(t.exercises.length, 'упражнение', 'упражнения', 'упражнений')}` + (last ? ctx.t(' · последняя: {date}', { date: fmt.date(last) }) : ''))),
           iconBtn('edit', 'Редактировать', () => showEditor(t)),
           iconBtn('trash', 'Удалить тренировку', remove, 'danger desktop-only'),
           h('button', { class: 'btn primary', onClick: () => startWorkout(t, active) }, icon('play', 14), 'Start'));
@@ -177,7 +174,7 @@ export default {
 
     async function startWorkout(tpl, active) {
       if (active) {
-        const resume = await confirmDialog(`Уже идёт тренировка «${active.name}». Вернуться к ней? (Чтобы начать новую, сначала завершите или отмените текущую.)`, { okText: 'Вернуться', title: 'Тренировка уже запущена' });
+        const resume = await confirmDialog(ctx.t('Уже идёт тренировка «{name}». Вернуться к ней? (Чтобы начать новую, сначала завершите или отмените текущую.)', { name: active.name }), { okText: 'Вернуться', title: 'Тренировка уже запущена' });
         if (resume) showRunner(active);
         return;
       }
@@ -227,12 +224,12 @@ export default {
         const sessions = await ctx.db.collection('sessions').list();
         const monday = startOfWeek();
         const week = sessions.filter(s => s.startedAt >= monday.getTime());
-        const days = DAYS.map((d, i) => {
+        const days = makeFmt(ctx).dayNames().map((d, i) => {
           const dt = new Date(monday); dt.setDate(monday.getDate() + i);
           return { d, hit: week.some(s => dayKey(s.startedAt) === dayKey(dt)), today: dayKey(dt) === dayKey(Date.now()) };
         });
         body.replaceChildren(...[
-          h('div', { class: 'big-num' }, String(week.length), h('span', { class: 'muted' }, plural(week.length, 'тренировка', 'тренировки', 'тренировок'))),
+          h('div', { class: 'big-num' }, String(week.length), h('span', { class: 'muted' }, ctx.plural(week.length, 'тренировка', 'тренировки', 'тренировок'))),
           ctx.size.w >= 2 ? h('div', { class: 'week-strip' }, days.map(x =>
             h('div', { class: 'wd' + (x.hit ? ' hit' : '') + (x.today ? ' today' : '') }, h('span', { class: 'dot' }), h('span', { class: 'muted small' }, x.d)))) : null,
         ].filter(Boolean));
@@ -245,7 +242,7 @@ export default {
         const sessions = await ctx.db.collection('sessions').list();
         const marks = new Map([...groupByDay(sessions)].map(([k, v]) => [k, v.length]));
         const d = new Date();
-        body.replaceChildren(monthGrid(ctx.ui, { year: d.getFullYear(), month: d.getMonth(), marks, compact: true }));
+        body.replaceChildren(monthGrid(ctx, { year: d.getFullYear(), month: d.getMonth(), marks, compact: true }));
         body.onclick = () => ctx.router.go('workouts');
       },
     },
@@ -261,7 +258,7 @@ export default {
         }
         body.replaceChildren(h('div', { class: 'quick-list' },
           active ? h('button', { class: 'quick-row active', onClick: () => ctx.router.go('workouts', { start: active.workoutId }) },
-            h('span', { class: 'grow' }, `Идёт: ${active.name}`), icon('chevR', 16)) : null,
+            h('span', { class: 'grow' }, ctx.t('Идёт: {name}', { name: active.name })), icon('chevR', 16)) : null,
           templates.slice(0, active ? limit - 1 : limit).map(t =>
             h('button', { class: 'quick-row', onClick: () => ctx.router.go('workouts', { start: t.id }) },
               h('span', { class: 'grow' }, t.name), icon('play', 14)))));

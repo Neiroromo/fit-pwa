@@ -3,6 +3,7 @@
 
 import { h, icon, modal, toast, dismissable } from './ui.js';
 import { openProfile, avatarEl } from './profile.js';
+import { translator } from './i18n.js';
 
 export function buildShell(app) {
   const { registry, router } = app;
@@ -49,6 +50,7 @@ export function buildShell(app) {
 
 export function openStore(app) {
   const { registry } = app;
+  const { tr } = translator('app');
   const body = h('div', { class: 'store' });
   const m = modal({ title: 'Модули', body, wide: true });
 
@@ -85,9 +87,9 @@ export function openStore(app) {
       try {
         const updating = registry.isInstalled(item.id);
         await registry.install(item.id, p => (btn.textContent = Math.round(p * 100) + '%'));
-        toast(updating ? `«${item.name}» обновлён. Перезагрузите страницу.` : `«${item.name}» скачан`);
+        toast(app.t(updating ? '«{name}» обновлён. Перезагрузите страницу.' : '«{name}» скачан', { name: tr(item.name) }));
       } catch (e) {
-        toast('Ошибка загрузки: ' + e.message);
+        toast(app.t('Ошибка загрузки: {msg}', { msg: e.message }));
       }
       render();
     });
@@ -122,7 +124,7 @@ export async function openNotifications(app, anchor) {
       items.length
         ? h('div', { class: 'notif-list' }, items.map(n =>
           h('div', { class: 'notif' + (n.read ? '' : ' unread') }, h('span', null, n.text),
-            h('span', { class: 'muted small' }, new Date(n.ts).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })))))
+            h('span', { class: 'muted small' }, new Date(n.ts).toLocaleString(translator('app').locale, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })))))
         : h('p', { class: 'muted empty' }, 'Пока ничего нового'),
     );
     for (const n of items.filter(n => !n.read)) await col.put({ ...n, read: true });

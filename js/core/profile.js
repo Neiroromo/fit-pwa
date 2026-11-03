@@ -2,6 +2,7 @@
 // подписка (заглушка), резервная копия данных.
 
 import { h, icon, iconBtn, toast, dismissable, confirmDialog } from './ui.js';
+import { LANGS, getSettings, saveSettings, translator } from './i18n.js';
 
 export function avatarEl(profile, size = 36) {
   const el = h('span', { class: 'avatar', style: { width: size + 'px', height: size + 'px', fontSize: size * 0.42 + 'px' } });
@@ -50,6 +51,7 @@ export function openProfile(app, anchor) {
       row('user', 'Имя и аватар', { onClick: () => go('profile') }),
       row('google', 'Войти через Google', { sub: 'Синхронизация данных между устройствами', soon: true }),
       row('grid', 'Настроить модули', { onClick: () => go('modules') }),
+      row('globe', 'Язык', { sub: LANGS[getSettings().app], onClick: () => go('lang') }),
       row('database', 'Данные на устройстве', { onClick: () => go('data') }),
       row('star', 'Подписка', { soon: true }),
     ],
@@ -96,7 +98,7 @@ export function openProfile(app, anchor) {
               iconBtn('chevU', 'Выше', async () => { await app.registry.move(m.id, -1); render(); }, i === 0 ? 'off' : ''),
               iconBtn('chevD', 'Ниже', async () => { await app.registry.move(m.id, 1); render(); }, i === items.length - 1 ? 'off' : ''),
               iconBtn('trash', 'Удалить', async () => {
-                const ok = await confirmDialog(`Удалить модуль «${m.name}» с устройства? Ваши данные сохранятся и вернутся при повторной установке.`, { okText: 'Удалить', danger: true });
+                const ok = await confirmDialog(app.t('Удалить модуль «{name}» с устройства? Ваши данные сохранятся и вернутся при повторной установке.', { name: translator(m.id, getSettings().app).tr(m.name) }), { okText: 'Удалить', danger: true });
                 if (!ok) return;
                 await app.registry.uninstall(m.id);
                 if (app.router.current() === m.id) app.router.go('hub');
@@ -107,6 +109,39 @@ export function openProfile(app, anchor) {
       ];
     },
 
+    // Язык: приложение целиком, отдельные модули и контент модулей (например, названия и техника упражнений) настраиваются независимо
+    lang: () => {
+      const cur = getSettings();
+      const draft = { app: cur.app, modules: { ...cur.modules }, content: { ...cur.content } };
+      const select = (value, options, onChange) => {
+        const el = h('select', { class: 'input' }, options.map(([v, label]) => h('option', { value: v, selected: v === value }, label)));
+        el.addEventListener('change', () => onChange(el.value));
+        return el;
+      };
+      const langOptions = Object.entries(LANGS);
+      const withAuto = (autoLabel) => [['auto', autoLabel], ...langOptions];
+      const items = [{ id: 'hub', name: 'Хаб', content: [] }, ...app.registry.installed()];
+      const trIn = id => translator(id, cur.app).tr; // названия модулей и контента — словарём модуля на язык приложения
+      return [
+        head('Язык'),
+        h('div', { class: 'form' },
+          h('label', { class: 'field' }, h('span', null, 'Язык приложения'), select(draft.app, langOptions, v => { draft.app = v; })),
+          h('p', { class: 'muted small' }, 'Каждый модуль и его контент можно переключить отдельно. «Как в приложении» — язык следует за настройкой выше.'),
+          ...items.flatMap(m => [
+            h('strong', { class: 'lang-mod' }, trIn(m.id)(m.name)),
+            h('label', { class: 'field' }, h('span', null, 'Интерфейс модуля'),
+              select(draft.modules[m.id] ?? 'auto', withAuto('Как в приложении'), v => { draft.modules[m.id] = v; })),
+            ...(m.content ?? []).map(c => h('label', { class: 'field' }, h('span', null, trIn(m.id)(c.title)),
+              select(draft.content[`${m.id}.${c.id}`] ?? 'auto', withAuto('Как у модуля'), v => { draft.content[`${m.id}.${c.id}`] = v; }))),
+          ]),
+          h('button', { class: 'btn primary', onClick: async () => {
+            await saveSettings(app.db, draft);
+            toast('Язык сохранён. Перезагрузка…');
+            setTimeout(() => location.reload(), 600);
+          } }, 'Применить')),
+      ];
+    },
+
     data: () => {
       const file = h('input', { type: 'file', accept: 'application/json', hidden: true });
       file.addEventListener('change', async () => {
@@ -114,7 +149,7 @@ export function openProfile(app, anchor) {
           await app.db.importAll(JSON.parse(await file.files[0].text()));
           toast('Данные восстановлены. Перезагрузка…');
           setTimeout(() => location.reload(), 800);
-        } catch (e) { toast(e.message || 'Не удалось прочитать файл'); }
+        } catch (e) { toast(e.message ? app.t(e.message) : 'Не удалось прочитать файл'); }
       });
       return [
         head('Данные на устройстве'),

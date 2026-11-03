@@ -1,23 +1,35 @@
 // Мини-хелперы для DOM без фреймворка: h(), иконки, модальные окна, тосты.
+// Строки, попадающие в DOM через h() и диалоги, проходят через переводчик (см. i18n.js):
+// ядро использует общий переводчик, а каждый модуль получает свою копию (createUi) с языком модуля.
 
-export function h(tag, props, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(props ?? {})) {
-    if (v == null || v === false) continue;
-    if (k === 'class') el.className = v;
-    else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
-    else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2).toLowerCase(), v);
-    else if (v === true) el.setAttribute(k, '');
-    else el.setAttribute(k, v);
-  }
-  append(el, kids);
-  return el;
+const same = s => s;
+let appTr = same;
+export const setAppTranslator = fn => { appTr = fn ?? same; };
+
+const TR_ATTRS = new Set(['title', 'aria-label', 'placeholder', 'alt']);
+
+function makeH(getTr) {
+  return function h(tag, props, ...kids) {
+    const tr = getTr();
+    const el = document.createElement(tag);
+    for (const [k, raw] of Object.entries(props ?? {})) {
+      const v = typeof raw === 'string' && TR_ATTRS.has(k) ? tr(raw) : raw;
+      if (v == null || v === false) continue;
+      if (k === 'class') el.className = v;
+      else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+      else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2).toLowerCase(), v);
+      else if (v === true) el.setAttribute(k, '');
+      else el.setAttribute(k, v);
+    }
+    append(el, kids, tr);
+    return el;
+  };
 }
 
-export function append(el, kids) {
+export function append(el, kids, tr = same) {
   for (const k of kids.flat(Infinity)) {
     if (k == null || k === false) continue;
-    el.append(k.nodeType ? k : document.createTextNode(String(k)));
+    el.append(k.nodeType ? k : document.createTextNode(typeof k === 'string' ? tr(k) : String(k)));
   }
   return el;
 }
@@ -57,6 +69,7 @@ const ICONS = {
   msg: '<path d="M4 5h16v11H9l-5 4z"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h0"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
   database: '<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/>',
 };
 
@@ -68,56 +81,66 @@ export function icon(name, size = 20) {
   return span;
 }
 
-export function iconBtn(name, title, onClick, cls = '') {
-  return h('button', { class: 'icon-btn ' + cls, title, 'aria-label': title, onClick }, icon(name, 20));
-}
+/** Набор хелперов с переводчиком getTr(): строки переводятся, текст из raw() — нет (данные пользователя, контент). */
+export function createUi(getTr = () => appTr) {
+  const h = makeH(getTr);
+  /** Текстовый узел без перевода: названия упражнений, технику и прочий контент передают через него. */
+  const raw = s => document.createTextNode(String(s ?? ''));
 
-/** Модальное окно. body — Node или массив; actions — массив кнопок. */
-export function modal({ title, body, actions, wide = false, onClose } = {}) {
-  const overlay = h('div', { class: 'overlay' });
-  const box = h('div', { class: 'modal' + (wide ? ' wide' : ''), role: 'dialog', 'aria-modal': 'true' });
-  const close = () => {
-    overlay.remove();
-    document.removeEventListener('keydown', onKey);
-    onClose?.();
-  };
-  const onKey = e => e.key === 'Escape' && close();
-  box.append(
-    h('div', { class: 'modal-head' }, h('h2', null, title ?? ''), iconBtn('x', 'Закрыть', close)),
-    h('div', { class: 'modal-body' }, body),
-  );
-  if (actions?.length) box.append(h('div', { class: 'modal-actions' }, actions));
-  overlay.append(box);
-  overlay.addEventListener('pointerdown', e => e.target === overlay && close());
-  document.addEventListener('keydown', onKey);
-  document.body.append(overlay);
-  return { el: box, close };
-}
+  function iconBtn(name, title, onClick, cls = '') {
+    return h('button', { class: 'icon-btn ' + cls, title, 'aria-label': title, onClick }, icon(name, 20));
+  }
 
-export function confirmDialog(text, { okText = 'Ок', danger = false, title = 'Подтвердите' } = {}) {
-  return new Promise(resolve => {
-    let done = false;
-    const finish = v => { if (!done) { done = true; resolve(v); } m.close(); };
-    const m = modal({
-      title,
-      body: h('p', null, text),
-      actions: [
-        h('button', { class: 'btn', onClick: () => finish(false) }, 'Отмена'),
-        h('button', { class: 'btn ' + (danger ? 'danger' : 'primary'), onClick: () => finish(true) }, okText),
-      ],
-      onClose: () => { if (!done) { done = true; resolve(false); } },
+  /** Модальное окно. body — Node или массив; actions — массив кнопок. */
+  function modal({ title, body, actions, wide = false, onClose } = {}) {
+    const overlay = h('div', { class: 'overlay' });
+    const box = h('div', { class: 'modal' + (wide ? ' wide' : ''), role: 'dialog', 'aria-modal': 'true' });
+    const close = () => {
+      overlay.remove();
+      document.removeEventListener('keydown', onKey);
+      onClose?.();
+    };
+    const onKey = e => e.key === 'Escape' && close();
+    box.append(
+      h('div', { class: 'modal-head' }, h('h2', null, title ?? ''), iconBtn('x', 'Закрыть', close)),
+      h('div', { class: 'modal-body' }, body),
+    );
+    if (actions?.length) box.append(h('div', { class: 'modal-actions' }, actions));
+    overlay.append(box);
+    overlay.addEventListener('pointerdown', e => e.target === overlay && close());
+    document.addEventListener('keydown', onKey);
+    document.body.append(overlay);
+    return { el: box, close };
+  }
+
+  function confirmDialog(text, { okText = 'Ок', danger = false, title = 'Подтвердите' } = {}) {
+    return new Promise(resolve => {
+      let done = false;
+      const finish = v => { if (!done) { done = true; resolve(v); } m.close(); };
+      const m = modal({
+        title,
+        body: h('p', null, text),
+        actions: [
+          h('button', { class: 'btn', onClick: () => finish(false) }, 'Отмена'),
+          h('button', { class: 'btn ' + (danger ? 'danger' : 'primary'), onClick: () => finish(true) }, okText),
+        ],
+        onClose: () => { if (!done) { done = true; resolve(false); } },
+      });
     });
-  });
+  }
+
+  function toast(text) {
+    document.querySelector('.toast')?.remove();
+    const t = h('div', { class: 'toast' }, text);
+    document.body.append(t);
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.remove(), 2600);
+  }
+
+  return { h, raw, icon, iconBtn, modal, confirmDialog, toast, uid, clamp, dismissable };
 }
 
 let toastTimer;
-export function toast(text) {
-  document.querySelector('.toast')?.remove();
-  const t = h('div', { class: 'toast' }, text);
-  document.body.append(t);
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.remove(), 2600);
-}
 
 /** Закрывается по клику вне и Escape. Возвращает close(). */
 export function dismissable(el, { ignore = [], onClose } = {}) {
@@ -137,4 +160,5 @@ export function dismissable(el, { ignore = [], onClose } = {}) {
   return close;
 }
 
-export const ui = { h, icon, iconBtn, modal, confirmDialog, toast, uid, clamp, dismissable };
+export const ui = createUi();
+export const { h, raw, iconBtn, modal, confirmDialog, toast } = ui;
