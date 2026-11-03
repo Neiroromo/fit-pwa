@@ -134,5 +134,12 @@
   "6 мес": "6 mo",
   "Год": "1 year",
   "Нет данных за этот период": "No data for this period",
-  "Рекорд: {kg} кг": "Best: {kg} kg"
+  "Рекорд: {kg} кг": "Best: {kg} kg",
+  "Выйти из редактирования?": "Leave editing?",
+  "Тренировка не сохранена.": "The workout is not saved.",
+  "Изменения не сохранены.": "Changes are not saved.",
+  "Отмена": "Cancel",
+  "Сохранить как черновик": "Save as draft",
+  "Не сохранять": "Discard",
+  "Сохранено как черновик": "Saved as draft"
 }

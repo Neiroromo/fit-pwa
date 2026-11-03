@@ -37,6 +37,54 @@ const equipKeys = ex => (ex.e?.length ? [...new Set(ex.e.map(e => EQUIP_ALIAS[e]
 /** Название упражнения на языке контента ('en' — оригинал каталога; иначе русский перевод, если есть). */
 export const displayName = (ex, lang = 'ru') => (lang === 'en' ? ex.n : ex.ru || ex.n);
 
+/** Нижний регистр, ё=е, знаки препинания → пробел. Пробел в конце запроса сохраняется: он означает «слово закончено». */
+const norm = str => String(str ?? '').toLowerCase().replace(/ё/g, 'е').replace(/[^\p{L}\p{N}]+/gu, ' ');
+
+/** Запрос → {tokens, closed}. Возвращает null для пустого запроса. */
+export function parseQuery(q) {
+  const n = norm(q).replace(/^ +/, '');
+  const tokens = n.split(' ').filter(Boolean);
+  return tokens.length ? { tokens, closed: n.endsWith(' ') } : null;
+}
+
+/** Совпадение названия с запросом по любому слову (не только по началу): «рук» найдёт и «Сгибание рук», и «Разгибание рук». Меньше — лучше, null — не подходит. */
+function scoreName(name, pq) {
+  const words = norm(name).split(' ').filter(Boolean);
+  let pos = 0;
+  for (let i = 0; i < pq.tokens.length; i++) {
+    const tok = pq.tokens[i];
+    const whole = pq.closed && i === pq.tokens.length - 1; // «рук » — слово «рук» целиком, а не «рукоятка»
+    const at = words.findIndex(w => (whole ? w === tok : w.startsWith(tok)));
+    if (at < 0) return null;
+    if (i === 0) pos = at;
+  }
+  return pos * 100 + Math.min(words.length, 99);
+}
+
+/** Лучшее совпадение упражнения на любом языке: {score, name} или null. */
+export function matchExercise(ex, pq) {
+  let best = null;
+  for (const name of [ex.ru, ex.n]) {
+    if (!name) continue;
+    const score = scoreName(name, pq);
+    if (score != null && (!best || score < best.score)) best = { score, name };
+  }
+  return best;
+}
+
+/** Лучшие упражнения по тексту запроса (для подсказок при вводе). */
+export async function suggest(q, limit = 3) {
+  const pq = parseQuery(q);
+  if (!pq) return [];
+  const { exercises } = await loadCatalog();
+  const found = [];
+  for (const ex of exercises) {
+    const m = matchExercise(ex, pq);
+    if (m) found.push({ ex, score: m.score });
+  }
+  return found.sort((a, b) => a.score - b.score).slice(0, limit).map(f => f.ex);
+}
+
 let cache;
 export function loadCatalog() {
   cache ??= fetch(new URL('exercises.json', import.meta.url)).then(r => {
@@ -50,32 +98,42 @@ export async function getExercise(id) {
   return (await loadCatalog()).exercises.find(e => e.id === id) ?? null;
 }
 
-/** Карточка упражнения. Если передан onPick — внизу кнопка «Выбрать», onBack — стрелка назад. */
+/** Карточка упражнения. Если передан onPick(ex, lang) — внизу кнопка «Выбрать», onBack — стрелка назад. Язык карточки можно переключить (только для просмотра и выбора, настройки не меняются). */
 export function renderDetail(ctx, ex, { onPick, onBack } = {}) {
   const { h, icon, iconBtn, raw } = ctx.ui; // контент (названия, теги, техника) идёт через raw — его язык задаётся отдельно от языка интерфейса
-  const lang = ctx.contentLang('exercises');
-  const L = labels(lang);
-  const steps = lang === 'en' ? (ex.d?.length ? ex.d : ex.dr) : (ex.dr?.length ? ex.dr : ex.d);
-  const onlyEn = lang !== 'en' && !ex.dr?.length;
-  const tags = [
-    ...ex.g.map(L.group),
-    ex.l ? L.level(ex.l) : null,
-    ...(ex.e?.length ? ex.e.map(L.equip) : []),
-    L.place(!!ex.h),
-  ].filter(Boolean);
-  const mus = list => raw((list ?? []).map(L.muscle).join(', '));
-  return h('div', { class: 'ex-detail' },
-    h('div', { class: 'row-gap' }, onBack ? iconBtn('chevL', 'К списку', onBack) : null,
-      h('div', { class: 'grow' }, h('h3', null, raw(displayName(ex, lang))), lang !== 'en' && ex.ru ? h('span', { class: 'muted small' }, raw(ex.n)) : null)),
-    ex.img?.length ? h('div', { class: 'ex-imgs' }, ex.img.slice(0, 3).map(src => h('img', { src, alt: ex.n, loading: 'lazy' }))) : null,
-    h('div', { class: 'row-gap wrap' }, tags.map(t => h('span', { class: 'chip' }, raw(t)))),
-    ex.m?.length ? h('p', null, h('span', { class: 'muted' }, 'Основные мышцы: '), mus(ex.m)) : null,
-    ex.s?.length ? h('p', null, h('span', { class: 'muted' }, 'Дополнительно: '), mus(ex.s)) : null,
-    steps?.length ? h('div', null,
-      h('strong', null, 'Техника выполнения'), onlyEn ? h('span', { class: 'muted small' }, ' · описание на английском') : null,
-      h('ol', { class: 'ex-steps' }, steps.map(s => h('li', null, raw(s))))) : h('p', { class: 'muted' }, 'Описания техники для этого упражнения пока нет.'),
-    ex.cr ? h('p', { class: 'muted small' }, 'Источник: ', raw(ex.cr)) : null,
-    onPick ? h('button', { class: 'btn primary wide', onClick: () => onPick(ex) }, icon('check', 16), 'Выбрать') : null);
+  let lang = ctx.contentLang('exercises');
+  const root = h('div', { class: 'ex-detail' });
+
+  function draw() {
+    const L = labels(lang);
+    const steps = lang === 'en' ? (ex.d?.length ? ex.d : ex.dr) : (ex.dr?.length ? ex.dr : ex.d);
+    const onlyEn = lang !== 'en' && !ex.dr?.length;
+    const tags = [
+      ...ex.g.map(L.group),
+      ex.l ? L.level(ex.l) : null,
+      ...(ex.e?.length ? ex.e.map(L.equip) : []),
+      L.place(!!ex.h),
+    ].filter(Boolean);
+    const mus = list => raw((list ?? []).map(L.muscle).join(', '));
+    const langChip = (code, text) => h('button', { class: 'chip-btn' + (lang === code ? ' on' : ''), onClick: () => { lang = code; draw(); } }, text);
+    root.replaceChildren(...[
+      h('div', { class: 'row-gap' }, onBack ? iconBtn('chevL', 'К списку', onBack) : null,
+        h('div', { class: 'grow' }, h('h3', null, raw(displayName(ex, lang))), lang !== 'en' && ex.ru ? h('span', { class: 'muted small' }, raw(ex.n)) : null),
+        ex.ru || ex.dr?.length ? h('div', { class: 'size-chips' }, langChip('ru', 'RU'), langChip('en', 'EN')) : null),
+      ex.img?.length ? h('div', { class: 'ex-imgs' }, ex.img.slice(0, 3).map(src => h('img', { src, alt: ex.n, loading: 'lazy' }))) : null,
+      h('div', { class: 'row-gap wrap' }, tags.map(t => h('span', { class: 'chip' }, raw(t)))),
+      ex.m?.length ? h('p', null, h('span', { class: 'muted' }, 'Основные мышцы: '), mus(ex.m)) : null,
+      ex.s?.length ? h('p', null, h('span', { class: 'muted' }, 'Дополнительно: '), mus(ex.s)) : null,
+      steps?.length ? h('div', null,
+        h('strong', null, 'Техника выполнения'), onlyEn ? h('span', { class: 'muted small' }, ' · описание на английском') : null,
+        h('ol', { class: 'ex-steps' }, steps.map(s => h('li', null, raw(s))))) : h('p', { class: 'muted' }, 'Описания техники для этого упражнения пока нет.'),
+      ex.cr ? h('p', { class: 'muted small' }, 'Источник: ', raw(ex.cr)) : null,
+      onPick ? h('button', { class: 'btn primary wide', onClick: () => onPick(ex, lang) }, icon('check', 16), 'Выбрать') : null,
+    ].filter(Boolean));
+  }
+
+  draw();
+  return root;
 }
 
 /** Модальный список с поиском и фильтрами. */
@@ -83,7 +141,7 @@ export function openPicker(ctx, { onPick, current }) {
   const { h, icon, modal, raw } = ctx.ui;
   const lang = ctx.contentLang('exercises');
   const L = labels(lang);
-  const state = { q: '', group: null, place: 'all', equip: new Set(), media: false, limit: 40 };
+  const state = { group: null, place: 'all', equip: new Set(), media: false, limit: 40 };
   const body = h('div', { class: 'picker-ex' }, h('p', { class: 'muted' }, 'Загрузка каталога…'));
   const m = modal({ title: 'Каталог упражнений', body, wide: true });
   let data = [];
@@ -91,19 +149,18 @@ export function openPicker(ctx, { onPick, current }) {
 
   const chip = (text, on, fn) => h('button', { class: 'chip-btn' + (on ? ' on' : ''), onClick: fn }, text);
 
+  let pq = null;
   function matches(ex) {
     if (state.group && !ex.g.includes(state.group)) return false;
     if (state.place === 'home' && !ex.h) return false;
     if (state.place === 'gym' && ex.h) return false;
     if (state.equip.size && !equipKeys(ex).some(k => state.equip.has(k))) return false;
     if (state.media && !ex.img?.length) return false;
-    if (!state.q) return true;
-    const q = state.q.toLowerCase();
-    return ex.n.toLowerCase().includes(q) || (ex.ru ?? '').toLowerCase().includes(q);
+    return !pq || !!matchExercise(ex, pq);
   }
 
   const search = h('input', { class: 'input', type: 'search', placeholder: 'Поиск по названию…' });
-  search.addEventListener('input', () => { state.q = search.value.trim(); state.limit = 40; renderList(); });
+  search.addEventListener('input', () => { pq = parseQuery(search.value); state.limit = 40; renderList(); });
   const filters = h('div', { class: 'ex-filters' });
   const list = h('div', { class: 'ex-results' });
 
@@ -147,7 +204,7 @@ export function openPicker(ctx, { onPick, current }) {
   }
   function showDetail(ex) {
     m.el.querySelector('h2').textContent = ctx.t('Упражнение');
-    body.replaceChildren(renderDetail(ctx, ex, { onBack: showHome, onPick: e => { m.close(); onPick(e); } }));
+    body.replaceChildren(renderDetail(ctx, ex, { onBack: showHome, onPick: (e, l) => { m.close(); onPick(e, l); } }));
   }
 
   loadCatalog().then(c => {

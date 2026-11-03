@@ -73,11 +73,11 @@ export default {
             h('strong', null, t.name),
             h('span', { class: 'muted small block' },
               `${t.exercises.length} ${plural(t.exercises.length, 'упражнение', 'упражнения', 'упражнений')}` + (last ? ctx.t(' · последняя: {date}', { date: fmt.date(last) }) : ''))),
-          iconBtn('share', 'Поделиться тренировкой', () => openShare(ctx, t)),
+          t.draft ? null : iconBtn('share', 'Поделиться тренировкой', () => openShare(ctx, t)),
           iconBtn('edit', 'Редактировать', () => showEditor(t)),
           iconBtn('trash', 'Удалить тренировку', remove, 'danger desktop-only'),
-          iconBtn('play', 'Начать тренировку', () => startWorkout(t, active), 'solid'));
-        const row = h('div', { class: 'wk-row' }, h('div', { class: 'wk-bg' }, icon('trash', 20), 'Удалить'), content);
+          t.draft ? null : iconBtn('play', 'Начать тренировку', () => startWorkout(t, active), 'solid'));
+        const row = h('div', { class: 'wk-row' + (t.draft ? ' draft' : '') }, h('div', { class: 'wk-bg' }, icon('trash', 20), 'Удалить'), content);
         swipeToDelete(content, remove);
         return row;
       }));
@@ -122,7 +122,7 @@ export default {
 
     function showEditor(tpl) {
       disposeRunner?.();
-      openEditor(page, ctx, tpl, { onDone: showHome });
+      disposeRunner = openEditor(page, ctx, tpl, { onDone: showHome });
     }
 
     async function startWorkout(tpl, active) {
@@ -161,7 +161,7 @@ export default {
     else if (params?.start) {
       const [tpl, active] = await Promise.all([templatesCol.get(params.start), ctx.db.kv.get('active')]);
       if (active) await showRunner(active);
-      else if (tpl) await startWorkout(tpl, null);
+      else if (tpl && !tpl.draft) await startWorkout(tpl, null);
       else await showHome();
     } else await showHome();
 
@@ -203,7 +203,7 @@ export default {
       id: 'quick',
       async render(body, ctx) {
         const { h, icon } = ctx.ui;
-        const [templates, active] = await Promise.all([ctx.db.collection('templates').list(), ctx.db.kv.get('active')]);
+        const [templates, active] = await Promise.all([ctx.db.collection('templates').list().then(l => l.filter(t => !t.draft)), ctx.db.kv.get('active')]);
         const limit = ctx.size.h >= 2 ? 5 : 2;
         if (!templates.length && !active) {
           body.replaceChildren(h('button', { class: 'btn', onClick: () => ctx.router.go('workouts', { create: true }) }, icon('plus', 16), 'Создать тренировку'));
