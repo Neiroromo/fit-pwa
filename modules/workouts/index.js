@@ -30,7 +30,7 @@ export default {
       const calBox = h('div', { class: 'card cal-card' });
       const listBox = h('div', { class: 'wk-list' });
 
-      page.replaceChildren(
+      page.replaceChildren(...[
         h('header', { class: 'page-head' }, h('h1', null, 'Тренировки'),
           iconBtn('sliders', 'Настройки модуля', openSettings)),
         active ? activeBanner(active) : null,
@@ -38,7 +38,7 @@ export default {
         h('button', { class: 'btn primary wide', onClick: () => showEditor(null) }, icon('plus', 18), 'Создать тренировку'),
         h('h2', { class: 'section-title' }, 'Мои тренировки'),
         listBox,
-      );
+      ].filter(Boolean));
 
       drawCalendar(calBox, sessions);
       drawList(listBox, templates, sessions, active);
@@ -231,10 +231,11 @@ export default {
           const dt = new Date(monday); dt.setDate(monday.getDate() + i);
           return { d, hit: week.some(s => dayKey(s.startedAt) === dayKey(dt)), today: dayKey(dt) === dayKey(Date.now()) };
         });
-        body.replaceChildren(
+        body.replaceChildren(...[
           h('div', { class: 'big-num' }, String(week.length), h('span', { class: 'muted' }, plural(week.length, 'тренировка', 'тренировки', 'тренировок'))),
           ctx.size.w >= 2 ? h('div', { class: 'week-strip' }, days.map(x =>
-            h('div', { class: 'wd' + (x.hit ? ' hit' : '') + (x.today ? ' today' : '') }, h('span', { class: 'dot' }), h('span', { class: 'muted small' }, x.d)))) : null);
+            h('div', { class: 'wd' + (x.hit ? ' hit' : '') + (x.today ? ' today' : '') }, h('span', { class: 'dot' }), h('span', { class: 'muted small' }, x.d)))) : null,
+        ].filter(Boolean));
         body.onclick = () => ctx.router.go('workouts');
       },
     },

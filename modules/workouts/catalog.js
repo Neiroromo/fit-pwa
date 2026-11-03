@@ -95,14 +95,16 @@ export function openPicker(ctx, { onPick }) {
   function renderList() {
     const all = data.filter(matches);
     const shown = all.slice(0, state.limit);
-    list.replaceChildren(
+    // replaceChildren превращает null в текст «null», поэтому пустые значения отбрасываем
+    list.replaceChildren(...[
       h('div', { class: 'muted small' }, `Найдено: ${all.length}`),
       ...shown.map(ex => h('button', { class: 'ex-item', onClick: () => showDetail(ex) },
         ex.img?.[0] ? h('img', { src: ex.img[0], alt: '', loading: 'lazy' }) : h('span', { class: 'ex-noimg' }, icon('dumbbell', 22)),
         h('span', { class: 'grow' }, h('strong', null, displayName(ex)),
           h('span', { class: 'muted small block' }, [ex.g.map(g => label(GROUPS, g)).join(', '), (ex.e ?? []).map(e => label(EQUIP, e)).join(', ') || null].filter(Boolean).join(' · '))))),
       all.length > shown.length ? h('button', { class: 'btn', onClick: () => { state.limit += 60; renderList(); } }, 'Показать ещё') : null,
-      !all.length ? h('p', { class: 'muted empty' }, 'Ничего не найдено') : null);
+      !all.length ? h('p', { class: 'muted empty' }, 'Ничего не найдено') : null,
+    ].filter(Boolean));
   }
 
   const update = () => { state.limit = 40; renderFilters(); renderList(); };
