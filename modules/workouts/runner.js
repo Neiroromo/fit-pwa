@@ -15,6 +15,10 @@ export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
   const restBar = h('div', { class: 'rest-bar', hidden: true });
   const list = h('div', { class: 'run-list' });
   let restTime = null;
+  // Пауза: s.pausedAt — когда поставили, s.pausedTotal — сколько всего простояли. Время тренировки = now() - startedAt - pausedTotal.
+  const now = () => s.pausedAt ?? Date.now();
+  const elapsed = () => (now() - s.startedAt - (s.pausedTotal ?? 0)) / 1000;
+  const pauseBtn = h('button', { class: 'icon-btn pause-btn', onClick: () => togglePause() });
   let rows = []; // [{row, set}] для подсветки текущего подхода
 
   // ---------- таймер отдыха ----------
@@ -27,7 +31,7 @@ export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
     const r = s.rest;
     if (!r) return;
     const set = s.exercises[r.ex]?.sets[r.set];
-    if (set) set.restSec = Math.round((Date.now() - r.start) / 1000);
+    if (set) set.restSec = Math.round((now() - r.start) / 1000);
     s.rest = null;
     renderRest();
     save();
@@ -50,16 +54,40 @@ export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
   }
 
   function tick() {
-    totalEl.textContent = fmtClock((Date.now() - s.startedAt) / 1000);
+    totalEl.textContent = fmtClock(elapsed());
     const r = s.rest;
     if (r && restTime) {
-      const left = r.total - (Date.now() - r.start) / 1000;
+      const left = r.total - (now() - r.start) / 1000;
       restTime.textContent = left > 0 ? fmtClock(Math.ceil(left)) : '+' + fmtClock(-left);
       restBar.classList.toggle('over', left <= 0);
-      if (left <= 0 && !r.notified) { r.notified = true; beep(); save(); }
+      if (left <= 0 && !r.notified && !s.pausedAt) { r.notified = true; beep(); save(); }
     }
   }
   const interval = setInterval(tick, 250);
+
+  function togglePause() {
+    if (s.pausedAt) {
+      const gap = Date.now() - s.pausedAt;
+      s.pausedTotal = (s.pausedTotal ?? 0) + gap;
+      if (s.rest) s.rest.start += gap; // отдых тоже стоял
+      s.pausedAt = null;
+    } else {
+      s.pausedAt = Date.now();
+    }
+    renderPause();
+    tick();
+    save();
+  }
+
+  function renderPause() {
+    const paused = !!s.pausedAt;
+    pauseBtn.replaceChildren(icon(paused ? 'play' : 'pause', 22));
+    pauseBtn.title = ctx.t(paused ? 'Продолжить' : 'Пауза');
+    pauseBtn.setAttribute('aria-label', pauseBtn.title);
+    pauseBtn.classList.toggle('on', paused);
+    list.classList.toggle('paused', paused);
+    restBar.classList.toggle('paused', paused);
+  }
 
   // ---------- упражнения ----------
   function markCurrent(scroll = false) {
@@ -126,14 +154,21 @@ export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
   }
 
   function editComment(ex) {
-    const input = h('input', { class: 'input', value: ex.comment, placeholder: 'Например: узкий хват, пауза внизу', maxlength: '120' });
+    // несколько строк: на ПК Enter сохраняет, Shift+Enter — новая строка; на сенсорных Enter — новая строка, сохранить — кнопкой
+    const input = h('textarea', { class: 'input comment', rows: '3', placeholder: 'Например: узкий хват, пауза внизу', maxlength: '500' });
+    input.value = ex.comment ?? '';
     const m = modal({
       title: 'Комментарий',
       body: input,
       actions: [h('button', { class: 'btn primary', onClick: () => { ex.comment = input.value.trim(); m.close(); renderList(); save(); } }, 'Сохранить')],
     });
     input.focus();
-    input.addEventListener('keydown', e => e.key === 'Enter' && m.el.querySelector('.btn.primary').click());
+    input.setSelectionRange(input.value.length, input.value.length);
+    input.addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      const newline = !e.ctrlKey && (e.shiftKey || matchMedia('(pointer: coarse)').matches);
+      if (!newline) { e.preventDefault(); m.el.querySelector('.btn.primary').click(); }
+    });
   }
 
   function renderList() {
@@ -150,16 +185,16 @@ export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
       { okText: 'Завершить' });
     if (!ok) return;
     stopRest();
-    const endedAt = Date.now();
+    const endedAt = now();
     if (hasDone) {
       await ctx.db.collection('sessions').put({
         workoutId: s.workoutId, name: s.name, startedAt: s.startedAt, endedAt,
-        durationSec: Math.round((endedAt - s.startedAt) / 1000),
+        durationSec: Math.round(elapsed()),
         exercises: s.exercises
           .map(ex => ({ name: ex.name, comment: ex.comment, sets: ex.sets.filter(x => x.done).map(({ kind, kg, reps, restSec }) => ({ kind, kg, reps, restSec })) }))
           .filter(ex => ex.sets.length),
       });
-      ctx.notify(ctx.t('Тренировка «{name}» завершена: {time}', { name: s.name, time: fmtClock((endedAt - s.startedAt) / 1000) }));
+      ctx.notify(ctx.t('Тренировка «{name}» завершена: {time}', { name: s.name, time: fmtClock(elapsed()) }));
     }
     await ctx.db.kv.set('active', null);
     dispose(false);
@@ -184,13 +219,15 @@ export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
 
   renderList();
   renderRest();
+  renderPause();
   tick();
   el.replaceChildren(
     h('header', { class: 'run-head' },
       iconBtn('chevL', 'Свернуть (тренировка продолжится)', () => { dispose(); onExit(); }),
-      h('div', { class: 'grow' }, h('h1', null, s.name), h('div', { class: 'muted small' }, 'Тренировка идёт')),
+      h('div', { class: 'grow' }, h('h1', null, s.name)),
       totalEl,
-      h('button', { class: 'btn primary', onClick: finish }, 'Завершить')),
+      pauseBtn,
+      iconBtn('flag', 'Завершить', finish, 'solid')),
     list,
     h('button', { class: 'link danger-text', onClick: cancel }, 'Отменить тренировку'),
     restBar,

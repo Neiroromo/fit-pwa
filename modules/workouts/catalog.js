@@ -178,19 +178,21 @@ export function openPicker(ctx, { onPick, current, query }) {
   const list = h('div', { class: 'ex-results' });
 
   function renderFilters() {
+    const group = (title, ...rows) => h('div', { class: 'filter-group' }, h('div', { class: 'filter-title' }, title), ...rows);
     filters.replaceChildren(
-      h('div', { class: 'size-chips' },
+      group('Место', h('div', { class: 'size-chips' },
         chip('Всё', state.place === 'all', () => { state.place = 'all'; update(); }),
         chip('Дома', state.place === 'home', () => { state.place = 'home'; update(); }, !has({ place: 'home' })),
-        chip('Зал', state.place === 'gym', () => { state.place = 'gym'; update(); }, !has({ place: 'gym' })),
-        chip('С картинками', state.media, () => { state.media = !state.media; update(); }, !has({ media: true }))),
-      h('div', { class: 'size-chips' },
+        chip('Зал', state.place === 'gym', () => { state.place = 'gym'; update(); }, !has({ place: 'gym' })))),
+      group('Визуализация', h('div', { class: 'size-chips' },
+        chip('С картинками', state.media, () => { state.media = !state.media; update(); }, !has({ media: true })))),
+      group('Группа мышц', h('div', { class: 'size-chips' },
         chip('Все мышцы', !state.group, () => { state.group = null; update(); }),
-        Object.keys(GROUPS).map(k => chip(raw(L.group(k)), state.group === k, () => { state.group = k; update(); }, !has({ group: k })))),
+        Object.keys(GROUPS).map(k => chip(raw(L.group(k)), state.group === k, () => { state.group = k; update(); }, !has({ group: k }))))),
       // оборудование: можно выбрать несколько (подходит любое из выбранных), по убыванию популярности
-      h('div', { class: 'size-chips' },
+      group('Оборудование', h('div', { class: 'size-chips' },
         chip('Любое оборудование', !state.equip.size, () => { state.equip.clear(); update(); }),
-        equipOptions.map(k => chip(raw(L.equip(k)), state.equip.has(k), () => { state.equip.has(k) ? state.equip.delete(k) : state.equip.add(k); update(); }, !has({ equip: new Set([k]) })))));
+        equipOptions.map(k => chip(raw(L.equip(k)), state.equip.has(k), () => { state.equip.has(k) ? state.equip.delete(k) : state.equip.add(k); update(); }, !has({ equip: new Set([k]) }))))));
   }
 
   function renderList() {

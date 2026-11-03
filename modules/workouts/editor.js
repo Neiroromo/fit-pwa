@@ -5,6 +5,9 @@
 
 import { openPicker, displayName, suggest } from './catalog.js';
 
+/** Поле растёт вместе с текстом. */
+const autosize = ta => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; };
+
 export function openEditor(el, ctx, template, { onDone }) {
   const { h, icon, iconBtn, uid, toast, raw } = ctx.ui;
   const isNew = !template;
@@ -81,8 +84,10 @@ export function openEditor(el, ctx, template, { onDone }) {
           hideSug();
         }
       });
-      const comment = h('input', { class: 'input fld', placeholder: 'Комментарий (необязательно)', value: ex.comment, maxlength: '120' });
-      comment.addEventListener('input', () => (ex.comment = comment.value));
+      const comment = h('textarea', { class: 'input fld comment', rows: '1', placeholder: 'Комментарий (необязательно)', maxlength: '500' });
+      comment.value = ex.comment ?? '';
+      comment.addEventListener('input', () => { ex.comment = comment.value; autosize(comment); });
+      requestAnimationFrame(() => autosize(comment));
 
       // Esc в поле возвращает значение, которое было при входе в поле
       const keep = (input, read, write) => {
@@ -95,7 +100,7 @@ export function openEditor(el, ctx, template, { onDone }) {
         if (r) { ex.ref = r; ex.refName = rn; } else { delete ex.ref; delete ex.refName; }
         exName.value = n;
       });
-      keep(comment, () => ex.comment, v => { ex.comment = v; comment.value = v; });
+      keep(comment, () => ex.comment, v => { ex.comment = v; comment.value = v; autosize(comment); });
 
       const setsVal = h('span', { class: 'stepper-val' }, String(ex.sets));
       const step = d => { ex.sets = Math.min(10, Math.max(1, ex.sets + d)); setsVal.textContent = ex.sets; };
@@ -189,6 +194,8 @@ export function openEditor(el, ctx, template, { onDone }) {
     if (!el.isConnected) return dispose();
     const t = e.target;
     if (e.key === 'Enter' && t.classList?.contains('fld') && !e.defaultPrevented) {
+      // в комментарии (несколько строк): на сенсорных и с Shift Enter — новая строка, Ctrl+Enter — к следующему полю
+      if (t.tagName === 'TEXTAREA' && !e.ctrlKey && (e.shiftKey || matchMedia('(pointer: coarse)').matches)) return;
       e.preventDefault();
       const all = [...el.querySelectorAll('.fld')], next = all[all.indexOf(t) + 1];
       if (next) next.focus(); else t.blur();

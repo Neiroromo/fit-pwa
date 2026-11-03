@@ -44,11 +44,11 @@ export default {
 
     function activeBanner(active) {
       const t = h('strong', null);
-      const upd = () => (t.textContent = fmtClock((Date.now() - active.startedAt) / 1000));
+      const upd = () => (t.textContent = fmtClock(((active.pausedAt ?? Date.now()) - active.startedAt - (active.pausedTotal ?? 0)) / 1000));
       upd();
       const iv = setInterval(() => (t.isConnected ? upd() : clearInterval(iv)), 1000);
       return h('button', { class: 'banner', onClick: () => showRunner(active) },
-        icon('play', 18), h('span', { class: 'grow' }, ctx.t('Идёт тренировка «{name}»', { name: active.name })), t, icon('chevR', 18));
+        icon('play', 18), h('span', { class: 'grow' }, ctx.ui.raw(active.name)), t, icon('chevR', 18));
     }
 
     // ---------- список тренировок ----------

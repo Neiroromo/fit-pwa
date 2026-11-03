@@ -1,4 +1,6 @@
-// История тренировок: список выполненных, подробности по упражнениям и график максимального веса.
+// История тренировок: три колонки-ступени. Слева — выполненные тренировки (коротко),
+// по нажатию справа открываются упражнения с подходами, по нажатию на упражнение ещё правее — график максимального веса.
+// На узких экранах показывается только последняя ступень, назад — стрелкой в её заголовке.
 
 import { fmtClock, makeFmt } from './data.js';
 
@@ -11,85 +13,89 @@ const PERIODS = [
 const DAY = 86_400_000;
 const keyOf = name => name.trim().toLowerCase();
 
-/** Экран истории: список тренировок (новые сверху), по нажатию раскрывается состав. */
 export async function openHistory(page, ctx, { onBack }) {
-  const { h, icon, iconBtn } = ctx.ui;
+  const { h, iconBtn, raw } = ctx.ui;
   const { plural } = ctx;
   const fmt = makeFmt(ctx);
   const sessions = (await ctx.db.collection('sessions').list()).sort((a, b) => b.startedAt - a.startedAt);
-  const all = sessions;
-  let openId = null;
+  let sel = null; // выбранная тренировка
+  let exKey = null; // выбранное упражнение (по названию)
+  let period = PERIODS[1];
 
-  const list = h('div', { class: 'wk-list' });
+  const root = h('div', { class: 'hist' });
 
   function draw() {
-    list.replaceChildren(...(sessions.length ? sessions.map(item) : [h('p', { class: 'muted empty' }, 'Нет выполненных тренировок')]));
+    const session = sessions.find(s => s.id === sel) ?? null;
+    const exercise = session?.exercises.find(e => keyOf(e.name) === exKey) ?? null;
+    const cols = [colSessions(), session ? colExercises(session) : null, exercise ? colChart(exercise) : null].filter(Boolean);
+    cols.forEach((c, i) => c.classList.toggle('last', i === cols.length - 1));
+    root.className = 'hist cols-' + cols.length;
+    root.replaceChildren(...cols);
   }
 
-  function item(s) {
-    const open = openId === s.id;
-    const year = new Date(s.startedAt).getFullYear() !== new Date().getFullYear() ? ' ' + new Date(s.startedAt).getFullYear() : '';
-    return h('div', { class: 'sess' + (open ? ' open' : '') },
-      h('button', { class: 'sess-head', onClick: () => { openId = open ? null : s.id; draw(); } },
-        h('span', { class: 'sess-date' }, h('strong', null, fmt.date(s.startedAt) + year), h('span', { class: 'muted small' }, fmt.weekday(s.startedAt))),
-        h('span', { class: 'grow' }, h('span', null, ctx.ui.raw(s.name)),
-          h('span', { class: 'muted small block' }, `${s.exercises.length} ${plural(s.exercises.length, 'упражнение', 'упражнения', 'упражнений')} · ${fmt.human(s.durationSec ?? 0)}`)),
-        icon(open ? 'chevU' : 'chevD', 16)),
-      open ? h('div', { class: 'sess-body' }, s.exercises.map(ex =>
-        h('div', { class: 'sess-ex' },
-          h('div', { class: 'sess-ex-head' },
-            h('strong', { class: 'grow' }, ctx.ui.raw(ex.name)),
-            iconBtn('chart', 'Динамика максимального веса', () => openChart(ctx, all, ex.name))),
-          ex.comment ? h('span', { class: 'muted small block' }, ctx.ui.raw(ex.comment)) : null,
+  /** Заголовок колонки: на узких экранах слева стрелка назад на предыдущую ступень. */
+  const colHead = (title, sub, back) => h('div', { class: 'hcol-head' },
+    back ? iconBtn('chevL', 'Назад', back, 'hist-back') : null,
+    h('div', { class: 'grow' }, h('strong', null, title), sub ? h('span', { class: 'muted small block' }, sub) : null));
+
+  // ---------- 1: тренировки ----------
+  function colSessions() {
+    const year = new Date().getFullYear();
+    return h('section', { class: 'hcol card' },
+      sessions.length ? h('div', { class: 'hlist' }, sessions.map(s => {
+        const y = new Date(s.startedAt).getFullYear();
+        return h('button', { class: 'hrow' + (s.id === sel ? ' on' : ''), onClick: () => { sel = s.id; exKey = null; draw(); } },
+          h('span', { class: 'hrow-date' }, h('strong', null, fmt.date(s.startedAt) + (y !== year ? ' ' + y : '')), h('span', { class: 'muted small' }, fmt.weekday(s.startedAt))),
+          h('span', { class: 'grow' }, raw(s.name)),
+          h('span', { class: 'muted small' }, fmt.human(s.durationSec ?? 0)));
+      })) : h('p', { class: 'muted empty' }, 'Нет выполненных тренировок'));
+  }
+
+  // ---------- 2: упражнения тренировки ----------
+  function colExercises(s) {
+    return h('section', { class: 'hcol card' },
+      colHead(raw(s.name), `${fmt.date(s.startedAt)} · ${s.exercises.length} ${plural(s.exercises.length, 'упражнение', 'упражнения', 'упражнений')} · ${fmt.human(s.durationSec ?? 0)}`,
+        () => { sel = null; exKey = null; draw(); }),
+      h('div', { class: 'hlist' }, s.exercises.map(ex =>
+        h('button', { class: 'hex' + (keyOf(ex.name) === exKey ? ' on' : ''), onClick: () => { exKey = keyOf(ex.name); draw(); } },
+          h('strong', null, raw(ex.name)),
+          ex.comment ? h('span', { class: 'muted small block pre' }, raw(ex.comment)) : null,
           h('div', { class: 'sess-sets' }, ex.sets.map((x, i) =>
             h('div', { class: 'sess-set' },
               h('span', { class: 'muted' }, x.kind === 'warmup' ? 'Разминка' : ctx.t('Сет {n}', { n: ex.sets.slice(0, i + 1).filter(y => y.kind === 'work').length })),
               h('span', null, fmt.set(x)),
               h('span', { class: 'muted small' }, x.restSec != null ? ctx.t('отдых {time}', { time: fmtClock(x.restSec) }) : '')))))))
-        : null);
+    );
+  }
+
+  // ---------- 3: график ----------
+  function colChart(ex) {
+    const points = [];
+    for (const s of sessions) {
+      for (const e of s.exercises) {
+        if (keyOf(e.name) !== keyOf(ex.name)) continue;
+        const kgs = e.sets.filter(x => x.kind === 'work').map(x => Number(x.kg) || 0);
+        if (kgs.length) points.push({ t: s.startedAt, kg: Math.max(...kgs) });
+      }
+    }
+    points.sort((a, b) => a.t - b.t);
+    const to = Date.now(), from = to - period.days * DAY;
+    const pts = points.filter(p => p.t >= from);
+    const chips = h('div', { class: 'size-chips' }, PERIODS.map(p =>
+      h('button', { class: 'chip-btn' + (p === period ? ' on' : ''), onClick: () => { period = p; draw(); } }, p.label)));
+    return h('section', { class: 'hcol card' },
+      colHead(raw(ex.name), 'Динамика максимального веса', () => { exKey = null; draw(); }),
+      h('div', { class: 'hchart' },
+        chips,
+        pts.length
+          ? [h('p', { class: 'muted small' }, ctx.t('Рекорд: {kg} кг', { kg: Math.max(...pts.map(p => p.kg)) })), lineChart(pts, from, to, fmt)]
+          : h('p', { class: 'muted empty' }, 'Нет данных за этот период')));
   }
 
   draw();
   page.replaceChildren(
     h('header', { class: 'page-head' }, h('div', { class: 'row-gap' }, iconBtn('chevL', 'Назад', onBack), h('h1', null, 'История'))),
-    list);
-}
-
-/** Окно с графиком максимального рабочего веса в упражнении по выбранному периоду. */
-function openChart(ctx, sessions, name) {
-  const { h, modal, raw } = ctx.ui;
-  const fmt = makeFmt(ctx);
-  const key = keyOf(name);
-  const points = [];
-  for (const s of sessions) {
-    for (const ex of s.exercises) {
-      if (keyOf(ex.name) !== key) continue;
-      const kgs = ex.sets.filter(x => x.kind === 'work').map(x => Number(x.kg) || 0);
-      if (kgs.length) points.push({ t: s.startedAt, kg: Math.max(...kgs) });
-    }
-  }
-  points.sort((a, b) => a.t - b.t);
-
-  let period = PERIODS[1];
-  const chips = h('div', { class: 'size-chips' });
-  const box = h('div', { class: 'chart-box' });
-
-  function draw() {
-    chips.replaceChildren(...PERIODS.map(p => h('button', { class: 'chip-btn' + (p === period ? ' on' : ''), onClick: () => { period = p; draw(); } }, p.label)));
-    const to = Date.now(), from = to - period.days * DAY;
-    const pts = points.filter(p => p.t >= from);
-    if (!pts.length) {
-      box.replaceChildren(h('p', { class: 'muted empty' }, 'Нет данных за этот период'));
-      return;
-    }
-    const best = Math.max(...pts.map(p => p.kg));
-    box.replaceChildren(
-      h('p', { class: 'muted small' }, ctx.t('Рекорд: {kg} кг', { kg: best })),
-      lineChart(pts, from, to, fmt));
-  }
-
-  draw();
-  modal({ title: 'Динамика максимального веса', body: h('div', { class: 'share' }, h('strong', null, raw(name)), chips, box) });
+    root);
 }
 
 const NS = 'http://www.w3.org/2000/svg';

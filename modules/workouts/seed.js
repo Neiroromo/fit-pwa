@@ -63,7 +63,7 @@ export async function decodeSeed(text) {
       name: exName,
       sets: Math.min(10, Math.max(1, Math.round(Number(r[1])) || 3)),
       warmup: r[2] === 1,
-      comment: str(r[3], 120),
+      comment: str(r[3], 500),
       ...(ref ? { ref, refName: exName } : {}),
     };
   });
