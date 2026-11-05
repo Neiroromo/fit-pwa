@@ -3,6 +3,7 @@ import { createRegistry } from './core/registry.js';
 import { buildShell, openStore, updateButton, notifyUpdates } from './core/shell.js';
 import { ui, createUi, setAppTranslator } from './core/ui.js';
 import { initI18n, preload, translator, contentLang } from './core/i18n.js';
+import { loadDemo } from './core/profile.js';
 
 const db = createDb(new IdbAdapter());
 const registry = createRegistry(db);
@@ -46,6 +47,12 @@ function moduleContext(id) {
 }
 
 async function boot() {
+  // ссылка вида ?demo=<имя набора> (demo/<имя>.json) один раз загружает тестовые данные и убирает параметр из адреса
+  const demo = new URLSearchParams(location.search).get('demo');
+  if (demo) {
+    try { await loadDemo({ db }, demo); ui.toast('Демо-данные загружены: ' + demo); } catch (e) { console.error(e); ui.toast('Не удалось загрузить демо-данные: ' + demo); }
+    history.replaceState(null, '', location.pathname + location.hash);
+  }
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 
   await registry.init();

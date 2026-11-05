@@ -29,6 +29,17 @@ function resizeImage(file, max = 160) {
   });
 }
 
+/**
+ * Загружает демо-набор demo/<имя>.json (список наборов — demo/index.json). Импорт только добавляет записи.
+ * Нужен app.db; вызывается из профиля и из main.js по ссылке вида ?demo=<имя>.
+ */
+export async function loadDemo(app, name) {
+  if (!/^[\w-]+$/.test(name)) throw new Error('Неверное имя набора');
+  const res = await fetch(new URL(`demo/${name}.json`, document.baseURI), { cache: 'no-cache' });
+  if (!res.ok) throw new Error('Набор не найден');
+  await app.db.importAll(await res.json());
+}
+
 export function openProfile(app, anchor) {
   const prev = document.querySelector('.popover');
   prev?._close?.();
@@ -134,6 +145,24 @@ export function openProfile(app, anchor) {
           setTimeout(() => location.reload(), 800);
         } catch (e) { toast(e.message ? app.t(e.message) : 'Не удалось прочитать файл'); }
       });
+      // тестовые наборы данных из demo/ (если папка есть): одна кнопка вместо выбора файла
+      const demoBox = h('div', { class: 'form' });
+      fetch(new URL('demo/index.json', document.baseURI), { cache: 'no-cache' })
+        .then(r => (r.ok ? r.json() : []))
+        .catch(() => [])
+        .then(list => {
+          if (!list.length) return;
+          demoBox.replaceChildren(
+            h('strong', null, 'Демо-данные'),
+            h('p', { class: 'muted small' }, 'Тестовые наборы для проверки модулей. Загрузка только добавляет записи.'),
+            ...list.map(d => h('button', { class: 'btn', onClick: async () => {
+              try {
+                await loadDemo(app, d.file);
+                toast('Демо-данные загружены. Перезагрузка…');
+                setTimeout(() => location.reload(), 800);
+              } catch (e) { toast(app.t(e.message)); }
+            } }, icon('download', 16), raw(d.title))));
+        });
       return [
         head('Данные на устройстве'),
         h('div', { class: 'form' },
@@ -146,6 +175,7 @@ export function openProfile(app, anchor) {
           } }, icon('download', 16), 'Экспорт в файл'),
           h('button', { class: 'btn', onClick: () => file.click() }, icon('upload', 16), 'Импорт из файла'),
           file),
+        demoBox,
       ];
     },
   };

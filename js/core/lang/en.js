@@ -46,7 +46,7 @@ export default {
   'Данные восстановлены. Перезагрузка…': 'Data restored. Reloading…',
   'Не удалось прочитать файл': 'Could not read the file', 'Неверный файл резервной копии': 'Invalid backup file',
   'В бета-версии все данные хранятся только в этом браузере. Делайте резервные копии. Позже данные переедут в ваш Google-профиль.': 'In the beta, all data is stored in this browser only. Make backups. Later your data will move to your Google profile.',
-  'Экспорт в файл': 'Export to file', 'Импорт из файла': 'Import from file',
+  'Экспорт в файл': 'Export to file', 'Демо-данные': 'Demo data', 'Тестовые наборы для проверки модулей. Загрузка только добавляет записи.': 'Test datasets for trying the modules. Loading only adds records.', 'Демо-данные загружены. Перезагрузка…': 'Demo data loaded. Reloading…', 'Неверное имя набора': 'Invalid dataset name', 'Набор не найден': 'Dataset not found', 'Импорт из файла': 'Import from file',
 
   // язык
   'Язык приложения': 'App language',

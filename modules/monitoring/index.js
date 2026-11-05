@@ -122,9 +122,13 @@ export default {
         cb.addEventListener('change', () => onChange(cb.checked));
         return h('label', { class: 'check' }, cb, h('span', null, label));
       };
+      // две колонки (на широком экране): слева «Фитнес», справа «Медицина»
       modal({
         title: 'Настройки мониторинга',
+        wide: true,
         body: h('div', { class: 'mon-set' },
+          h('div', { class: 'set-col' },
+          h('div', { class: 'set-head' }, 'Фитнес'),
           h('div', { class: 'set-title' }, 'Показатели замеров'),
           ...MEASURES.map(m => check(!hiddenSet().has(m.id), m.name, on => {
             const hidden = hiddenSet();
@@ -137,14 +141,16 @@ export default {
             if (state.form) moveSplitValues(state.form.vals, g.id, on); // набранное в форме переносится
             change({ split: { ...settings.split, [g.id]: on } });
           })),
-          h('p', { class: 'muted small' }, 'Руки: бицепс и предплечье. Ноги: бедро и голень. Если выключено, вводится одно общее значение.'),
+          h('p', { class: 'muted small' }, 'Руки: бицепс и предплечье. Ноги: бедро и голень. Если выключено, вводится одно общее значение.')),
+          h('div', { class: 'set-col' },
+          h('div', { class: 'set-head' }, 'Медицина'),
           h('div', { class: 'set-title' }, 'Медицинские показатели'),
           ...MEDICAL.map(m => check(!hiddenSet().has(m.id), m.name, on => {
             const hidden = hiddenSet();
             if (on) hidden.delete(m.id); else hidden.add(m.id);
             change({ hidden: [...hidden] });
           })),
-          h('p', { class: 'muted small' }, 'Отключённый показатель не показывается, но уже внесённые записи сохраняются.')),
+          h('p', { class: 'muted small' }, 'Отключённый показатель не показывается, но уже внесённые записи сохраняются.'))),
       });
     }
 

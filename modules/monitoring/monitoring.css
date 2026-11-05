@@ -102,9 +102,12 @@
 .input.bad { border-color: var(--danger); }
 
 /* настройки */
-.mon-set { display: flex; flex-direction: column; gap: 8px; }
+.mon-set { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.set-col { display: flex; flex-direction: column; gap: 8px; align-content: start; }
+.set-head { font-size: 17px; font-weight: 650; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+@media (max-width: 720px) { .mon-set { grid-template-columns: minmax(0, 1fr); gap: 18px; } }
 .mon-set .check { padding: 4px 0; }
-.mon-set .set-title { margin-top: 10px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.mon-set .set-title { margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .tile.empty { opacity: .55; }
 
 /* медицина */
