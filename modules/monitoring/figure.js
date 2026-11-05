@@ -80,5 +80,10 @@ export function buildFigure(ctx, { onHover } = {}) {
     groups.set(m.id, g);
   }
 
-  return { el: wrap, highlight, hide };
+  /** Скрывает линии отключённых замеров. */
+  function setHidden(ids) {
+    for (const [k, g] of groups) g.classList.toggle('off', ids.has(k));
+  }
+
+  return { el: wrap, highlight, hide, setHidden };
 }

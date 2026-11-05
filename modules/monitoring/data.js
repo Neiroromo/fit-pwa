@@ -4,7 +4,8 @@
 //   {id, date, weight?: кг, fat?: %, m?: {ключ замера: см}}
 // Ключи замеров: 'neck', 'chest', … Для парных конечностей замер либо общий ('biceps'),
 // либо раздельный ('biceps.r' — правая, 'biceps.l' — левая); в истории встречаются оба вида.
-// kv 'settings': {height: см | null, split: {arms: bool, legs: bool}}
+// kv 'settings': {height: см | null, split: {arms: bool, legs: bool}, hidden: [ключи отключённых замеров]}
+// Отключённый замер не показывается (ввод, схема, история), но уже внесённые значения сохраняются.
 
 const pad = n => String(n).padStart(2, '0');
 
@@ -23,7 +24,7 @@ export const num = s => {
   return Number.isFinite(v) ? v : null;
 };
 
-export const LIMITS = { weight: [20, 400], fat: [2, 70], measure: [5, 250] };
+export const LIMITS = { weight: [20, 400], fat: [2, 70], height: [100, 250], measure: [5, 250] };
 export const inRange = (v, [lo, hi]) => v != null && v >= lo && v <= hi;
 
 /** Подсказки: как правильно мерить. Линии на схеме и тексты привязаны к этим ключам. */
@@ -70,11 +71,11 @@ export function removeEntry(ctx, date) {
   return ctx.db.collection('entries').remove(date);
 }
 
-const DEFAULT_SETTINGS = { height: null, split: { arms: false, legs: false } };
+const DEFAULT_SETTINGS = { height: null, split: { arms: false, legs: false }, hidden: [] };
 
 export async function getSettings(ctx) {
   const s = await ctx.db.kv.get('settings', null);
-  return { ...DEFAULT_SETTINGS, ...(s ?? {}), split: { ...DEFAULT_SETTINGS.split, ...(s?.split ?? {}) } };
+  return { ...DEFAULT_SETTINGS, ...(s ?? {}), split: { ...DEFAULT_SETTINGS.split, ...(s?.split ?? {}) }, hidden: [...(s?.hidden ?? [])] };
 }
 
 export const saveSettings = (ctx, s) => ctx.db.kv.set('settings', s);

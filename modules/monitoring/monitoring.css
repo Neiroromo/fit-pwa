@@ -66,3 +66,11 @@
   .m-row .input { width: 96px; }
 }
 .mon-log { display: flex; flex-direction: column; gap: 10px; }
+
+.mline.off { display: none; }
+.input.bad { border-color: var(--danger); }
+
+/* настройки */
+.mon-set { display: flex; flex-direction: column; gap: 8px; }
+.mon-set .check { padding: 4px 0; }
+.mon-set .set-title { margin-top: 10px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }

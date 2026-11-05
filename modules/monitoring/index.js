@@ -17,12 +17,42 @@ const PERIODS = [
   { days: 0, label: 'Всё' },
 ];
 
+/** Оставляет только цифры и один разделитель: до 3 цифр целой части и до 2 дробной. */
+function sanitizeNumber(v) {
+  const s = String(v).replace(/[^0-9.,]/g, '');
+  const i = s.search(/[.,]/);
+  if (i < 0) return s.slice(0, 3);
+  return s.slice(0, i).slice(0, 3) + s[i] + s.slice(i + 1).replace(/[.,]/g, '').slice(0, 2);
+}
+
+/**
+ * Переносит значения замеров группы при смене режима «вместе / раздельно»:
+ * общее значение → обе стороны, две стороны → среднее. Повторный вызов ничего не меняет.
+ */
+function moveSplitValues(vals, groupId, on) {
+  for (const m of MEASURES.filter(m => m.group === groupId)) {
+    const [c, r, l] = sideKeys(m.id).map(k => num(vals[k]));
+    if (on) {
+      if (c != null) { vals[`${m.id}.r`] = vals[`${m.id}.l`] = vals[m.id]; }
+      delete vals[m.id];
+    } else {
+      const sides = [r, l].filter(v => v != null);
+      if (sides.length && c == null) vals[m.id] = String(Math.round((sides.reduce((a, b) => a + b, 0) / sides.length) * 10) / 10);
+      delete vals[`${m.id}.r`]; delete vals[`${m.id}.l`];
+    }
+  }
+}
+
 export default {
   async mount(page, ctx, params) {
-    const { h, icon, iconBtn, confirmDialog, toast, raw } = ctx.ui;
+    const { h, icon, iconBtn, confirmDialog, toast, raw, modal } = ctx.ui;
     let entries = await listEntries(ctx);
     let settings = await getSettings(ctx);
-    const state = { tab: 'input', hist: 'body', period: 90, measure: 'biceps', date: dayKey() };
+    // form — то, что набрано в форме ввода; хранится здесь, чтобы не потеряться при смене настроек
+    const state = { tab: 'input', hist: 'body', period: 90, measure: 'biceps', date: dayKey(), form: null };
+
+    const hiddenSet = () => new Set(settings.hidden);
+    const visible = () => MEASURES.filter(m => !hiddenSet().has(m.id));
 
     const fmtNum = v => (Math.round(v * 10) / 10).toLocaleString(ctx.locale);
     const fmtDay = ms => new Date(ms).toLocaleDateString(ctx.locale, { day: 'numeric', month: 'short' });
@@ -39,36 +69,88 @@ export default {
 
     function render() {
       page.replaceChildren(
-        h('header', { class: 'page-head' }, h('h1', null, 'Мониторинг')),
+        h('header', { class: 'page-head' }, h('h1', null, 'Мониторинг'), iconBtn('sliders', 'Настройки мониторинга', openSettings)),
         tabs([['input', 'Ввод'], ['history', 'История']], state.tab, t => { state.tab = t; render(); }),
         view);
       if (state.tab === 'input') renderInput(); else renderHistory();
     }
 
+    // ---------- настройки ----------
+    function openSettings() {
+      const change = async next => {
+        settings = { ...settings, ...next };
+        await saveSettings(ctx, settings);
+        render();
+      };
+      const check = (checked, label, onChange) => {
+        const cb = h('input', { type: 'checkbox' });
+        cb.checked = checked;
+        cb.addEventListener('change', () => onChange(cb.checked));
+        return h('label', { class: 'check' }, cb, h('span', null, label));
+      };
+      modal({
+        title: 'Настройки мониторинга',
+        body: h('div', { class: 'mon-set' },
+          h('div', { class: 'set-title' }, 'Показатели замеров'),
+          ...MEASURES.map(m => check(!hiddenSet().has(m.id), m.name, on => {
+            const hidden = hiddenSet();
+            if (on) hidden.delete(m.id); else hidden.add(m.id);
+            change({ hidden: [...hidden] });
+          })),
+          h('p', { class: 'muted small' }, 'Отключённый замер не показывается, но уже внесённые значения сохраняются.'),
+          h('div', { class: 'set-title' }, 'Правая и левая отдельно'),
+          ...GROUPS.map(g => check(!!settings.split[g.id], g.name, on => {
+            if (state.form) moveSplitValues(state.form.vals, g.id, on); // набранное в форме переносится
+            change({ split: { ...settings.split, [g.id]: on } });
+          })),
+          h('p', { class: 'muted small' }, 'Руки: бицепс и предплечье. Ноги: бедро и голень. Если выключено, вводится одно общее значение.')),
+      });
+    }
+
     // ---------- ввод ----------
-    function renderInput() {
-      const form = { date: state.date, weight: '', fat: '', height: settings.height != null ? String(settings.height) : '', vals: {} };
-      const split = { ...settings.split };
-      const entry = entries.find(e => e.date === form.date);
+    /** Состояние формы для даты: набранное (если дата та же) или значения сохранённой записи. */
+    function formFor(date) {
+      if (state.form?.date === date) return state.form;
+      const entry = entries.find(e => e.date === date);
+      const form = { date, weight: '', fat: '', height: settings.height != null ? String(settings.height) : '', vals: {} };
       if (entry) {
         form.weight = entry.weight != null ? String(entry.weight) : '';
         form.fat = entry.fat != null ? String(entry.fat) : '';
         for (const [k, v] of Object.entries(entry.m ?? {})) form.vals[k] = String(v);
-        // в записи с раздельными значениями показываем правую и левую стороны
-        for (const g of GROUPS) {
-          const keys = MEASURES.filter(m => m.group === g.id).flatMap(m => Object.keys(entry.m ?? {}).filter(k => splitKey(k)[0] === m.id));
-          if (keys.some(k => splitKey(k)[1])) split[g.id] = true;
-          else if (keys.length) split[g.id] = false;
-        }
+        for (const g of GROUPS) moveSplitValues(form.vals, g.id, !!settings.split[g.id]); // приводим к текущему режиму
       }
+      return (state.form = form);
+    }
 
+    function renderInput() {
+      const form = formFor(state.date);
       const fig = buildFigure(ctx, { onHover: id => markRow(id) });
+      fig.setHidden(hiddenSet());
       const list = h('div', { class: 'm-list' });
       const markRow = id => list.querySelectorAll('.m-row').forEach(r => r.classList.toggle('on', r.dataset.k === id));
 
-      const numInput = (get, set, ph, cls = '') => {
-        const i = h('input', { class: 'input num ' + cls, inputmode: 'decimal', placeholder: ph, value: get(), autocomplete: 'off' });
-        i.addEventListener('input', () => { set(i.value); updateEstimate(); });
+      /** Числовое поле: буквы и символы не вводятся, при выходе из поля значение проверяется по диапазону. */
+      const numInput = (get, set, ph, range) => {
+        const i = h('input', { class: 'input num', inputmode: 'decimal', placeholder: ph, value: get(), autocomplete: 'off', maxlength: '6' });
+        i.addEventListener('keydown', e => {
+          if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && !/[0-9.,]/.test(e.key)) e.preventDefault();
+        });
+        i.addEventListener('input', () => {
+          const clean = sanitizeNumber(i.value);
+          if (clean !== i.value) { // вставка или автозаполнение с лишними символами
+            const pos = Math.max(0, (i.selectionStart ?? clean.length) - (i.value.length - clean.length));
+            i.value = clean;
+            i.setSelectionRange(pos, pos);
+          }
+          i.classList.remove('bad');
+          set(i.value);
+          updateEstimate();
+        });
+        i.addEventListener('blur', () => {
+          const bad = i.value.trim() !== '' && !inRange(num(i.value), range);
+          i.classList.toggle('bad', bad);
+          i.title = bad ? ctx.t('Допустимо от {lo} до {hi}', { lo: range[0], hi: range[1] }) : '';
+        });
         return i;
       };
       const hint = key => {
@@ -78,7 +160,7 @@ export default {
 
       // --- процент жира: оценка ---
       const estBox = h('div', { class: 'est' });
-      const fatInput = numInput(() => form.fat, v => (form.fat = v), '—');
+      const fatInput = numInput(() => form.fat, v => (form.fat = v), '—', LIMITS.fat);
       function updateEstimate() {
         const cur = k => num(form.vals[k]) ?? lastValue(entries, e => e.m?.[k], form.date);
         const est = estimateFat({
@@ -96,16 +178,15 @@ export default {
         estBox.replaceChildren(
           h('div', { class: 'est-row' },
             h('span', null, 'Оценка: '), h('strong', null, `≈ ${fmtNum(est.value)} %`),
-            h('button', { class: 'btn sm', onClick: () => { form.fat = String(est.value); fatInput.value = form.fat; } }, 'Подставить')),
+            h('button', { class: 'btn sm', onClick: () => { form.fat = String(est.value).replace('.', ','); fatInput.value = form.fat; fatInput.classList.remove('bad'); } }, 'Подставить')),
           h('span', { class: 'muted small' }, note));
       }
 
       // --- замеры ---
       function drawMeasures() {
-        const rows = [];
-        const row = m => {
-          const sided = m.group && split[m.group];
-          const field = key => numInput(() => form.vals[key] ?? '', v => (form.vals[key] = v), hint(key));
+        const rows = visible().map(m => {
+          const sided = m.group && settings.split[m.group];
+          const field = key => numInput(() => form.vals[key] ?? '', v => (form.vals[key] = v), hint(key), LIMITS.measure);
           const body = sided
             ? h('div', { class: 'm-pair' }, ['r', 'l'].map(s => h('label', { class: 'm-side' }, h('span', { class: 'muted small' }, s === 'r' ? 'П' : 'Л'), field(`${m.id}.${s}`))))
             : field(m.id);
@@ -115,35 +196,8 @@ export default {
           r.addEventListener('focusin', () => fig.highlight(m.id));
           r.addEventListener('focusout', () => fig.highlight(null));
           return r;
-        };
-        for (const m of MEASURES.filter(m => !m.group)) rows.push(row(m));
-        for (const g of GROUPS) {
-          const cb = h('input', { type: 'checkbox' });
-          cb.checked = !!split[g.id];
-          cb.addEventListener('change', () => { toggleSplit(g.id, cb.checked); });
-          rows.push(h('label', { class: 'check m-split' }, cb, h('span', null, ctx.t('{name}: правая и левая отдельно', { name: ctx.t(g.name) }))));
-          for (const m of MEASURES.filter(m => m.group === g.id)) rows.push(row(m));
-        }
-        list.replaceChildren(...rows);
-      }
-
-      /** Переключение «вместе / раздельно»: значения переносятся (общее → обе стороны, обе стороны → среднее). */
-      function toggleSplit(groupId, on) {
-        split[groupId] = on;
-        for (const m of MEASURES.filter(m => m.group === groupId)) {
-          const [c, r, l] = sideKeys(m.id).map(k => num(form.vals[k]));
-          if (on) {
-            if (c != null) { form.vals[`${m.id}.r`] = form.vals[`${m.id}.l`] = form.vals[m.id]; }
-            delete form.vals[m.id];
-          } else {
-            const sides = [r, l].filter(v => v != null);
-            if (sides.length) form.vals[m.id] = String(Math.round((sides.reduce((a, b) => a + b, 0) / sides.length) * 10) / 10);
-            delete form.vals[`${m.id}.r`]; delete form.vals[`${m.id}.l`];
-          }
-        }
-        settings = { ...settings, split: { ...settings.split, [groupId]: on } };
-        saveSettings(ctx, settings);
-        drawMeasures();
+        });
+        list.replaceChildren(...(rows.length ? rows : [h('p', { class: 'muted small' }, 'Все замеры отключены в настройках.')]));
       }
 
       async function save() {
@@ -151,15 +205,20 @@ export default {
         const weight = num(form.weight), fat = num(form.fat), height = num(form.height);
         if (form.weight.trim() && !inRange(weight, LIMITS.weight)) return toast('Проверьте вес');
         if (form.fat.trim() && !inRange(fat, LIMITS.fat)) return toast('Проверьте процент жира');
+        if (form.height.trim() && !inRange(height, LIMITS.height)) return toast('Проверьте рост');
         if (weight != null) out.weight = weight;
         if (fat != null) out.fat = fat;
         const m = {};
-        for (const meas of MEASURES) {
-          const keys = meas.group && split[meas.group] ? [`${meas.id}.r`, `${meas.id}.l`] : [meas.id];
+        // значения отключённых замеров остаются как были
+        const hidden = hiddenSet();
+        const existing = entries.find(e => e.date === form.date);
+        for (const [k, v] of Object.entries(existing?.m ?? {})) if (hidden.has(splitKey(k)[0])) m[k] = v;
+        for (const meas of visible()) {
+          const keys = meas.group && settings.split[meas.group] ? [`${meas.id}.r`, `${meas.id}.l`] : [meas.id];
           for (const k of keys) {
-            const raw = form.vals[k];
-            if (raw == null || !String(raw).trim()) continue;
-            const v = num(raw);
+            const text = form.vals[k];
+            if (text == null || !String(text).trim()) continue;
+            const v = num(text);
             if (!inRange(v, LIMITS.measure)) return toast(ctx.t('Проверьте замер: {name}', { name: sideLabel(k) }));
             m[k] = v;
           }
@@ -172,6 +231,7 @@ export default {
         }
         await putEntry(ctx, out);
         entries = await listEntries(ctx);
+        state.form = null;
         toast('Сохранено');
         renderInput();
       }
@@ -187,8 +247,8 @@ export default {
           h('div', { class: 'card mon-main' },
             h('label', { class: 'field' }, h('span', null, 'Дата'), date),
             h('div', { class: 'mon-two' },
-              h('label', { class: 'field' }, h('span', null, 'Вес, кг'), numInput(() => form.weight, v => (form.weight = v), hintOf(e => e.weight))),
-              h('label', { class: 'field' }, h('span', null, 'Рост, см'), numInput(() => form.height, v => (form.height = v), '—'))),
+              h('label', { class: 'field' }, h('span', null, 'Вес, кг'), numInput(() => form.weight, v => (form.weight = v), hintOf(e => e.weight), LIMITS.weight)),
+              h('label', { class: 'field' }, h('span', null, 'Рост, см'), numInput(() => form.height, v => (form.height = v), '—', LIMITS.height))),
             h('label', { class: 'field' }, h('span', null, 'Процент жира, %'), fatInput),
             estBox),
           h('div', { class: 'card' }, h('strong', null, 'Замеры, см'), list),
@@ -233,8 +293,11 @@ export default {
     }
 
     function measuresHistory() {
+      const shown = visible();
+      if (!shown.length) return h('p', { class: 'muted empty' }, 'Все замеры отключены в настройках.');
+      if (!shown.some(m => m.id === state.measure)) state.measure = shown[0].id;
       const present = id => sideKeys(id).filter(k => points(entries, e => e.m?.[k]).length);
-      const chips = h('div', { class: 'size-chips' }, MEASURES.map(m =>
+      const chips = h('div', { class: 'size-chips' }, shown.map(m =>
         h('button', { class: 'chip-btn' + (m.id === state.measure ? ' on' : ''), disabled: !present(m.id).length && m.id !== state.measure,
           onClick: () => { state.measure = m.id; renderHistory(); } }, m.name)));
 
@@ -249,7 +312,7 @@ export default {
 
       // изменения всех замеров за период: первое и последнее значение
       const rows = [];
-      for (const m of MEASURES) {
+      for (const m of shown) {
         for (const k of sideKeys(m.id)) {
           const pts = points(entries, e => e.m?.[k], fromMs());
           if (!pts.length) continue;
@@ -268,16 +331,18 @@ export default {
     function logHistory() {
       if (!entries.length) return h('p', { class: 'muted empty' }, 'Записей пока нет. Добавьте первую на вкладке «Ввод».');
       return h('div', { class: 'mon-log' }, [...entries].reverse().map(e => {
-        const n = Object.keys(e.m ?? {}).length;
+        const hidden = hiddenSet();
+        const n = Object.keys(e.m ?? {}).filter(k => !hidden.has(splitKey(k)[0])).length;
         const bits = [e.weight != null ? `${fmtNum(e.weight)} ${ctx.t('кг')}` : null, e.fat != null ? `${fmtNum(e.fat)} %` : null,
           n ? ctx.t('замеров: {n}', { n }) : null].filter(Boolean);
         return h('div', { class: 'log-row' },
           h('div', { class: 'grow' }, h('strong', null, raw(fmtDayLong(e.date))), h('span', { class: 'muted small block' }, raw(bits.join(' · ')))),
-          iconBtn('edit', 'Редактировать', () => { state.date = e.date; state.tab = 'input'; render(); }),
+          iconBtn('edit', 'Редактировать', () => { state.date = e.date; state.form = null; state.tab = 'input'; render(); }),
           iconBtn('trash', 'Удалить', async () => {
             if (!(await confirmDialog(ctx.t('Удалить запись от {date}?', { date: fmtDayLong(e.date) }), { okText: 'Удалить', danger: true }))) return;
             await removeEntry(ctx, e.date);
             entries = await listEntries(ctx);
+            if (state.form?.date === e.date) state.form = null;
             renderHistory();
           }, 'danger'));
       }));

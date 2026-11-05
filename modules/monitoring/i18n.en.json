@@ -33,7 +33,6 @@
   "Л": "L",
   "правая": "right",
   "левая": "left",
-  "{name}: правая и левая отдельно": "{name}: right and left separately",
   "Проверьте вес": "Check the weight",
   "Проверьте процент жира": "Check the body fat",
   "Проверьте замер: {name}": "Check the measurement: {name}",
@@ -71,5 +70,13 @@
   "Середина плеча между плечевым суставом и локтем, рука расслаблена и опущена. Лента перпендикулярно плечу. Выберите один способ (расслабленный или напряжённый) и придерживайтесь его.": "The middle of the upper arm between shoulder and elbow, arm relaxed and hanging. Tape perpendicular to the arm. Pick one way (relaxed or flexed) and stick to it.",
   "В самой толстой части, примерно на треть длины предплечья ниже локтя. Рука расслаблена, ладонь повёрнута вперёд.": "At the thickest part, about a third of the forearm's length below the elbow. Arm relaxed, palm facing forward.",
   "В самой толстой части, примерно на 5–10 см ниже ягодичной складки. Вес на обе ноги, мышцы расслаблены, лента горизонтально.": "At the thickest part, about 5–10 cm below the gluteal fold. Weight on both legs, muscles relaxed, tape level.",
-  "В самой широкой части икры. Стойте прямо, вес на обе ноги, мышцы расслаблены.": "At the widest part of the calf. Stand straight with your weight on both legs, muscles relaxed."
+  "В самой широкой части икры. Стойте прямо, вес на обе ноги, мышцы расслаблены.": "At the widest part of the calf. Stand straight with your weight on both legs, muscles relaxed.",
+  "Настройки мониторинга": "Monitoring settings",
+  "Показатели замеров": "Measurements to track",
+  "Отключённый замер не показывается, но уже внесённые значения сохраняются.": "A disabled measurement is hidden, but values you already entered are kept.",
+  "Правая и левая отдельно": "Right and left separately",
+  "Руки: бицепс и предплечье. Ноги: бедро и голень. Если выключено, вводится одно общее значение.": "Arms: biceps and forearm. Legs: thigh and calf. When off, a single combined value is entered.",
+  "Все замеры отключены в настройках.": "All measurements are disabled in settings.",
+  "Проверьте рост": "Check the height",
+  "Допустимо от {lo} до {hi}": "Allowed range: {lo} to {hi}"
 }
