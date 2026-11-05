@@ -119,5 +119,6 @@
   "Давление ещё не вносилось": "No blood pressure entered yet",
   "Пульс: {n}": "Pulse: {n}",
   "{name}, {unit}": "{name}, {unit}",
-  "Последнее давление и пульс": "Latest blood pressure and pulse"
+  "Последнее давление и пульс": "Latest blood pressure and pulse",
+  "2 нед": "2 wk"
 }

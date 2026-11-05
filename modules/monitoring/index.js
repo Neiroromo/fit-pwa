@@ -11,6 +11,7 @@ import { dynamicsChart, dynamicsTable, sparkline, withTrend, colorOfKey, SERIES_
 
 const DAY = 86_400_000;
 const PERIODS = [
+  { days: 14, label: '2 нед' },
   { days: 30, label: '1 мес' },
   { days: 90, label: '3 мес' },
   { days: 182, label: '6 мес' },
