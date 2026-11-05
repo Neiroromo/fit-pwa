@@ -2,7 +2,7 @@
   "id": "monitoring",
   "name": "Мониторинг",
   "icon": "heart",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "entry": "index.js",
   "files": [
     "data.js",

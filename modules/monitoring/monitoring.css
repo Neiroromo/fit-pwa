@@ -102,10 +102,11 @@
 .input.bad { border-color: var(--danger); }
 
 /* настройки */
-.mon-set { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.mon-set { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
 .set-col { display: flex; flex-direction: column; gap: 8px; align-content: start; }
 .set-head { font-size: 17px; font-weight: 650; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
-@media (max-width: 720px) { .mon-set { grid-template-columns: minmax(0, 1fr); gap: 18px; } }
+@media (max-width: 1000px) { .mon-set { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .mon-set { grid-template-columns: minmax(0, 1fr); gap: 18px; } }
 .mon-set .check { padding: 4px 0; }
 .mon-set .set-title { margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .tile.empty { opacity: .55; }
@@ -115,3 +116,15 @@
 .tile-group { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 6px 2px 0; }
 .log-row .chip { flex: none; }
 @media (max-width: 900px) { .mon-med { grid-template-columns: minmax(0, 1fr); } }
+
+/* окно настроек шире обычного: три колонки */
+.modal:has(.mon-set) { width: min(1000px, 100%); }
+
+/* замеры в форме: подразделы, подсказки «как измерить», размер обуви */
+.m-sub { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.m-list > .m-sub:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.m-info { width: 28px; height: 28px; margin-left: -6px; }
+.m-info .icon { --s: 16px; }
+.m-hint { padding: 0 8px 4px; line-height: 1.45; }
+.m-hint[hidden], .shoe-note[hidden] { display: none; }
+.shoe-note { padding: 0 8px; }

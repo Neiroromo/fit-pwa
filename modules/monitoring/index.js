@@ -1,12 +1,13 @@
-// Модуль «Мониторинг»: два раздела — «Фитнес» (вес, процент жира, замеры тела) и «Медицина» (давление, пульс, температура); ввод, история и динамика.
+// Модуль «Мониторинг»: два раздела — «Тело» (вес, процент жира, замеры тела и размеры для одежды и обуви) и «Медицина» (давление, пульс, температура); ввод, история и динамика.
 
 import {
-  MEASURES, GROUPS, SIDE_NAME, LIMITS, dayKey, parseDay, num, inRange, measureOf, sideKeys, splitKey,
+  MEASURES, GROUPS, SECTIONS, SIDE_NAME, LIMITS, shoeSizes, dayKey, parseDay, num, inRange, measureOf, sideKeys, splitKey,
   listEntries, putEntry, removeEntry, getSettings, saveSettings, lastValue, points,
   MEDICAL, VITAL_LABEL, listVitals, putVital, removeVital, vitalPoints,
 } from './data.js';
 import { estimateFat } from './estimate.js';
 import { buildFigure } from './figure.js';
+import { LINES } from './shape.js';
 import { dynamicsChart, dynamicsTable, sparkline, withTrend, colorOfKey, SERIES_COLORS } from './charts.js';
 
 const DAY = 86_400_000;
@@ -98,7 +99,7 @@ export default {
 
     function render() {
       // раздел (фитнес / медицина) выбирается во вводе; в истории тот же выбор — фильтр с пунктом «Всё»
-      const catBar = state.tab === 'input' ? tabs([['fitness', 'Фитнес'], ['medical', 'Медицина']], state.cat, c => { state.cat = c; render(); }) : null;
+      const catBar = state.tab === 'input' ? tabs([['fitness', 'Тело'], ['medical', 'Медицина']], state.cat, c => { state.cat = c; render(); }) : null;
       page.replaceChildren(...[
         h('header', { class: 'page-head' }, h('h1', null, 'Мониторинг'), iconBtn('sliders', 'Настройки мониторинга', openSettings)),
         tabs([['input', 'Ввод'], ['history', 'История']], state.tab, t => { state.tab = t; render(); }),
@@ -123,35 +124,38 @@ export default {
         cb.addEventListener('change', () => onChange(cb.checked));
         return h('label', { class: 'check' }, cb, h('span', null, label));
       };
-      // две колонки (на широком экране): слева «Фитнес», справа «Медицина»
+      const toggle = (id, on) => {
+        const hidden = hiddenSet();
+        if (on) hidden.delete(id); else hidden.add(id);
+        change({ hidden: [...hidden] });
+      };
+      const measureChecks = section => MEASURES.filter(m => m.section === section).map(m => check(!hiddenSet().has(m.id), m.name, on => toggle(m.id, on)));
+      // три колонки на широком экране: «Тело», «Одежда и обувь», «Медицина» (на узком — две или одна)
       modal({
         title: 'Настройки мониторинга',
         wide: true,
         body: h('div', { class: 'mon-set' },
           h('div', { class: 'set-col' },
-          h('div', { class: 'set-head' }, 'Фитнес'),
-          h('div', { class: 'set-title' }, 'Показатели замеров'),
-          ...MEASURES.map(m => check(!hiddenSet().has(m.id), m.name, on => {
-            const hidden = hiddenSet();
-            if (on) hidden.delete(m.id); else hidden.add(m.id);
-            change({ hidden: [...hidden] });
-          })),
-          h('p', { class: 'muted small' }, 'Отключённый замер не показывается, но уже внесённые значения сохраняются.'),
-          h('div', { class: 'set-title' }, 'Правая и левая отдельно'),
-          ...GROUPS.map(g => check(!!settings.split[g.id], g.name, on => {
-            if (state.form) moveSplitValues(state.form.vals, g.id, on); // набранное в форме переносится
-            change({ split: { ...settings.split, [g.id]: on } });
-          })),
-          h('p', { class: 'muted small' }, 'Руки: бицепс и предплечье. Ноги: бедро и голень. Если выключено, вводится одно общее значение.')),
+            h('div', { class: 'set-head' }, 'Тело'),
+            h('div', { class: 'set-title' }, 'Показатели замеров'),
+            ...measureChecks('body'),
+            h('p', { class: 'muted small' }, 'Отключённый замер не показывается, но уже внесённые значения сохраняются.'),
+            h('div', { class: 'set-title' }, 'Правая и левая отдельно'),
+            ...GROUPS.map(g => check(!!settings.split[g.id], g.name, on => {
+              if (state.form) moveSplitValues(state.form.vals, g.id, on); // набранное в форме переносится
+              change({ split: { ...settings.split, [g.id]: on } });
+            })),
+            h('p', { class: 'muted small' }, 'Руки: бицепс, предплечье, длина рукава, запястье, ладонь. Ноги: бедро, голень, щиколотка, длина и ширина стопы. Если выключено, вводится одно общее значение.')),
           h('div', { class: 'set-col' },
-          h('div', { class: 'set-head' }, 'Медицина'),
-          h('div', { class: 'set-title' }, 'Медицинские показатели'),
-          ...MEDICAL.map(m => check(!hiddenSet().has(m.id), m.name, on => {
-            const hidden = hiddenSet();
-            if (on) hidden.delete(m.id); else hidden.add(m.id);
-            change({ hidden: [...hidden] });
-          })),
-          h('p', { class: 'muted small' }, 'Отключённый показатель не показывается, но уже внесённые записи сохраняются.'))),
+            h('div', { class: 'set-head' }, 'Одежда и обувь'),
+            h('div', { class: 'set-title' }, 'Размеры для подбора одежды'),
+            ...measureChecks('clothes'),
+            h('p', { class: 'muted small' }, 'По длине стопы показывается примерный размер обуви.')),
+          h('div', { class: 'set-col' },
+            h('div', { class: 'set-head' }, 'Медицина'),
+            h('div', { class: 'set-title' }, 'Медицинские показатели'),
+            ...MEDICAL.map(m => check(!hiddenSet().has(m.id), m.name, on => toggle(m.id, on))),
+            h('p', { class: 'muted small' }, 'Отключённый показатель не показывается, но уже внесённые записи сохраняются.'))),
       });
     }
 
@@ -177,7 +181,7 @@ export default {
       const list = h('div', { class: 'm-list' });
       const markRow = id => list.querySelectorAll('.m-row').forEach(r => r.classList.toggle('on', r.dataset.k === id));
 
-      const numInput = (get, set, ph, range) => numField(ctx, { get, set, ph, range, onInput: updateEstimate });
+      const numInput = (get, set, ph, range) => numField(ctx, { get, set, ph, range, onInput: () => { updateEstimate(); updateShoe(); } });
       const hint = key => {
         const v = lastValue(entries, e => e.m?.[key], form.date);
         return v != null ? fmtNum(v) : '—';
@@ -209,20 +213,42 @@ export default {
 
       // --- замеры ---
       function drawMeasures() {
-        const rows = visible().map(m => {
-          const sided = m.group && settings.split[m.group];
-          const field = key => numInput(() => form.vals[key] ?? '', v => (form.vals[key] = v), hint(key), LIMITS.measure);
-          const body = sided
-            ? h('div', { class: 'm-pair' }, ['r', 'l'].map(s => h('label', { class: 'm-side' }, h('span', { class: 'muted small' }, s === 'r' ? 'П' : 'Л'), field(`${m.id}.${s}`))))
-            : field(m.id);
-          const r = h('div', { class: 'm-row', 'data-k': m.id }, h('span', { class: 'm-name' }, m.name), body);
-          r.addEventListener('pointerenter', () => fig.highlight(m.id));
-          r.addEventListener('pointerleave', () => fig.highlight(null));
-          r.addEventListener('focusin', () => fig.highlight(m.id));
-          r.addEventListener('focusout', () => fig.highlight(null));
-          return r;
-        });
+        const rows = [];
+        for (const sec of SECTIONS) {
+          const items = visible().filter(m => m.section === sec.id);
+          if (!items.length) continue;
+          rows.push(h('div', { class: 'm-sub' }, sec.name));
+          for (const m of items) {
+            const sided = m.group && settings.split[m.group];
+            const field = key => numInput(() => form.vals[key] ?? '', v => (form.vals[key] = v), hint(key), m.range ?? LIMITS.measure);
+            const body = sided
+              ? h('div', { class: 'm-pair' }, ['r', 'l'].map(s => h('label', { class: 'm-side' }, h('span', { class: 'muted small' }, s === 'r' ? 'П' : 'Л'), field(`${m.id}.${s}`))))
+              : field(m.id);
+            // как измерять: у замеров со схемы — подсказка по линии, у всех — значок в строке (работает и на сенсорных экранах)
+            const tipEl = h('p', { class: 'm-hint muted small', hidden: true }, m.tip);
+            const info = iconBtn('info', 'Как измерить', () => { tipEl.hidden = !tipEl.hidden; }, 'm-info');
+            const r = h('div', { class: 'm-row', 'data-k': m.id }, h('span', { class: 'm-name' }, m.name), info, body);
+            r.addEventListener('pointerenter', () => fig.highlight(m.id));
+            r.addEventListener('pointerleave', () => fig.highlight(null));
+            r.addEventListener('focusin', () => fig.highlight(m.id));
+            r.addEventListener('focusout', () => fig.highlight(null));
+            rows.push(r, tipEl);
+            if (m.id === 'foot') rows.push(h('p', { class: 'shoe-note muted small', hidden: true }));
+          }
+        }
         list.replaceChildren(...(rows.length ? rows : [h('p', { class: 'muted small' }, 'Все замеры отключены в настройках.')]));
+        updateShoe();
+      }
+
+      /** Примерный размер обуви по длине стопы (при раздельном вводе — по большей стопе). */
+      function updateShoe() {
+        const el = list.querySelector('.shoe-note');
+        if (!el) return;
+        const vals = ['foot', 'foot.r', 'foot.l'].map(k => num(form.vals[k])).filter(v => v != null && inRange(v, measureOf('foot').range));
+        el.hidden = !vals.length;
+        if (!vals.length) return;
+        const z = shoeSizes(Math.max(...vals));
+        el.textContent = ctx.t('Примерный размер обуви: EU {eu} · US {us} · UK {uk}. У разных брендов размеры отличаются.', { eu: fmtNum(z.eu), us: fmtNum(z.us), uk: fmtNum(z.uk) });
       }
 
       async function save() {
@@ -244,7 +270,7 @@ export default {
             const text = form.vals[k];
             if (text == null || !String(text).trim()) continue;
             const v = num(text);
-            if (!inRange(v, LIMITS.measure)) return toast(ctx.t('Проверьте замер: {name}', { name: sideLabel(k) }));
+            if (!inRange(v, meas.range ?? LIMITS.measure)) return toast(ctx.t('Проверьте замер: {name}', { name: sideLabel(k) }));
             m[k] = v;
           }
         }
@@ -387,11 +413,11 @@ export default {
     function metricsList() {
       const hidden = hiddenSet();
       const fit = [
-        { id: 'weight', cat: 'fitness', name: 'Вес', unit: 'кг', get: e => e.weight, tau: 7 },
-        { id: 'fat', cat: 'fitness', name: 'Процент жира', unit: '%', get: e => e.fat, tau: 10 },
-        ...visible().map(m => ({ id: m.id, cat: 'fitness', name: m.name, unit: 'см', measure: true, tau: 10 })),
+        { id: 'weight', cat: 'fitness', section: 'body', name: 'Вес', unit: 'кг', get: e => e.weight, tau: 7 },
+        { id: 'fat', cat: 'fitness', section: 'body', name: 'Процент жира', unit: '%', get: e => e.fat, tau: 10 },
+        ...visible().map(m => ({ id: m.id, cat: 'fitness', section: m.section, name: m.name, unit: 'см', measure: true, tau: 10 })),
       ];
-      const med = MEDICAL.filter(m => !hidden.has(m.id)).map(m => ({ id: m.id, cat: 'medical', name: m.name, unit: m.unit, vital: m.keys, tau: 7 }));
+      const med = MEDICAL.filter(m => !hidden.has(m.id)).map(m => ({ id: m.id, cat: 'medical', section: 'medical', name: m.name, unit: m.unit, vital: m.keys, tau: 7 }));
       return [...fit, ...med].filter(m => state.hcat === 'all' || m.cat === state.hcat);
     }
 
@@ -478,7 +504,7 @@ export default {
     }
 
     function renderHistory() {
-      const cats = tabs([['all', 'Всё'], ['fitness', 'Фитнес'], ['medical', 'Медицина']], state.hcat, c => { state.hcat = c; renderHistory(); });
+      const cats = tabs([['all', 'Всё'], ['fitness', 'Тело'], ['medical', 'Медицина']], state.hcat, c => { state.hcat = c; renderHistory(); });
       const filters = h('div', { class: 'dyn-filters' },
         state.hview === 'dynamics' ? tabs(PERIODS.map(p => [p.days, p.label]), state.period, d => { state.period = d; renderHistory(); }) : h('span'),
         tabs([['dynamics', 'Динамика'], ['log', 'Записи']], state.hview, v => { state.hview = v; renderHistory(); }));
@@ -488,10 +514,13 @@ export default {
       if (!list.length) { view.replaceChildren(cats, filters, h('p', { class: 'muted empty' }, 'Нет включённых показателей. Включите их в настройках.')); return; }
       if (!list.some(([m]) => m.id === state.metric)) state.metric = list[0][0].id;
       const [cur, curSeries] = list.find(([m]) => m.id === state.metric);
+      // заголовки групп плиток, если показано больше одной группы
       const tiles = [];
-      let prevCat = null;
+      const sectionName = { body: 'Тело', clothes: 'Одежда и обувь', medical: 'Медицина' };
+      const manySections = new Set(list.map(([m]) => m.section)).size > 1;
+      let prevSection = null;
       for (const [m, s] of list) {
-        if (state.hcat === 'all' && m.cat !== prevCat) { tiles.push(h('div', { class: 'tile-group' }, m.cat === 'fitness' ? 'Фитнес' : 'Медицина')); prevCat = m.cat; }
+        if (manySections && m.section !== prevSection) { tiles.push(h('div', { class: 'tile-group' }, sectionName[m.section])); prevSection = m.section; }
         tiles.push(tile(m, s));
       }
       view.replaceChildren(cats, filters, h('div', { class: 'dyn' }, h('div', { class: 'dyn-tiles' }, tiles), mainCard(cur, curSeries)));
@@ -512,7 +541,7 @@ export default {
           n ? ctx.t('замеров: {n}', { n }) : null].filter(Boolean);
         return h('div', { class: 'log-row' },
           h('div', { class: 'grow' }, h('strong', null, raw(fmtDayLong(e.date))), h('span', { class: 'muted small block' }, raw(bits.join(' · ')))),
-          tag('Фитнес'),
+          tag('Тело'),
           iconBtn('edit', 'Редактировать', () => { state.date = e.date; state.form = null; state.tab = 'input'; state.cat = 'fitness'; render(); }),
           iconBtn('trash', 'Удалить', async () => {
             if (!(await confirmDialog(ctx.t('Удалить запись от {date}?', { date: fmtDayLong(e.date) }), { okText: 'Удалить', danger: true }))) return;

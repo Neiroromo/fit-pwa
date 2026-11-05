@@ -29,7 +29,7 @@ export default {
   'Активность': 'Activity',
   'Шаги, прогулки, пробежки и ежедневная активность.': 'Steps, walks, runs and daily activity.',
   'Мониторинг': 'Monitoring',
-  'Фитнес-мониторинг (вес, процент жира, замеры тела) и медицинский (давление, пульс, температура) с историей и графиками.': 'Fitness monitoring (weight, body fat, body measurements) and medical monitoring (blood pressure, pulse, temperature) with history and charts.',
+  'Мониторинг тела (вес, процент жира, замеры, размеры одежды и обуви) и медицинский (давление, пульс, температура) с историей и графиками.': 'Body monitoring (weight, body fat, measurements, clothing and shoe sizes) and medical monitoring (blood pressure, pulse, temperature) with history and charts.',
 
   // профиль
   'Локальный профиль': 'Local profile', 'Имя и аватар': 'Name and avatar',

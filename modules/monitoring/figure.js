@@ -62,7 +62,7 @@ export function buildFigure(ctx, { onHover } = {}) {
     for (const [k, g] of groups) g.classList.toggle('on', k === id);
   }
 
-  for (const m of MEASURES) {
+  for (const m of MEASURES.filter(m => LINES[m.id])) { // у замеров для одежды линий на схеме нет
     const g = el('g', { class: 'mline', tabindex: '0', role: 'img', 'aria-label': ctx.t(m.name), 'data-k': m.id }, svg);
     for (const [x1, y1, x2, y2] of LINES[m.id]) {
       el('line', { x1, y1, x2, y2, class: 'ml-hit' }, g);
