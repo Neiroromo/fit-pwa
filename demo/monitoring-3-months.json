@@ -1,0 +1,884 @@
+{
+ "app": "fit-pwa",
+ "version": 1,
+ "exportedAt": "2026-11-05T18:54:41.931Z",
+ "records": [
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-09",
+   "date": "2026-08-09",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "fat": 24.7,
+   "m": {
+    "neck": 38,
+    "shoulders": 118,
+    "chest": 101,
+    "waist": 96,
+    "hips": 102,
+    "biceps.r": 34,
+    "biceps.l": 33.5,
+    "forearm.r": 29,
+    "forearm.l": 28.5,
+    "thigh": 59,
+    "calf": 38
+   }
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-10",
+   "date": "2026-08-10",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 88.3
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-11",
+   "date": "2026-08-11",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 87.8
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-12",
+   "date": "2026-08-12",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 88
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-13",
+   "date": "2026-08-13",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 87.8
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-14",
+   "date": "2026-08-14",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 87.8
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-16",
+   "date": "2026-08-16",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 87.6,
+   "fat": 24.2
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-17",
+   "date": "2026-08-17",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 87.7
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-18",
+   "date": "2026-08-18",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 87.2
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-19",
+   "date": "2026-08-19",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.8
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-20",
+   "date": "2026-08-20",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 87.1
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-21",
+   "date": "2026-08-21",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 87
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-22",
+   "date": "2026-08-22",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.5
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-23",
+   "date": "2026-08-23",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.8,
+   "fat": 23.8,
+   "m": {
+    "neck": 38,
+    "shoulders": 118.5,
+    "chest": 101.5,
+    "waist": 94.5,
+    "hips": 101.5,
+    "biceps.r": 34.5,
+    "biceps.l": 34,
+    "forearm.r": 29.5,
+    "forearm.l": 28.5,
+    "thigh": 59.5,
+    "calf": 38
+   }
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-24",
+   "date": "2026-08-24",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 87.3
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-25",
+   "date": "2026-08-25",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.6
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-26",
+   "date": "2026-08-26",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.5
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-27",
+   "date": "2026-08-27",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.4
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-28",
+   "date": "2026-08-28",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.1
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-29",
+   "date": "2026-08-29",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.4
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-30",
+   "date": "2026-08-30",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.3,
+   "fat": 23.8
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-08-31",
+   "date": "2026-08-31",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.6
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-01",
+   "date": "2026-09-01",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.1
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-02",
+   "date": "2026-09-02",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85.9
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-03",
+   "date": "2026-09-03",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.3
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-04",
+   "date": "2026-09-04",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85.9
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-05",
+   "date": "2026-09-05",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85.6
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-06",
+   "date": "2026-09-06",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85.7,
+   "fat": 23.2,
+   "m": {
+    "neck": 38.5,
+    "shoulders": 119,
+    "chest": 102,
+    "waist": 93.5,
+    "hips": 101.5,
+    "biceps.r": 35,
+    "biceps.l": 34.5,
+    "forearm.r": 29.5,
+    "forearm.l": 29,
+    "thigh": 60,
+    "calf": 38.5
+   }
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-07",
+   "date": "2026-09-07",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 86.1
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-08",
+   "date": "2026-09-08",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85.3
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-09",
+   "date": "2026-09-09",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85.7
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-10",
+   "date": "2026-09-10",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85.4
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-11",
+   "date": "2026-09-11",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-12",
+   "date": "2026-09-12",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85.2
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-13",
+   "date": "2026-09-13",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85.2,
+   "fat": 22.9
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-14",
+   "date": "2026-09-14",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85.4
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-15",
+   "date": "2026-09-15",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.9
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-16",
+   "date": "2026-09-16",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 85.3
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-17",
+   "date": "2026-09-17",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.8
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-18",
+   "date": "2026-09-18",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.7
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-19",
+   "date": "2026-09-19",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.8
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-20",
+   "date": "2026-09-20",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.4,
+   "fat": 22.8,
+   "m": {
+    "neck": 38.5,
+    "shoulders": 119,
+    "chest": 102.5,
+    "waist": 92.5,
+    "hips": 101,
+    "biceps.r": 35.5,
+    "biceps.l": 35,
+    "forearm.r": 29.5,
+    "forearm.l": 29,
+    "thigh": 60,
+    "calf": 38.5
+   }
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-21",
+   "date": "2026-09-21",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.8
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-22",
+   "date": "2026-09-22",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.6
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-23",
+   "date": "2026-09-23",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.5
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-24",
+   "date": "2026-09-24",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.7
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-25",
+   "date": "2026-09-25",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.4
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-26",
+   "date": "2026-09-26",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.1
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-27",
+   "date": "2026-09-27",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "fat": 22.5
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-28",
+   "date": "2026-09-28",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.4
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-29",
+   "date": "2026-09-29",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84.2
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-09-30",
+   "date": "2026-09-30",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 84
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-01",
+   "date": "2026-10-01",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 83.8
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-02",
+   "date": "2026-10-02",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 83.7
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-04",
+   "date": "2026-10-04",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 83.8,
+   "fat": 22.2,
+   "m": {
+    "neck": 38.5,
+    "shoulders": 119.5,
+    "chest": 102.5,
+    "waist": 91.5,
+    "hips": 100.5,
+    "biceps.r": 36,
+    "biceps.l": 35,
+    "forearm.r": 29.5,
+    "forearm.l": 29.5,
+    "thigh": 60.5,
+    "calf": 38.5
+   }
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-05",
+   "date": "2026-10-05",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 83.8
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-06",
+   "date": "2026-10-06",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 83.7
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-07",
+   "date": "2026-10-07",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 83.3
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-09",
+   "date": "2026-10-09",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 83.2
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-10",
+   "date": "2026-10-10",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 83.2
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-11",
+   "date": "2026-10-11",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "fat": 22
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-12",
+   "date": "2026-10-12",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 83.5
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-13",
+   "date": "2026-10-13",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 83
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-14",
+   "date": "2026-10-14",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 82.6
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-15",
+   "date": "2026-10-15",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 82.9
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-17",
+   "date": "2026-10-17",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 82.9
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-18",
+   "date": "2026-10-18",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 82.9,
+   "fat": 21.6,
+   "m": {
+    "neck": 38.5,
+    "shoulders": 119.5,
+    "chest": 103,
+    "waist": 90.5,
+    "hips": 100.5,
+    "biceps.r": 36,
+    "biceps.l": 35.5,
+    "forearm.r": 30,
+    "forearm.l": 29.5,
+    "thigh": 60.5,
+    "calf": 39
+   }
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-19",
+   "date": "2026-10-19",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 83.3
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-20",
+   "date": "2026-10-20",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 82.5
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-21",
+   "date": "2026-10-21",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 82.6
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-22",
+   "date": "2026-10-22",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 82.1
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-24",
+   "date": "2026-10-24",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 82.2
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-25",
+   "date": "2026-10-25",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 82.1,
+   "fat": 21.4
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-26",
+   "date": "2026-10-26",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 82.6
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-27",
+   "date": "2026-10-27",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 82.3
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-28",
+   "date": "2026-10-28",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 81.7
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-29",
+   "date": "2026-10-29",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 81.8
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-10-30",
+   "date": "2026-10-30",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 81.9
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-11-01",
+   "date": "2026-11-01",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 81.9,
+   "fat": 21.1,
+   "m": {
+    "neck": 38.5,
+    "shoulders": 120,
+    "chest": 103.5,
+    "waist": 89,
+    "hips": 100,
+    "biceps.r": 36.5,
+    "biceps.l": 36,
+    "forearm.r": 30,
+    "forearm.l": 29.5,
+    "thigh": 61,
+    "calf": 39
+   }
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-11-02",
+   "date": "2026-11-02",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 81.9
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-11-04",
+   "date": "2026-11-04",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 81.3
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-11-05",
+   "date": "2026-11-05",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 81.6
+  },
+  {
+   "c": "monitoring/entries",
+   "id": "2026-11-06",
+   "date": "2026-11-06",
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false,
+   "weight": 81.5,
+   "fat": 20.8,
+   "m": {
+    "neck": 38.5,
+    "shoulders": 120,
+    "chest": 103.5,
+    "waist": 89,
+    "hips": 100,
+    "biceps.r": 36.5,
+    "biceps.l": 36,
+    "forearm.r": 30,
+    "forearm.l": 29.5,
+    "thigh": 61,
+    "calf": 39
+   }
+  },
+  {
+   "c": "monitoring/_kv",
+   "id": "settings",
+   "value": {
+    "height": 178,
+    "split": {
+     "arms": true,
+     "legs": false
+    },
+    "hidden": []
+   },
+   "createdAt": 1793904881930,
+   "updatedAt": 1793904881930,
+   "deleted": false
+  }
+ ]
+}
