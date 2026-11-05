@@ -2,11 +2,49 @@
   "id": "monitoring",
   "name": "Мониторинг",
   "icon": "heart",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "entry": "index.js",
-  "files": ["data.js", "estimate.js", "figure.js", "shape.js", "charts.js", "i18n.en.json"],
-  "styles": ["monitoring.css"],
+  "files": [
+    "data.js",
+    "estimate.js",
+    "figure.js",
+    "shape.js",
+    "charts.js",
+    "i18n.en.json"
+  ],
+  "styles": [
+    "monitoring.css"
+  ],
   "widgets": [
-    { "id": "weight", "title": "Вес", "description": "Последний вес и динамика", "sizes": [[1, 1], [2, 1]] }
+    {
+      "id": "weight",
+      "title": "Вес",
+      "description": "Последний вес и динамика",
+      "sizes": [
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "id": "pressure",
+      "title": "Давление",
+      "description": "Последнее давление и пульс",
+      "sizes": [
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ]
+    }
   ]
 }

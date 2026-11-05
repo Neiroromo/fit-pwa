@@ -1,9 +1,13 @@
 // Данные модуля «Мониторинг».
 //
+// Два раздела: «Фитнес» (вес, жир, замеры тела — коллекция entries) и «Медицина» (давление, пульс, температура — коллекция vitals).
+//
 // Коллекция entries — одна запись на день (id = дата 'YYYY-MM-DD'):
 //   {id, date, weight?: кг, fat?: %, m?: {ключ замера: см}}
 // Ключи замеров: 'neck', 'chest', … Для парных конечностей замер либо общий ('biceps'),
 // либо раздельный ('biceps.r' — правая, 'biceps.l' — левая); в истории встречаются оба вида.
+// Коллекция vitals — любое число замеров в день, у каждого своё время:
+//   {id, ts: мс, sys?: верхнее, dia?: нижнее (мм рт. ст.), pulse?: уд/мин, temp?: °C}; давление вносится парой (sys + dia).
 // kv 'settings': {height: см | null, split: {arms: bool, legs: bool}, hidden: [ключи отключённых замеров]}
 // Отключённый замер не показывается (ввод, схема, история), но уже внесённые значения сохраняются.
 
@@ -24,7 +28,10 @@ export const num = s => {
   return Number.isFinite(v) ? v : null;
 };
 
-export const LIMITS = { weight: [20, 400], fat: [2, 70], height: [100, 250], measure: [5, 250] };
+export const LIMITS = {
+  weight: [20, 400], fat: [2, 70], height: [100, 250], measure: [5, 250],
+  sys: [60, 260], dia: [30, 160], pulse: [25, 250], temp: [30, 45], // медицинские показатели
+};
 export const inRange = (v, [lo, hi]) => v != null && v >= lo && v <= hi;
 
 /** Подсказки: как правильно мерить. Линии на схеме и тексты привязаны к этим ключам. */
@@ -100,4 +107,24 @@ export function points(entries, get, fromMs = 0) {
     if (v != null && t >= fromMs) out.push({ t, v });
   }
   return out;
+}
+
+// ---------- медицинские показатели ----------
+/** Показатели медицинского раздела. keys — поля записи vitals, из которых строятся ряды графика. */
+export const MEDICAL = [
+  { id: 'pressure', name: 'Давление', unit: 'мм рт. ст.', keys: ['sys', 'dia'] },
+  { id: 'pulse', name: 'Пульс', unit: 'уд/мин', keys: ['pulse'] },
+  { id: 'temp', name: 'Температура', unit: '°C', keys: ['temp'] },
+];
+export const VITAL_LABEL = { sys: 'Верхнее', dia: 'Нижнее' };
+
+export async function listVitals(ctx) {
+  return (await ctx.db.collection('vitals').list()).sort((a, b) => a.ts - b.ts);
+}
+export const putVital = (ctx, rec) => ctx.db.collection('vitals').put(rec);
+export const removeVital = (ctx, id) => ctx.db.collection('vitals').remove(id);
+
+/** Точки {t, v} поля записей vitals за период. */
+export function vitalPoints(vitals, key, fromMs = 0) {
+  return vitals.filter(r => r[key] != null && r.ts >= fromMs).map(r => ({ t: r.ts, v: r[key] }));
 }

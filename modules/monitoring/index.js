@@ -1,8 +1,9 @@
-// Модуль «Мониторинг»: вес, процент жира и замеры тела; история и динамика.
+// Модуль «Мониторинг»: два раздела — «Фитнес» (вес, процент жира, замеры тела) и «Медицина» (давление, пульс, температура); ввод, история и динамика.
 
 import {
   MEASURES, GROUPS, SIDE_NAME, LIMITS, dayKey, parseDay, num, inRange, measureOf, sideKeys, splitKey,
   listEntries, putEntry, removeEntry, getSettings, saveSettings, lastValue, points,
+  MEDICAL, VITAL_LABEL, listVitals, putVital, removeVital, vitalPoints,
 } from './data.js';
 import { estimateFat } from './estimate.js';
 import { buildFigure } from './figure.js';
@@ -17,12 +18,38 @@ const PERIODS = [
   { days: 0, label: 'Всё' },
 ];
 
-/** Оставляет только цифры и один разделитель: до 3 цифр целой части и до 2 дробной. */
-function sanitizeNumber(v) {
-  const s = String(v).replace(/[^0-9.,]/g, '');
+/** Оставляет только цифры и один разделитель: до 3 цифр целой части и до 2 дробной. int — только целые числа. */
+function sanitizeNumber(v, int = false) {
+  const s = String(v).replace(int ? /[^0-9]/g : /[^0-9.,]/g, '');
+  if (int) return s.slice(0, 3);
   const i = s.search(/[.,]/);
   if (i < 0) return s.slice(0, 3);
   return s.slice(0, i).slice(0, 3) + s[i] + s.slice(i + 1).replace(/[.,]/g, '').slice(0, 2);
+}
+
+/** Числовое поле: буквы и символы не вводятся, при выходе из поля значение проверяется по диапазону. */
+function numField(ctx, { get, set, ph, range, int = false, onInput }) {
+  const i = ctx.ui.h('input', { class: 'input num', inputmode: int ? 'numeric' : 'decimal', placeholder: ph, value: get(), autocomplete: 'off', maxlength: '6' });
+  i.addEventListener('keydown', e => {
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && !(int ? /[0-9]/ : /[0-9.,]/).test(e.key)) e.preventDefault();
+  });
+  i.addEventListener('input', () => {
+    const clean = sanitizeNumber(i.value, int);
+    if (clean !== i.value) { // вставка или автозаполнение с лишними символами
+      const pos = Math.max(0, (i.selectionStart ?? clean.length) - (i.value.length - clean.length));
+      i.value = clean;
+      i.setSelectionRange(pos, pos);
+    }
+    i.classList.remove('bad');
+    set(i.value);
+    onInput?.();
+  });
+  i.addEventListener('blur', () => {
+    const bad = i.value.trim() !== '' && !inRange(num(i.value), range);
+    i.classList.toggle('bad', bad);
+    i.title = bad ? ctx.t('Допустимо от {lo} до {hi}', { lo: range[0], hi: range[1] }) : '';
+  });
+  return i;
 }
 
 /**
@@ -47,9 +74,10 @@ export default {
   async mount(page, ctx, params) {
     const { h, icon, iconBtn, confirmDialog, toast, raw, modal } = ctx.ui;
     let entries = await listEntries(ctx);
+    let vitals = await listVitals(ctx);
     let settings = await getSettings(ctx);
     // form — то, что набрано в форме ввода; хранится здесь, чтобы не потеряться при смене настроек
-    const state = { tab: 'input', hview: 'dynamics', metric: 'weight', trend: true, dview: 'chart', period: 90, date: dayKey(), form: null };
+    const state = { tab: 'input', cat: 'fitness', hcat: 'all', vform: null, hview: 'dynamics', metric: 'weight', trend: true, dview: 'chart', period: 90, date: dayKey(), form: null };
 
     const hiddenSet = () => new Set(settings.hidden);
     const visible = () => MEASURES.filter(m => !hiddenSet().has(m.id));
@@ -68,11 +96,17 @@ export default {
       h('button', { class: 'chip-btn' + (id === current ? ' on' : ''), onClick: () => onPick(id) }, label)));
 
     function render() {
-      page.replaceChildren(
+      // раздел (фитнес / медицина) выбирается во вводе; в истории тот же выбор — фильтр с пунктом «Всё»
+      const catBar = state.tab === 'input' ? tabs([['fitness', 'Фитнес'], ['medical', 'Медицина']], state.cat, c => { state.cat = c; render(); }) : null;
+      page.replaceChildren(...[
         h('header', { class: 'page-head' }, h('h1', null, 'Мониторинг'), iconBtn('sliders', 'Настройки мониторинга', openSettings)),
         tabs([['input', 'Ввод'], ['history', 'История']], state.tab, t => { state.tab = t; render(); }),
-        view);
-      if (state.tab === 'input') renderInput(); else renderHistory();
+        catBar,
+        view,
+      ].filter(Boolean));
+      if (state.tab !== 'input') renderHistory();
+      else if (state.cat === 'medical') renderMedicalInput();
+      else renderInput();
     }
 
     // ---------- настройки ----------
@@ -103,7 +137,14 @@ export default {
             if (state.form) moveSplitValues(state.form.vals, g.id, on); // набранное в форме переносится
             change({ split: { ...settings.split, [g.id]: on } });
           })),
-          h('p', { class: 'muted small' }, 'Руки: бицепс и предплечье. Ноги: бедро и голень. Если выключено, вводится одно общее значение.')),
+          h('p', { class: 'muted small' }, 'Руки: бицепс и предплечье. Ноги: бедро и голень. Если выключено, вводится одно общее значение.'),
+          h('div', { class: 'set-title' }, 'Медицинские показатели'),
+          ...MEDICAL.map(m => check(!hiddenSet().has(m.id), m.name, on => {
+            const hidden = hiddenSet();
+            if (on) hidden.delete(m.id); else hidden.add(m.id);
+            change({ hidden: [...hidden] });
+          })),
+          h('p', { class: 'muted small' }, 'Отключённый показатель не показывается, но уже внесённые записи сохраняются.')),
       });
     }
 
@@ -129,30 +170,7 @@ export default {
       const list = h('div', { class: 'm-list' });
       const markRow = id => list.querySelectorAll('.m-row').forEach(r => r.classList.toggle('on', r.dataset.k === id));
 
-      /** Числовое поле: буквы и символы не вводятся, при выходе из поля значение проверяется по диапазону. */
-      const numInput = (get, set, ph, range) => {
-        const i = h('input', { class: 'input num', inputmode: 'decimal', placeholder: ph, value: get(), autocomplete: 'off', maxlength: '6' });
-        i.addEventListener('keydown', e => {
-          if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && !/[0-9.,]/.test(e.key)) e.preventDefault();
-        });
-        i.addEventListener('input', () => {
-          const clean = sanitizeNumber(i.value);
-          if (clean !== i.value) { // вставка или автозаполнение с лишними символами
-            const pos = Math.max(0, (i.selectionStart ?? clean.length) - (i.value.length - clean.length));
-            i.value = clean;
-            i.setSelectionRange(pos, pos);
-          }
-          i.classList.remove('bad');
-          set(i.value);
-          updateEstimate();
-        });
-        i.addEventListener('blur', () => {
-          const bad = i.value.trim() !== '' && !inRange(num(i.value), range);
-          i.classList.toggle('bad', bad);
-          i.title = bad ? ctx.t('Допустимо от {lo} до {hi}', { lo: range[0], hi: range[1] }) : '';
-        });
-        return i;
-      };
+      const numInput = (get, set, ph, range) => numField(ctx, { get, set, ph, range, onInput: updateEstimate });
       const hint = key => {
         const v = lastValue(entries, e => e.m?.[key], form.date);
         return v != null ? fmtNum(v) : '—';
@@ -260,21 +278,127 @@ export default {
       }
     }
 
+    // ---------- ввод: медицина ----------
+    const pad2 = n => String(n).padStart(2, '0');
+    const fmtDateTime = ms => new Date(ms).toLocaleString(ctx.locale, { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const newVital = () => {
+      const d = new Date();
+      return { id: null, date: dayKey(d), time: `${pad2(d.getHours())}:${pad2(d.getMinutes())}`, sys: '', dia: '', pulse: '', temp: '' };
+    };
+    const vitalTs = f => {
+      const [y, m, d] = f.date.split('-').map(Number), [hh, mm] = f.time.split(':').map(Number);
+      return new Date(y, m - 1, d, hh, mm).getTime();
+    };
+    const lastVital = key => {
+      for (let i = vitals.length - 1; i >= 0; i--) if (vitals[i][key] != null) return vitals[i][key];
+      return null;
+    };
+    /** Краткая строка значений записи: «120/80 мм рт. ст. · 68 уд/мин · 36,6 °C». */
+    const vitalBits = v => {
+      const hidden = hiddenSet();
+      return [
+        v.sys != null && !hidden.has('pressure') ? `${v.sys}/${v.dia} ${ctx.t('мм рт. ст.')}` : null,
+        v.pulse != null && !hidden.has('pulse') ? `${v.pulse} ${ctx.t('уд/мин')}` : null,
+        v.temp != null && !hidden.has('temp') ? `${fmtNum(v.temp)} °C` : null,
+      ].filter(Boolean);
+    };
+    const editVital = v => {
+      const d = new Date(v.ts), str = x => (x != null ? String(x) : '');
+      state.vform = { id: v.id, date: dayKey(d), time: `${pad2(d.getHours())}:${pad2(d.getMinutes())}`, sys: str(v.sys), dia: str(v.dia), pulse: str(v.pulse), temp: str(v.temp) };
+      state.tab = 'input'; state.cat = 'medical';
+      render();
+    };
+    async function deleteVital(v, after) {
+      if (!(await confirmDialog(ctx.t('Удалить запись от {date}?', { date: fmtDateTime(v.ts) }), { okText: 'Удалить', danger: true }))) return;
+      await removeVital(ctx, v.id);
+      vitals = await listVitals(ctx);
+      if (state.vform?.id === v.id) state.vform = null;
+      after();
+    }
+
+    function renderMedicalInput() {
+      const f = (state.vform ??= newVital());
+      const hidden = hiddenSet();
+      const ph = key => { const v = lastVital(key); return v != null ? fmtNum(v) : '—'; };
+      const field = (key, range, int = false) => numField(ctx, { get: () => f[key], set: v => (f[key] = v), ph: ph(key), range, int });
+      const date = h('input', { class: 'input', type: 'date', value: f.date, max: dayKey() });
+      date.addEventListener('change', () => { if (date.value) f.date = date.value; });
+      const time = h('input', { class: 'input', type: 'time', value: f.time });
+      time.addEventListener('change', () => { if (time.value) f.time = time.value; });
+      const labeled = (title, input) => h('label', { class: 'field' }, h('span', null, title), input);
+
+      async function save() {
+        const sys = num(f.sys), dia = num(f.dia), pulse = num(f.pulse), temp = num(f.temp);
+        if ((f.sys.trim() || f.dia.trim()) && (sys == null || dia == null)) return toast('Давление вносится парой: верхнее и нижнее');
+        if (sys != null && !inRange(sys, LIMITS.sys)) return toast('Проверьте верхнее давление');
+        if (dia != null && !inRange(dia, LIMITS.dia)) return toast('Проверьте нижнее давление');
+        if (sys != null && dia != null && sys <= dia) return toast('Верхнее давление должно быть больше нижнего');
+        if (f.pulse.trim() && !inRange(pulse, LIMITS.pulse)) return toast('Проверьте пульс');
+        if (f.temp.trim() && !inRange(temp, LIMITS.temp)) return toast('Проверьте температуру');
+        const rec = { ts: vitalTs(f) };
+        if (f.id) rec.id = f.id;
+        if (sys != null) { rec.sys = sys; rec.dia = dia; }
+        if (pulse != null) rec.pulse = pulse;
+        if (temp != null) rec.temp = temp;
+        // значения отключённых показателей остаются, как были
+        const orig = f.id ? vitals.find(v => v.id === f.id) : null;
+        for (const m of MEDICAL) if (hidden.has(m.id) && orig) for (const k of m.keys) if (orig[k] != null) rec[k] = orig[k];
+        if (rec.sys == null && rec.pulse == null && rec.temp == null) return toast('Введите хотя бы одно значение');
+        await putVital(ctx, rec);
+        vitals = await listVitals(ctx);
+        state.vform = null;
+        toast('Сохранено');
+        renderMedicalInput();
+      }
+
+      const recent = [...vitals].reverse().slice(0, 8);
+      const fields = [
+        !hidden.has('pressure') ? h('div', { class: 'mon-two' },
+          labeled('Верхнее давление', field('sys', LIMITS.sys, true)), labeled('Нижнее давление', field('dia', LIMITS.dia, true))) : null,
+        !hidden.has('pulse') ? labeled('Пульс, уд/мин', field('pulse', LIMITS.pulse, true)) : null,
+        !hidden.has('temp') ? labeled('Температура, °C', field('temp', LIMITS.temp)) : null,
+      ].filter(Boolean);
+      view.replaceChildren(h('div', { class: 'mon-med' },
+        h('div', { class: 'card mon-main' },
+          h('div', { class: 'mon-two' }, labeled('Дата', date), labeled('Время', time)),
+          ...(fields.length ? fields : [h('p', { class: 'muted small' }, 'Все медицинские показатели отключены в настройках.')]),
+          h('button', { class: 'btn primary wide', onClick: save }, icon('check', 16), 'Сохранить'),
+          h('p', { class: 'muted small' }, 'Данные носят справочный характер и не заменяют консультацию врача.')),
+        recent.length ? h('div', { class: 'card' }, h('strong', null, 'Последние записи'),
+          h('div', { class: 'mon-log' }, recent.map(v => h('div', { class: 'log-row' },
+            h('div', { class: 'grow' }, h('strong', null, raw(fmtDateTime(v.ts))), h('span', { class: 'muted small block' }, raw(vitalBits(v).join(' · ')))),
+            iconBtn('edit', 'Редактировать', () => editVital(v)),
+            iconBtn('trash', 'Удалить', () => deleteVital(v, renderMedicalInput), 'danger'))))) : null));
+    }
+
     // ---------- история ----------
     // Экран «Динамика»: слева плитки показателей (текущее значение, изменение за период, мини-график), справа большой график выбранного.
     // Один ряд фильтров сверху (период) действует на всё ниже.
     const fromMs = () => (state.period ? Date.now() - state.period * DAY : 0);
 
+    /** Показатели обоих разделов, отфильтрованные по выбранному разделу истории. */
     function metricsList() {
-      return [
-        { id: 'weight', name: 'Вес', unit: 'кг', get: e => e.weight, tau: 7 },
-        { id: 'fat', name: 'Процент жира', unit: '%', get: e => e.fat, tau: 10 },
-        ...visible().map(m => ({ id: m.id, name: m.name, unit: 'см', measure: true, tau: 10 })),
+      const hidden = hiddenSet();
+      const fit = [
+        { id: 'weight', cat: 'fitness', name: 'Вес', unit: 'кг', get: e => e.weight, tau: 7 },
+        { id: 'fat', cat: 'fitness', name: 'Процент жира', unit: '%', get: e => e.fat, tau: 10 },
+        ...visible().map(m => ({ id: m.id, cat: 'fitness', name: m.name, unit: 'см', measure: true, tau: 10 })),
       ];
+      const med = MEDICAL.filter(m => !hidden.has(m.id)).map(m => ({ id: m.id, cat: 'medical', name: m.name, unit: m.unit, vital: m.keys, tau: 7 }));
+      return [...fit, ...med].filter(m => state.hcat === 'all' || m.cat === state.hcat);
     }
 
     /** Ряды показателя: тренд считается по всей истории, чтобы он не менялся от выбранного периода; pts — только выбранный период. */
     function seriesOf(metric) {
+      if (metric.vital) {
+        return metric.vital.filter(k => vitalPoints(vitals, k).length).map(k => {
+          const all = withTrend(vitalPoints(vitals, k), metric.tau);
+          return {
+            key: k, label: VITAL_LABEL[k] ? ctx.t(VITAL_LABEL[k]) : ctx.t(metric.name),
+            color: k === 'dia' ? SERIES_COLORS.l : SERIES_COLORS.main, all, pts: all.filter(p => p.t >= fromMs()),
+          };
+        });
+      }
       const keys = metric.measure ? sideKeys(metric.id).filter(k => points(entries, e => e.m?.[k]).length) : [metric.id];
       return keys.map(k => {
         const get = metric.measure ? e => e.m?.[k] : metric.get;
@@ -300,7 +424,9 @@ export default {
 
     function mainCard(metric, series) {
       const unit = ctx.t(metric.unit);
-      const title = metric.measure ? ctx.t('{name}, см', { name: ctx.t(metric.name) }) : metric.id === 'weight' ? ctx.t('Вес, кг') : ctx.t('Процент жира, %');
+      const title = metric.vital ? ctx.t('{name}, {unit}', { name: ctx.t(metric.name), unit }) : metric.measure ? ctx.t('{name}, см', { name: ctx.t(metric.name) }) : metric.id === 'weight' ? ctx.t('Вес, кг') : ctx.t('Процент жира, %');
+      // у медицинских записей есть время: в подсказке и таблице показываем дату с временем
+      const longDate = metric.vital ? fmtDateTime : ms => fmtDayLong(dayKey(ms));
       const withPts = series.filter(s => s.pts.length);
       const single = series.length === 1;
       const head = h('div', { class: 'dyn-head' }, h('strong', null, title),
@@ -321,7 +447,8 @@ export default {
           stat(ctx.t('Мин'), fmtNum(Math.min(...vs))), stat(ctx.t('Макс'), fmtNum(Math.max(...vs))),
           stat(ctx.t('Среднее'), fmtNum(vs.reduce((a, b) => a + b, 0) / vs.length)), stat(ctx.t('Записей'), String(vs.length))));
       } else {
-        // несколько рядов (общее / правая / левая): легенда с изменением по каждому
+        // несколько рядов (общее / правая / левая, верхнее / нижнее давление): легенда с изменением по каждому
+        if (metric.vital) parts.push(h('div', { class: 'dyn-hero' }, h('span', { class: 'dyn-hero-val' }, raw(withPts.map(s => fmtNum(s.pts.at(-1).v)).join(' / ')), h('span', { class: 'muted' }, unit))));
         parts.push(h('div', { class: 'legend' }, withPts.map(s => {
           const first = s.pts[0].v, last = s.pts.at(-1).v;
           const key = h('i', { class: 'dyn-key' });
@@ -335,8 +462,8 @@ export default {
       const range = { from: state.period ? Math.max(fromMs(), firstT) : firstT, to: Date.now() };
       const common = { h, series: withPts, fmtNum, showTrend: state.trend };
       parts.push(state.dview === 'table'
-        ? dynamicsTable({ ...common, fmtDateLong: ms => fmtDayLong(dayKey(ms)), headDate: ctx.t('Дата'), headTrend: ctx.t('Тренд') })
-        : dynamicsChart({ ...common, ...range, fmtDate: fmtDay, fmtDateLong: ms => fmtDayLong(dayKey(ms)), unit, trendLabel: ctx.t('Тренд'), ariaLabel: title }));
+        ? dynamicsTable({ ...common, fmtDateLong: longDate, headDate: ctx.t('Дата'), headTrend: ctx.t('Тренд') })
+        : dynamicsChart({ ...common, ...range, fmtDate: fmtDay, fmtDateLong: longDate, unit, trendLabel: ctx.t('Тренд'), ariaLabel: title }));
       if (single && state.trend && state.dview === 'chart') {
         parts.push(h('p', { class: 'muted small' }, 'Линия — сглаженный тренд, точки — отдельные записи: суточные колебания не искажают картину.'));
       }
@@ -344,29 +471,42 @@ export default {
     }
 
     function renderHistory() {
+      const cats = tabs([['all', 'Всё'], ['fitness', 'Фитнес'], ['medical', 'Медицина']], state.hcat, c => { state.hcat = c; renderHistory(); });
       const filters = h('div', { class: 'dyn-filters' },
         state.hview === 'dynamics' ? tabs(PERIODS.map(p => [p.days, p.label]), state.period, d => { state.period = d; renderHistory(); }) : h('span'),
         tabs([['dynamics', 'Динамика'], ['log', 'Записи']], state.hview, v => { state.hview = v; renderHistory(); }));
-      if (state.hview === 'log') { view.replaceChildren(filters, logHistory()); return; }
+      if (state.hview === 'log') { view.replaceChildren(cats, filters, logHistory()); return; }
 
       const list = metricsList().map(m => [m, seriesOf(m)]);
-      if (!list.some(([m]) => m.id === state.metric)) state.metric = 'weight';
+      if (!list.length) { view.replaceChildren(cats, filters, h('p', { class: 'muted empty' }, 'Нет включённых показателей. Включите их в настройках.')); return; }
+      if (!list.some(([m]) => m.id === state.metric)) state.metric = list[0][0].id;
       const [cur, curSeries] = list.find(([m]) => m.id === state.metric);
-      view.replaceChildren(filters, h('div', { class: 'dyn' },
-        h('div', { class: 'dyn-tiles' }, list.map(([m, s]) => tile(m, s))),
-        mainCard(cur, curSeries)));
+      const tiles = [];
+      let prevCat = null;
+      for (const [m, s] of list) {
+        if (state.hcat === 'all' && m.cat !== prevCat) { tiles.push(h('div', { class: 'tile-group' }, m.cat === 'fitness' ? 'Фитнес' : 'Медицина')); prevCat = m.cat; }
+        tiles.push(tile(m, s));
+      }
+      view.replaceChildren(cats, filters, h('div', { class: 'dyn' }, h('div', { class: 'dyn-tiles' }, tiles), mainCard(cur, curSeries)));
     }
 
     function logHistory() {
-      if (!entries.length) return h('p', { class: 'muted empty' }, 'Записей пока нет. Добавьте первую на вкладке «Ввод».');
-      return h('div', { class: 'mon-log' }, [...entries].reverse().map(e => {
+      const items = [];
+      if (state.hcat !== 'medical') for (const e of entries) items.push({ ts: parseDay(e.date).getTime(), kind: 'fit', e });
+      if (state.hcat !== 'fitness') for (const v of vitals) items.push({ ts: v.ts, kind: 'med', v });
+      if (!items.length) return h('p', { class: 'muted empty' }, 'Записей пока нет. Добавьте первую на вкладке «Ввод».');
+      items.sort((a, b) => b.ts - a.ts);
+      const tag = text => (state.hcat === 'all' ? h('span', { class: 'chip' }, text) : null);
+
+      const fitRow = e => {
         const hidden = hiddenSet();
         const n = Object.keys(e.m ?? {}).filter(k => !hidden.has(splitKey(k)[0])).length;
         const bits = [e.weight != null ? `${fmtNum(e.weight)} ${ctx.t('кг')}` : null, e.fat != null ? `${fmtNum(e.fat)} %` : null,
           n ? ctx.t('замеров: {n}', { n }) : null].filter(Boolean);
         return h('div', { class: 'log-row' },
           h('div', { class: 'grow' }, h('strong', null, raw(fmtDayLong(e.date))), h('span', { class: 'muted small block' }, raw(bits.join(' · ')))),
-          iconBtn('edit', 'Редактировать', () => { state.date = e.date; state.form = null; state.tab = 'input'; render(); }),
+          tag('Фитнес'),
+          iconBtn('edit', 'Редактировать', () => { state.date = e.date; state.form = null; state.tab = 'input'; state.cat = 'fitness'; render(); }),
           iconBtn('trash', 'Удалить', async () => {
             if (!(await confirmDialog(ctx.t('Удалить запись от {date}?', { date: fmtDayLong(e.date) }), { okText: 'Удалить', danger: true }))) return;
             await removeEntry(ctx, e.date);
@@ -374,10 +514,19 @@ export default {
             if (state.form?.date === e.date) state.form = null;
             renderHistory();
           }, 'danger'));
-      }));
+      };
+      const medRow = v => h('div', { class: 'log-row' },
+        h('div', { class: 'grow' }, h('strong', null, raw(fmtDateTime(v.ts))), h('span', { class: 'muted small block' }, raw(vitalBits(v).join(' · ')))),
+        tag('Медицина'),
+        iconBtn('edit', 'Редактировать', () => editVital(v)),
+        iconBtn('trash', 'Удалить', () => deleteVital(v, renderHistory), 'danger'));
+
+      return h('div', { class: 'mon-log' }, items.map(it => (it.kind === 'fit' ? fitRow(it.e) : medRow(it.v))));
     }
 
     if (params?.tab) state.tab = params.tab;
+    if (params?.hcat) state.hcat = params.hcat;
+    if (params?.metric) state.metric = params.metric;
     render();
   },
 
@@ -402,6 +551,24 @@ export default {
           h('div', { class: 'big-num' }, fmt(last), h('span', { class: 'muted' }, ctx.t('кг'))),
           prev != null ? h('span', { class: 'muted small' }, ctx.t('к прошлому: {d}', { d: (last - prev > 0 ? '+' : last - prev < 0 ? '−' : '') + fmt(Math.abs(last - prev)) })) : null,
           ctx.size.w >= 2 && month.length > 1 ? sparkline(month) : null,
+        ].filter(Boolean));
+      },
+    },
+    {
+      id: 'pressure',
+      async render(body, ctx) {
+        const { h } = ctx.ui;
+        const vitals = await listVitals(ctx);
+        const last = [...vitals].reverse().find(v => v.sys != null);
+        body.onclick = () => ctx.router.go('monitoring', { tab: 'history', hcat: 'medical', metric: 'pressure' });
+        if (!last) {
+          body.replaceChildren(h('p', { class: 'muted' }, 'Давление ещё не вносилось'));
+          return;
+        }
+        const pulse = [...vitals].reverse().find(v => v.pulse != null)?.pulse;
+        body.replaceChildren(...[
+          h('div', { class: 'big-num' }, `${last.sys}/${last.dia}`, h('span', { class: 'muted' }, ctx.t('мм рт. ст.'))),
+          pulse != null ? h('span', { class: 'muted small' }, ctx.t('Пульс: {n}', { n: pulse })) : null,
         ].filter(Boolean));
       },
     },
