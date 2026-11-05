@@ -29,7 +29,7 @@ export default {
   'Активность': 'Activity',
   'Шаги, прогулки, пробежки и ежедневная активность.': 'Steps, walks, runs and daily activity.',
   'Мониторинг': 'Monitoring',
-  'Вес, замеры тела и самочувствие.': 'Weight, body measurements and well-being.',
+  'Вес, процент жира и замеры тела с историей и графиками.': 'Weight, body fat and body measurements with history and charts.',
 
   // профиль
   'Локальный профиль': 'Local profile', 'Имя и аватар': 'Name and avatar',
