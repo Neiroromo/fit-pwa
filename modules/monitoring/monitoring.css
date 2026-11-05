@@ -23,9 +23,10 @@
 /* фигура */
 .fig { position: relative; width: 100%; max-width: 260px; }
 .fig-svg { width: 100%; height: auto; display: block; overflow: visible; }
-.fg-out { stroke: var(--muted); stroke-opacity: .55; stroke-linecap: round; fill: none; }
-.fg-in { stroke: var(--panel); stroke-linecap: round; fill: none; }
-.fg-body { fill: var(--panel); stroke: var(--muted); stroke-opacity: .55; stroke-width: 2; }
+.fg-stop-a { stop-color: color-mix(in srgb, var(--accent) 10%, var(--panel-2)); }
+.fg-stop-b { stop-color: color-mix(in srgb, var(--accent) 3%, var(--panel)); }
+.fg-shape { fill: url(#fg-grad); stroke: var(--muted); stroke-opacity: .75; stroke-width: 1.5; stroke-linejoin: round; }
+.fg-hint { fill: none; stroke: var(--muted); stroke-opacity: .35; stroke-width: .9; stroke-linecap: round; }
 .fg-side { fill: var(--muted); font-size: 11px; }
 .mline { cursor: help; outline: none; }
 .ml-hit { stroke: transparent; stroke-width: 14; }

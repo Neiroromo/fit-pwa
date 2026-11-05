@@ -1,6 +1,8 @@
 // Схематичная мужская фигура с линиями замеров. Наведение (или нажатие / фокус) на линию показывает, как правильно сделать замер.
+// Контуры — в shape.js.
 
 import { MEASURES, measureOf } from './data.js';
+import { BODY_PATH, ARM_PATH, HEAD, HINT_PATHS, LINES } from './shape.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (tag, attrs = {}, parent) => {
@@ -10,47 +12,25 @@ const el = (tag, attrs = {}, parent) => {
   return e;
 };
 
-// Линии замеров: сегменты [x1, x2, y] в системе координат 200×420. Парные конечности — по линии на каждой стороне.
-const mirror = (x1, x2, y) => [[x1, x2, y], [200 - x2, 200 - x1, y]];
-const LINES = {
-  neck: [[86, 114, 63]],
-  shoulders: [[40, 160, 88]],
-  chest: [[62, 138, 116]],
-  waist: [[68, 132, 188]],
-  hips: [[64, 136, 236]],
-  biceps: mirror(38, 59, 120),
-  forearm: mirror(33, 49, 180),
-  thigh: mirror(63, 95, 262),
-  calf: mirror(66, 88, 345),
-};
-
-// Туловище и конечности: «капсулы» (толстые линии с круглыми концами) с обводкой.
-const LIMBS = [
-  [52, 94, 44, 150, 18], [44, 150, 38, 212, 14], // рука
-  [80, 226, 78, 300, 32], [78, 300, 76, 388, 22], // нога
-];
-
 export function buildFigure(ctx, { onHover } = {}) {
   const { h } = ctx.ui;
-  const svg = el('svg', { viewBox: '0 0 200 420', class: 'fig-svg', role: 'img', 'aria-label': ctx.t('Схема замеров тела') });
+  const svg = el('svg', { viewBox: '0 0 200 432', class: 'fig-svg', role: 'img', 'aria-label': ctx.t('Схема замеров тела') });
 
-  // конечности (левая и правая симметрично)
-  const limbs = el('g', { class: 'fg-limbs' }, svg);
-  for (const [x1, y1, x2, y2, w] of LIMBS) {
-    for (const mx of [false, true]) {
-      const a = mx ? 200 - x1 : x1, b = mx ? 200 - x2 : x2;
-      el('line', { x1: a, y1, x2: b, y2, 'stroke-width': w + 2, class: 'fg-out' }, limbs);
-      el('line', { x1: a, y1, x2: b, y2, 'stroke-width': w, class: 'fg-in' }, limbs);
-    }
-  }
-  el('path', { class: 'fg-body', d: 'M64 84 Q100 72 136 84 L131 130 Q128 160 126 186 L131 226 L69 226 L74 186 Q72 160 69 130 Z' }, svg);
-  el('rect', { class: 'fg-body', x: 91, y: 52, width: 18, height: 24, rx: 7 }, svg);
-  el('circle', { class: 'fg-body', cx: 100, cy: 34, r: 20 }, svg);
-  el('ellipse', { class: 'fg-body', cx: 76, cy: 397, rx: 13, ry: 5 }, svg);
-  el('ellipse', { class: 'fg-body', cx: 124, cy: 397, rx: 13, ry: 5 }, svg);
+  // заливка с мягким переходом сверху вниз
+  const defs = el('defs', {}, svg);
+  const grad = el('linearGradient', { id: 'fg-grad', x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+  el('stop', { offset: '0', class: 'fg-stop-a' }, grad);
+  el('stop', { offset: '1', class: 'fg-stop-b' }, grad);
+
+  // руки — под туловищем; правая рука — зеркальная копия левой
+  el('path', { d: ARM_PATH, class: 'fg-shape' }, svg);
+  el('path', { d: ARM_PATH, class: 'fg-shape', transform: 'translate(200 0) scale(-1 1)' }, svg);
+  el('path', { d: BODY_PATH, class: 'fg-shape' }, svg);
+  el('ellipse', { cx: HEAD.cx, cy: HEAD.cy, rx: HEAD.rx, ry: HEAD.ry, class: 'fg-shape' }, svg);
+  for (const d of HINT_PATHS) el('path', { d, class: 'fg-hint' }, svg);
   // фигура смотрит на нас: правая сторона человека — слева на рисунке
-  el('text', { x: 76, y: 414, class: 'fg-side', 'text-anchor': 'middle' }, svg).textContent = ctx.t('П');
-  el('text', { x: 124, y: 414, class: 'fg-side', 'text-anchor': 'middle' }, svg).textContent = ctx.t('Л');
+  el('text', { x: 80, y: 431, class: 'fg-side', 'text-anchor': 'middle' }, svg).textContent = ctx.t('П');
+  el('text', { x: 120, y: 431, class: 'fg-side', 'text-anchor': 'middle' }, svg).textContent = ctx.t('Л');
 
   const tip = h('div', { class: 'm-tip', hidden: true, role: 'tooltip' });
   const wrap = h('div', { class: 'fig' }, svg, tip);
