@@ -2,7 +2,7 @@
 // Контуры — в shape.js.
 
 import { MEASURES, measureOf } from './data.js';
-import { BODY_PATH, ARM_PATH, HEAD, HINT_PATHS, LINES } from './shape.js';
+import { BODY_PATH, VIEWBOX, LINES, SIDE_LABELS } from './shape.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (tag, attrs = {}, parent) => {
@@ -14,7 +14,7 @@ const el = (tag, attrs = {}, parent) => {
 
 export function buildFigure(ctx, { onHover } = {}) {
   const { h } = ctx.ui;
-  const svg = el('svg', { viewBox: '0 0 200 432', class: 'fig-svg', role: 'img', 'aria-label': ctx.t('Схема замеров тела') });
+  const svg = el('svg', { viewBox: VIEWBOX, class: 'fig-svg', role: 'img', 'aria-label': ctx.t('Схема замеров тела') });
 
   // заливка с мягким переходом сверху вниз
   const defs = el('defs', {}, svg);
@@ -22,15 +22,11 @@ export function buildFigure(ctx, { onHover } = {}) {
   el('stop', { offset: '0', class: 'fg-stop-a' }, grad);
   el('stop', { offset: '1', class: 'fg-stop-b' }, grad);
 
-  // руки — под туловищем; правая рука — зеркальная копия левой
-  el('path', { d: ARM_PATH, class: 'fg-shape' }, svg);
-  el('path', { d: ARM_PATH, class: 'fg-shape', transform: 'translate(200 0) scale(-1 1)' }, svg);
-  el('path', { d: BODY_PATH, class: 'fg-shape' }, svg);
-  el('ellipse', { cx: HEAD.cx, cy: HEAD.cy, rx: HEAD.rx, ry: HEAD.ry, class: 'fg-shape' }, svg);
-  for (const d of HINT_PATHS) el('path', { d, class: 'fg-hint' }, svg);
+  el('path', { d: BODY_PATH, class: 'fg-shape', 'fill-rule': 'evenodd' }, svg);
   // фигура смотрит на нас: правая сторона человека — слева на рисунке
-  el('text', { x: 80, y: 431, class: 'fg-side', 'text-anchor': 'middle' }, svg).textContent = ctx.t('П');
-  el('text', { x: 120, y: 431, class: 'fg-side', 'text-anchor': 'middle' }, svg).textContent = ctx.t('Л');
+  for (const [side, label] of [['r', 'П'], ['l', 'Л']]) {
+    el('text', { x: SIDE_LABELS[side][0], y: SIDE_LABELS[side][1], class: 'fg-side', 'text-anchor': 'middle' }, svg).textContent = ctx.t(label);
+  }
 
   const tip = h('div', { class: 'm-tip', hidden: true, role: 'tooltip' });
   const wrap = h('div', { class: 'fig' }, svg, tip);
@@ -68,11 +64,11 @@ export function buildFigure(ctx, { onHover } = {}) {
 
   for (const m of MEASURES) {
     const g = el('g', { class: 'mline', tabindex: '0', role: 'img', 'aria-label': ctx.t(m.name), 'data-k': m.id }, svg);
-    for (const [x1, x2, y] of LINES[m.id]) {
-      el('line', { x1, x2, y1: y, y2: y, class: 'ml-hit' }, g);
-      el('line', { x1, x2, y1: y, y2: y, class: 'ml-vis' }, g);
-      el('circle', { cx: x1, cy: y, r: 2, class: 'ml-dot' }, g);
-      el('circle', { cx: x2, cy: y, r: 2, class: 'ml-dot' }, g);
+    for (const [x1, y1, x2, y2] of LINES[m.id]) {
+      el('line', { x1, y1, x2, y2, class: 'ml-hit' }, g);
+      el('line', { x1, y1, x2, y2, class: 'ml-vis' }, g);
+      el('circle', { cx: x1, cy: y1, r: 3, class: 'ml-dot' }, g);
+      el('circle', { cx: x2, cy: y2, r: 3, class: 'ml-dot' }, g);
     }
     g.addEventListener('pointerenter', e => show(m.id, e.clientX, e.clientY));
     g.addEventListener('pointermove', e => !tip.hidden && place(e.clientX, e.clientY));

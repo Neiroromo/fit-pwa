@@ -21,18 +21,17 @@
 .m-split { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
 
 /* фигура */
-.fig { position: relative; width: 100%; max-width: 260px; }
+.fig { position: relative; width: 100%; max-width: 280px; }
 .fig-svg { width: 100%; height: auto; display: block; overflow: visible; }
 .fg-stop-a { stop-color: color-mix(in srgb, var(--accent) 10%, var(--panel-2)); }
 .fg-stop-b { stop-color: color-mix(in srgb, var(--accent) 3%, var(--panel)); }
-.fg-shape { fill: url(#fg-grad); stroke: var(--muted); stroke-opacity: .75; stroke-width: 1.5; stroke-linejoin: round; }
-.fg-hint { fill: none; stroke: var(--muted); stroke-opacity: .35; stroke-width: .9; stroke-linecap: round; }
-.fg-side { fill: var(--muted); font-size: 11px; }
+.fg-shape { fill: url(#fg-grad); stroke: var(--muted); stroke-opacity: .75; stroke-width: 1.6; stroke-linejoin: round; }
+.fg-side { fill: var(--muted); font-size: 16px; }
 .mline { cursor: help; outline: none; }
-.ml-hit { stroke: transparent; stroke-width: 14; }
-.ml-vis { stroke: var(--accent); stroke-width: 1.8; stroke-dasharray: 5 3; opacity: .8; }
+.ml-hit { stroke: transparent; stroke-width: 16; }
+.ml-vis { stroke: var(--accent); stroke-width: 2.4; stroke-dasharray: 8 5; opacity: .85; }
 .ml-dot { fill: var(--accent); }
-.mline:hover .ml-vis, .mline.on .ml-vis, .mline:focus .ml-vis { stroke-width: 3; opacity: 1; stroke-dasharray: none; }
+.mline:hover .ml-vis, .mline.on .ml-vis, .mline:focus .ml-vis { stroke-width: 4; opacity: 1; stroke-dasharray: none; }
 .m-tip { position: absolute; z-index: 5; width: 230px; display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 12px; background: var(--panel-2); border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0, 0, 0, .5); font-size: 13px; line-height: 1.4; pointer-events: none; }
 .m-tip[hidden] { display: none; }
 
