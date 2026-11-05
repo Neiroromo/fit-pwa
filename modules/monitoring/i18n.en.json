@@ -78,5 +78,16 @@
   "Руки: бицепс и предплечье. Ноги: бедро и голень. Если выключено, вводится одно общее значение.": "Arms: biceps and forearm. Legs: thigh and calf. When off, a single combined value is entered.",
   "Все замеры отключены в настройках.": "All measurements are disabled in settings.",
   "Проверьте рост": "Check the height",
-  "Допустимо от {lo} до {hi}": "Allowed range: {lo} to {hi}"
+  "Допустимо от {lo} до {hi}": "Allowed range: {lo} to {hi}",
+  "Динамика": "Trends",
+  "График": "Chart",
+  "Таблица": "Table",
+  "Тренд": "Trend",
+  "Мин": "Min",
+  "Макс": "Max",
+  "Среднее": "Average",
+  "Записей": "Entries",
+  "за период: {d}": "over the period: {d}",
+  "Данных пока нет. Добавьте запись на вкладке «Ввод».": "No data yet. Add an entry on the “Entry” tab.",
+  "Линия — сглаженный тренд, точки — отдельные записи: суточные колебания не искажают картину.": "The line is a smoothed trend and the dots are individual entries, so daily fluctuations don't distort the picture."
 }

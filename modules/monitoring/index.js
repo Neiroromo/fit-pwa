@@ -6,7 +6,7 @@ import {
 } from './data.js';
 import { estimateFat } from './estimate.js';
 import { buildFigure } from './figure.js';
-import { lineChart, sparkline, SERIES_COLORS } from './charts.js';
+import { dynamicsChart, dynamicsTable, sparkline, withTrend, colorOfKey, SERIES_COLORS } from './charts.js';
 
 const DAY = 86_400_000;
 const PERIODS = [
@@ -49,7 +49,7 @@ export default {
     let entries = await listEntries(ctx);
     let settings = await getSettings(ctx);
     // form — то, что набрано в форме ввода; хранится здесь, чтобы не потеряться при смене настроек
-    const state = { tab: 'input', hist: 'body', period: 90, measure: 'biceps', date: dayKey(), form: null };
+    const state = { tab: 'input', hview: 'dynamics', metric: 'weight', trend: true, dview: 'chart', period: 90, date: dayKey(), form: null };
 
     const hiddenSet = () => new Set(settings.hidden);
     const visible = () => MEASURES.filter(m => !hiddenSet().has(m.id));
@@ -261,71 +261,100 @@ export default {
     }
 
     // ---------- история ----------
-    function renderHistory() {
-      const subs = [['body', 'Вес и жир'], ['measures', 'Замеры'], ['log', 'Записи']];
-      const head = [tabs(subs, state.hist, t => { state.hist = t; renderHistory(); })];
-      if (state.hist !== 'log') head.push(tabs(PERIODS.map(p => [p.days, p.label]), state.period, d => { state.period = d; renderHistory(); }));
-      const body = state.hist === 'body' ? bodyHistory() : state.hist === 'measures' ? measuresHistory() : logHistory();
-      view.replaceChildren(...head, body);
-    }
-
+    // Экран «Динамика»: слева плитки показателей (текущее значение, изменение за период, мини-график), справа большой график выбранного.
+    // Один ряд фильтров сверху (период) действует на всё ниже.
     const fromMs = () => (state.period ? Date.now() - state.period * DAY : 0);
-    /** Границы оси времени: при «Всё» — от первой точки. */
-    const range = pts => ({ from: state.period ? fromMs() : Math.min(...pts.map(p => p.t)), to: Date.now() });
 
-    function statLine(pts, unit) {
-      if (pts.length < 2) return pts.length ? h('p', { class: 'muted small' }, ctx.t('Сейчас: {v} {unit}', { v: fmtNum(pts.at(-1).v), unit: ctx.t(unit) })) : null;
-      const d = pts.at(-1).v - pts[0].v;
-      return h('p', { class: 'muted small' }, ctx.t('Сейчас: {v} {unit} · за период: {d}', { v: fmtNum(pts.at(-1).v), unit: ctx.t(unit), d: signed(d) }));
+    function metricsList() {
+      return [
+        { id: 'weight', name: 'Вес', unit: 'кг', get: e => e.weight, tau: 7 },
+        { id: 'fat', name: 'Процент жира', unit: '%', get: e => e.fat, tau: 10 },
+        ...visible().map(m => ({ id: m.id, name: m.name, unit: 'см', measure: true, tau: 10 })),
+      ];
     }
 
-    function chartCard(title, pts, unit) {
-      if (!pts.length) return h('div', { class: 'card' }, h('strong', null, title), h('p', { class: 'muted empty' }, 'Нет данных за этот период'));
-      const { from, to } = range(pts);
-      return h('div', { class: 'card' }, h('strong', null, title), statLine(pts, unit),
-        lineChart({ series: [{ color: SERIES_COLORS[0], pts }], from, to, fmtDate: fmtDay, fmtNum, unit: ' ' + ctx.t(unit) }));
+    /** Ряды показателя: тренд считается по всей истории, чтобы он не менялся от выбранного периода; pts — только выбранный период. */
+    function seriesOf(metric) {
+      const keys = metric.measure ? sideKeys(metric.id).filter(k => points(entries, e => e.m?.[k]).length) : [metric.id];
+      return keys.map(k => {
+        const get = metric.measure ? e => e.m?.[k] : metric.get;
+        const all = withTrend(points(entries, get), metric.tau);
+        return {
+          key: k, label: metric.measure ? sideLabel(k) : ctx.t(metric.name),
+          color: metric.measure ? colorOfKey(k) : SERIES_COLORS.main, all, pts: all.filter(p => p.t >= fromMs()),
+        };
+      });
     }
 
-    function bodyHistory() {
-      return h('div', { class: 'mon-cols' },
-        chartCard(ctx.t('Вес'), points(entries, e => e.weight, fromMs()), 'кг'),
-        chartCard(ctx.t('Процент жира'), points(entries, e => e.fat, fromMs()), '%'));
+    function tile(metric, series) {
+      const withPts = series.filter(s => s.pts.length);
+      const value = withPts.length ? withPts.map(s => fmtNum(s.pts.at(-1).v)).join(' / ') : '—';
+      const deltas = series.map(s => (s.pts.length > 1 ? signed(s.pts.at(-1).v - s.pts[0].v) : null));
+      const delta = deltas.some(d => d != null) ? deltas.map(d => d ?? '—').join(' / ') : '';
+      return h('button', { class: 'tile' + (metric.id === state.metric ? ' on' : '') + (withPts.length ? '' : ' empty'), onClick: () => { state.metric = metric.id; renderHistory(); } },
+        h('span', { class: 'tile-name' }, metric.name),
+        h('span', { class: 'tile-val' }, raw(value), withPts.length ? h('span', { class: 'muted small' }, metric.unit) : null),
+        h('span', { class: 'tile-delta muted small' }, raw(delta)),
+        withPts[0]?.pts.length > 1 ? sparkline(withPts[0].pts, { color: withPts[0].color }) : h('span', { class: 'tile-spark-empty' }));
     }
 
-    function measuresHistory() {
-      const shown = visible();
-      if (!shown.length) return h('p', { class: 'muted empty' }, 'Все замеры отключены в настройках.');
-      if (!shown.some(m => m.id === state.measure)) state.measure = shown[0].id;
-      const present = id => sideKeys(id).filter(k => points(entries, e => e.m?.[k]).length);
-      const chips = h('div', { class: 'size-chips' }, shown.map(m =>
-        h('button', { class: 'chip-btn' + (m.id === state.measure ? ' on' : ''), disabled: !present(m.id).length && m.id !== state.measure,
-          onClick: () => { state.measure = m.id; renderHistory(); } }, m.name)));
+    function mainCard(metric, series) {
+      const unit = ctx.t(metric.unit);
+      const title = metric.measure ? ctx.t('{name}, см', { name: ctx.t(metric.name) }) : metric.id === 'weight' ? ctx.t('Вес, кг') : ctx.t('Процент жира, %');
+      const withPts = series.filter(s => s.pts.length);
+      const single = series.length === 1;
+      const head = h('div', { class: 'dyn-head' }, h('strong', null, title),
+        h('div', { class: 'row-gap' },
+          single && state.dview === 'chart' ? h('button', { class: 'chip-btn' + (state.trend ? ' on' : ''), onClick: () => { state.trend = !state.trend; renderHistory(); } }, 'Тренд') : null,
+          tabs([['chart', 'График'], ['table', 'Таблица']], state.dview, v => { state.dview = v; renderHistory(); })));
+      if (!series.length) return h('div', { class: 'card dyn-main' }, head, h('p', { class: 'muted empty' }, 'Данных пока нет. Добавьте запись на вкладке «Ввод».'));
+      if (!withPts.length) return h('div', { class: 'card dyn-main' }, head, h('p', { class: 'muted empty' }, 'Нет данных за этот период'));
 
-      const keys = sideKeys(state.measure).filter(k => points(entries, e => e.m?.[k], fromMs()).length);
-      const series = keys.map((k, i) => ({ key: k, color: SERIES_COLORS[i % SERIES_COLORS.length], pts: points(entries, e => e.m?.[k], fromMs()) }));
-      const chart = series.length
-        ? h('div', { class: 'card' },
-          h('strong', null, ctx.t('{name}, см', { name: ctx.t(measureOf(state.measure).name) })),
-          series.length > 1 ? h('div', { class: 'legend' }, series.map(s => h('span', { class: 'legend-i' }, h('i', { style: `background:${s.color}` }), raw(sideLabel(s.key))))) : null,
-          lineChart({ series, ...range(series.flatMap(s => s.pts)), fmtDate: fmtDay, fmtNum, unit: ' ' + ctx.t('см') }))
-        : h('div', { class: 'card' }, h('p', { class: 'muted empty' }, 'Нет данных за этот период'));
-
-      // изменения всех замеров за период: первое и последнее значение
-      const rows = [];
-      for (const m of shown) {
-        for (const k of sideKeys(m.id)) {
-          const pts = points(entries, e => e.m?.[k], fromMs());
-          if (!pts.length) continue;
-          const first = pts[0].v, last = pts.at(-1).v;
-          rows.push(h('button', { class: 'chg-row' + (m.id === state.measure ? ' on' : ''), onClick: () => { state.measure = m.id; renderHistory(); } },
-            h('span', { class: 'grow' }, raw(sideLabel(k))),
-            pts.length > 1 ? h('span', { class: 'muted' }, `${fmtNum(first)} → ${fmtNum(last)}`) : h('span', { class: 'muted' }, fmtNum(last)),
-            pts.length > 1 ? h('strong', { class: last > first ? 'up' : last < first ? 'down' : '' }, signed(last - first)) : h('span')));
-        }
+      const parts = [head];
+      if (single) {
+        const pts = series[0].pts, vs = pts.map(p => p.v), last = pts.at(-1).v;
+        const stat = (label, value) => h('div', { class: 'dyn-stat' }, h('span', { class: 'muted small' }, label), h('strong', null, raw(value)));
+        parts.push(h('div', { class: 'dyn-hero' },
+          h('span', { class: 'dyn-hero-val' }, raw(fmtNum(last)), h('span', { class: 'muted' }, unit)),
+          pts.length > 1 ? h('span', { class: 'muted' }, ctx.t('за период: {d}', { d: signed(last - pts[0].v) })) : null),
+        h('div', { class: 'dyn-stats' },
+          stat(ctx.t('Мин'), fmtNum(Math.min(...vs))), stat(ctx.t('Макс'), fmtNum(Math.max(...vs))),
+          stat(ctx.t('Среднее'), fmtNum(vs.reduce((a, b) => a + b, 0) / vs.length)), stat(ctx.t('Записей'), String(vs.length))));
+      } else {
+        // несколько рядов (общее / правая / левая): легенда с изменением по каждому
+        parts.push(h('div', { class: 'legend' }, withPts.map(s => {
+          const first = s.pts[0].v, last = s.pts.at(-1).v;
+          const key = h('i', { class: 'dyn-key' });
+          key.style.background = s.color;
+          return h('span', { class: 'legend-i' }, key, raw(`${s.label}: ${s.pts.length > 1 ? `${fmtNum(first)} → ${fmtNum(last)} (${signed(last - first)})` : fmtNum(last)}`));
+        })));
       }
-      return h('div', { class: 'mon-cols' }, h('div', null, chips, chart),
-        h('div', { class: 'card' }, h('strong', null, 'Изменения за период'),
-          rows.length ? h('div', { class: 'chg-list' }, rows) : h('p', { class: 'muted empty' }, 'Нет данных за этот период')));
+
+      // ось начинается с первой записи, если данных меньше, чем выбранный период, — иначе слева пустое место
+      const firstT = Math.min(...withPts.flatMap(s => s.pts.map(p => p.t)));
+      const range = { from: state.period ? Math.max(fromMs(), firstT) : firstT, to: Date.now() };
+      const common = { h, series: withPts, fmtNum, showTrend: state.trend };
+      parts.push(state.dview === 'table'
+        ? dynamicsTable({ ...common, fmtDateLong: ms => fmtDayLong(dayKey(ms)), headDate: ctx.t('Дата'), headTrend: ctx.t('Тренд') })
+        : dynamicsChart({ ...common, ...range, fmtDate: fmtDay, fmtDateLong: ms => fmtDayLong(dayKey(ms)), unit, trendLabel: ctx.t('Тренд'), ariaLabel: title }));
+      if (single && state.trend && state.dview === 'chart') {
+        parts.push(h('p', { class: 'muted small' }, 'Линия — сглаженный тренд, точки — отдельные записи: суточные колебания не искажают картину.'));
+      }
+      return h('div', { class: 'card dyn-main' }, ...parts);
+    }
+
+    function renderHistory() {
+      const filters = h('div', { class: 'dyn-filters' },
+        state.hview === 'dynamics' ? tabs(PERIODS.map(p => [p.days, p.label]), state.period, d => { state.period = d; renderHistory(); }) : h('span'),
+        tabs([['dynamics', 'Динамика'], ['log', 'Записи']], state.hview, v => { state.hview = v; renderHistory(); }));
+      if (state.hview === 'log') { view.replaceChildren(filters, logHistory()); return; }
+
+      const list = metricsList().map(m => [m, seriesOf(m)]);
+      if (!list.some(([m]) => m.id === state.metric)) state.metric = 'weight';
+      const [cur, curSeries] = list.find(([m]) => m.id === state.metric);
+      view.replaceChildren(filters, h('div', { class: 'dyn' },
+        h('div', { class: 'dyn-tiles' }, list.map(([m, s]) => tile(m, s))),
+        mainCard(cur, curSeries)));
     }
 
     function logHistory() {

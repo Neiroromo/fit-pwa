@@ -30,7 +30,7 @@
       "name": "Мониторинг",
       "icon": "heart",
       "description": "Вес, процент жира и замеры тела с историей и графиками.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "size": "~60 КБ",
       "available": true
     }
