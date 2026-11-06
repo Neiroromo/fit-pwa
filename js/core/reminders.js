@@ -33,7 +33,22 @@ export function inQuietHours(q, d = new Date()) {
 function deliver(app, text, tag) {
   app.db.collection('app/notifications').put({ text, ts: Date.now(), read: false }).then(() => app.shell.refreshBell());
   toast(text);
-  try { if (typeof Notification !== 'undefined' && Notification.permission === 'granted') new Notification(text, { tag }); } catch { /* уведомление не показано */ }
+  systemNotify(text, tag);
+}
+
+/**
+ * Системное уведомление. Через service worker (registration.showNotification) — только так оно работает на телефонах
+ * (Android, iPhone в установленном PWA); обычный new Notification() там не поддерживается. Запасной вариант — для десктопа.
+ */
+async function systemNotify(text, tag) {
+  if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+  const icon = new URL('icons/icon-192.png', document.baseURI).href;
+  const opts = { tag, icon, badge: icon, data: { url: new URL('./', document.baseURI).href } };
+  try {
+    const reg = await navigator.serviceWorker?.ready;
+    if (reg?.showNotification) return await reg.showNotification('Fit', { ...opts, body: text });
+  } catch { /* пробуем запасной вариант */ }
+  try { new Notification('Fit', { ...opts, body: text }); } catch { /* уведомление не показано */ }
 }
 
 /** Запускает проверку напоминаний. moduleContext(id) даёт модулю его обычный контекст. */

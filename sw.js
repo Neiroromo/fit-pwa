@@ -1,7 +1,7 @@
 // Service worker.
 //  • Оболочка приложения (ядро + Хаб): network-first с откатом на кэш — онлайн всегда свежая версия, офлайн работает.
 //  • Файлы скачанных модулей лежат в кэше 'fitpwa-modules' (кладёт registry.install) и отдаются cache-first.
-const SHELL = 'fitpwa-shell-v3';
+const SHELL = 'fitpwa-shell-v4';
 const MODULES = 'fitpwa-modules';
 
 const SHELL_FILES = [
@@ -43,5 +43,17 @@ self.addEventListener('fetch', e => {
         return res;
       })
       .catch(() => caches.match(req, { ignoreSearch: true })),
+  );
+});
+
+// Нажатие на системное уведомление: открыть приложение (или вернуться в уже открытое окно).
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url = e.notification.data?.url || self.registration.scope;
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      const win = list.find(c => c.url.startsWith(self.registration.scope));
+      return win ? win.focus() : self.clients.openWindow(url);
+    }),
   );
 });
