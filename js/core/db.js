@@ -109,6 +109,11 @@ export function createDb(adapter) {
     async exportAll() {
       return { app: 'fit-pwa', version: 1, exportedAt: new Date().toISOString(), records: await adapter.all() };
     },
+    /** Полностью стирает локальные данные (записи всех модулей и настройки). */
+    async clearAll() {
+      await adapter.clear();
+      emit('*');
+    },
     async importAll(data) {
       if (data?.app !== 'fit-pwa' || !Array.isArray(data.records)) throw new Error('Неверный файл резервной копии');
       for (const r of data.records) await adapter.put(r);

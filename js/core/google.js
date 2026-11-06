@@ -152,3 +152,10 @@ export async function deleteFile(name) {
   const f = await findFile(name);
   if (f) await api(`drive/v3/files/${f.id}`, { method: 'DELETE', raw: true });
 }
+
+/** Удалить ВСЕ файлы приложения в appDataFolder. Возвращает число удалённых файлов. */
+export async function deleteAllFiles() {
+  const files = await listFiles();
+  for (const f of files) await api(`drive/v3/files/${f.id}`, { method: 'DELETE', raw: true });
+  return files.length;
+}

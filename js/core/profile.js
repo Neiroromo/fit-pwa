@@ -1,7 +1,7 @@
 // Popup профиля: имя/аватар (локально), вход через Google (заглушка), язык, резервная копия данных.
 // Настройка модулей — общее окно «Модули» (shell.js, openStore).
 
-import { h, raw, icon, iconBtn, toast, dismissable } from './ui.js';
+import { h, raw, icon, iconBtn, toast, dismissable, confirmDialog } from './ui.js';
 import { LANGS, getSettings, saveSettings, translator } from './i18n.js';
 import { getUser as getGoogleUser, isSignedIn as googleSignedIn, wasLinked as googleLinked } from './google.js';
 import { getReminderSettings, saveReminderSettings, reminderOn } from './reminders.js';
@@ -232,6 +232,10 @@ export function openProfile(app, anchor, startView = 'main') {
             const back = await m.getJson('connection-test.json');
             say(`Записано и прочитано: ${back?.stamp === stamp ? 'совпадает ✓' : 'НЕ совпадает'}\nИзменён: ${meta.modifiedTime}\nФайлов в папке: ${(await m.listFiles()).length}`);
           }) }, icon('database', 16), 'Проверить Диск (записать и прочитать)'),
+          h('button', { class: 'btn danger', onClick: run(async m => {
+            if (!(await confirmDialog('Удалить все данные приложения из вашего Google Диска? Данные на этом устройстве останутся. Действие необратимо.', { okText: 'Удалить с Диска', danger: true }))) return;
+            say(`Удалено файлов на Диске: ${await m.deleteAllFiles()}`);
+          }) }, icon('trash', 16), 'Удалить данные на Google Диске'),
           h('button', { class: 'btn', onClick: run(async m => { m.signOut(); say('Отключено, доступ отозван.'); app.shell.renderProfile(); }) }, 'Отключить'),
           log),
       ];
@@ -246,28 +250,10 @@ export function openProfile(app, anchor, startView = 'main') {
           setTimeout(() => location.reload(), 800);
         } catch (e) { toast(e.message ? app.t(e.message) : 'Не удалось прочитать файл'); }
       });
-      // тестовые наборы данных из demo/ (если папка есть): одна кнопка вместо выбора файла
-      const demoBox = h('div', { class: 'form' });
-      fetch(new URL('demo/index.json', document.baseURI), { cache: 'no-cache' })
-        .then(r => (r.ok ? r.json() : []))
-        .catch(() => [])
-        .then(list => {
-          if (!list.length) return;
-          demoBox.replaceChildren(
-            h('strong', null, 'Демо-данные'),
-            h('p', { class: 'muted small' }, 'Тестовые наборы для проверки модулей. Загрузка только добавляет записи.'),
-            ...list.map(d => h('button', { class: 'btn', onClick: async () => {
-              try {
-                await loadDemo(app, d.file);
-                toast('Демо-данные загружены. Перезагрузка…');
-                setTimeout(() => location.reload(), 800);
-              } catch (e) { toast(app.t(e.message)); }
-            } }, icon('download', 16), raw(d.title))));
-        });
       return [
         head('Данные на устройстве'),
         h('div', { class: 'form' },
-          h('p', { class: 'muted small' }, 'В бета-версии все данные хранятся только в этом браузере. Делайте резервные копии. Позже данные переедут в ваш Google-профиль.'),
+          h('p', { class: 'muted small' }, 'В бета-версии все данные хранятся только в этом браузере. Делайте резервные копии или подключите Google (раздел «Google»).'),
           h('button', { class: 'btn', onClick: async () => {
             const blob = new Blob([JSON.stringify(await app.db.exportAll(), null, 1)], { type: 'application/json' });
             const a = h('a', { href: URL.createObjectURL(blob), download: `fit-backup-${new Date().toISOString().slice(0, 10)}.json` });
@@ -275,8 +261,13 @@ export function openProfile(app, anchor, startView = 'main') {
             URL.revokeObjectURL(a.href);
           } }, icon('download', 16), 'Экспорт в файл'),
           h('button', { class: 'btn', onClick: () => file.click() }, icon('upload', 16), 'Импорт из файла'),
-          file),
-        demoBox,
+          file,
+          h('button', { class: 'btn danger', onClick: async () => {
+            if (!(await confirmDialog('Удалить ВСЕ данные на этом устройстве: записи всех модулей, историю и настройки? Данные в Google Диске не затрагиваются. Действие необратимо — сделайте резервную копию, если нужно.', { okText: 'Удалить всё', danger: true }))) return;
+            await app.db.clearAll();
+            toast('Данные удалены. Перезагрузка…');
+            setTimeout(() => location.reload(), 800);
+          } }, icon('trash', 16), 'Удалить все данные на устройстве')),
       ];
     },
   };

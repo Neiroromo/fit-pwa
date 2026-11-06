@@ -64,7 +64,8 @@ function moduleContext(id) {
 
 async function boot() {
   // ссылка вида ?demo=<имя набора> (demo/<имя>.json) один раз загружает тестовые данные и убирает параметр из адреса
-  const demo = new URLSearchParams(location.search).get('demo');
+  // только при локальной разработке: на опубликованном сайте демо-данных нет
+  const demo = ['localhost', '127.0.0.1'].includes(location.hostname) ? new URLSearchParams(location.search).get('demo') : null;
   if (demo) {
     try { await loadDemo({ db }, demo); ui.toast('Демо-данные загружены: ' + demo); } catch (e) { console.error(e); ui.toast('Не удалось загрузить демо-данные: ' + demo); }
     history.replaceState(null, '', location.pathname + location.hash);
