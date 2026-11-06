@@ -30,6 +30,18 @@ function setUser(u) {
   window.dispatchEvent(new CustomEvent('fitpwa:google'));
 }
 
+/** Аватар Google → маленький data-URL (хранится локально, без повторных запросов к Google); при неудаче — сама ссылка. */
+async function loadPhoto(url) {
+  if (!url) return null;
+  try {
+    const blob = await (await fetch(url.replace(/=s\d+(-c)?$/, '=s160-c'), { referrerPolicy: 'no-referrer' })).blob();
+    const bmp = await createImageBitmap(blob);
+    const c = Object.assign(document.createElement('canvas'), { width: 160, height: 160 });
+    c.getContext('2d').drawImage(bmp, 0, 0, 160, 160);
+    return c.toDataURL('image/jpeg', 0.85);
+  } catch { return url; }
+}
+
 function loadGis() {
   if (window.google?.accounts?.oauth2) return Promise.resolve();
   gisLoading ??= new Promise((resolve, reject) => {
@@ -55,8 +67,8 @@ async function ensureClient() {
       expiresAt = Date.now() + (Number(r.expires_in) || 3600) * 1000 - 60000;
       store.set('1');
       // имя и почту берём из Drive (about.get) — отдельный scope для профиля не нужен
-      api('drive/v3/about?fields=user(displayName,emailAddress)')
-        .then(a => setUser({ name: a.user?.displayName || '', email: a.user?.emailAddress || '' }))
+      api('drive/v3/about?fields=user(displayName,emailAddress,photoLink)')
+        .then(async a => setUser({ name: a.user?.displayName || '', email: a.user?.emailAddress || '', photo: await loadPhoto(a.user?.photoLink) }))
         .catch(() => {})
         .finally(() => p?.resolve(token));
     },

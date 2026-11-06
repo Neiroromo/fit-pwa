@@ -23,7 +23,8 @@ export function googleLogo(size = 20) {
 
 export function avatarEl(profile, size = 36) {
   const el = h('span', { class: 'avatar', style: { width: size + 'px', height: size + 'px', fontSize: size * 0.42 + 'px' } });
-  if (profile.avatar) el.append(h('img', { src: profile.avatar, alt: '' }));
+  const photo = profile.avatar || (googleLinked() ? getGoogleUser()?.photo : null); // своё фото важнее; иначе — из Google вместо буквы
+  if (photo) el.append(h('img', { src: photo, alt: '', referrerpolicy: 'no-referrer' }));
   else el.textContent = shownName(profile).trim().charAt(0).toUpperCase();
   return el;
 }
