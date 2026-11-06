@@ -67,7 +67,7 @@ export function openProfile(app, anchor, startView = 'main') {
       h('div', { class: 'profile-card' }, avatarEl(app.profile, 48),
         h('div', null, h('strong', null, raw(shownName(app.profile))), h('div', { class: 'muted small' }, 'Локальный профиль'))),
       row('user', 'Личные данные', { sub: 'Имя, аватар, пол, дата рождения', onClick: () => go('profile') }),
-      row('google', 'Войти через Google', { sub: 'Синхронизация данных между устройствами', soon: true }),
+      row('google', 'Google', { sub: 'Синхронизация данных между устройствами (тест)', onClick: () => go('google') }),
       row('bell', 'Напоминания', { sub: 'По модулям и функциям', onClick: () => go('reminders') }),
       row('grid', 'Настроить модули', { onClick: () => { close(); app.openStore(); } }), // то же окно, что и кнопка «Модули» в навигации
       row('globe', 'Язык', { sub: LANGS[getSettings().app], onClick: () => go('lang') }),
@@ -187,8 +187,40 @@ export function openProfile(app, anchor, startView = 'main') {
       return [head('Напоминания'), box];
     },
 
+    // Прототип подключения к Google: вход и проверка записи/чтения файла в скрытой папке приложения на Диске.
+    google: () => {
+      const status = h('p', { class: 'muted small' }, 'Проверка подключения…');
+      const log = h('pre', { class: 'muted small', style: { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } });
+      const say = t => { log.textContent += (log.textContent ? '\n' : '') + t; };
+      const g = () => import('./google.js');
+      const refresh = async () => {
+        const m = await g();
+        status.textContent = m.isSignedIn() ? 'Подключено к Google (сессия активна).' : m.wasLinked() ? 'Входили раньше; нажмите «Войти», чтобы продолжить сессию.' : 'Не подключено.';
+      };
+      refresh();
+      const run = fn => async () => {
+        try { await fn(await g()); } catch (e) { say('Ошибка: ' + (e.message || e)); }
+        refresh();
+      };
+      return [
+        head('Google'),
+        h('div', { class: 'form' },
+          status,
+          h('p', { class: 'muted small' }, 'Тестовый режим. Данные приложения хранятся в скрытой папке вашего Google Диска; остальные файлы приложению недоступны.'),
+          h('button', { class: 'btn', onClick: run(async m => { await m.signIn(); say('Вход выполнен.'); }) }, icon('google', 16), 'Войти через Google'),
+          h('button', { class: 'btn', onClick: run(async m => {
+            const stamp = new Date().toISOString();
+            const meta = await m.putJson('connection-test.json', { app: 'fit-pwa', stamp });
+            const back = await m.getJson('connection-test.json');
+            say(`Записано и прочитано: ${back?.stamp === stamp ? 'совпадает ✓' : 'НЕ совпадает'}\nИзменён: ${meta.modifiedTime}\nФайлов в папке: ${(await m.listFiles()).length}`);
+          }) }, icon('database', 16), 'Проверить Диск (записать и прочитать)'),
+          h('button', { class: 'btn', onClick: run(async m => { m.signOut(); say('Отключено, доступ отозван.'); }) }, 'Отключить'),
+          log),
+      ];
+    },
+
     data: () => {
-      const file = h('input', { type: 'file', accept: 'application/json', hidden: true });
+      const file =h('input', { type: 'file', accept: 'application/json', hidden: true });
       file.addEventListener('change', async () => {
         try {
           await app.db.importAll(JSON.parse(await file.files[0].text()));

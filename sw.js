@@ -1,12 +1,12 @@
 // Service worker.
 //  • Оболочка приложения (ядро + Хаб): network-first с откатом на кэш — онлайн всегда свежая версия, офлайн работает.
 //  • Файлы скачанных модулей лежат в кэше 'fitpwa-modules' (кладёт registry.install) и отдаются cache-first.
-const SHELL = 'fitpwa-shell-v2';
+const SHELL = 'fitpwa-shell-v3';
 const MODULES = 'fitpwa-modules';
 
 const SHELL_FILES = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
-  'js/main.js', 'js/core/i18n.js', 'js/core/lang/en.js', 'js/core/db.js', 'js/core/registry.js', 'js/core/shell.js', 'js/core/profile.js', 'js/core/ui.js',
+  'js/main.js', 'js/core/i18n.js', 'js/core/lang/en.js', 'js/core/db.js', 'js/core/registry.js', 'js/core/shell.js', 'js/core/profile.js', 'js/core/ui.js', 'js/core/google.js',
   'js/hub/index.js', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',
 ];
 
