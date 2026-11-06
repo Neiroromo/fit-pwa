@@ -172,6 +172,10 @@ export function dismissable(el, { ignore = [], onClose } = {}) {
   const onDown = e => {
     if (el.contains(e.target) || ignore.some(i => i?.contains(e.target))) return;
     close();
+    // нажатие на фон только закрывает окно: следующий за ним click на кнопке под фоном не должен сработать
+    const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); };
+    document.addEventListener('click', swallow, { capture: true, once: true });
+    setTimeout(() => document.removeEventListener('click', swallow, true), 500);
   };
   const onKey = e => e.key === 'Escape' && close();
   setTimeout(() => document.addEventListener('pointerdown', onDown, true));

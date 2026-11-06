@@ -157,11 +157,17 @@ h1 .upd-btn { margin-left: 12px; padding: 4px 10px; font-size: 13px; vertical-al
 
 /* ---------- Телефон: навигация внизу ---------- */
 @media (max-width: 720px) {
-  .shell { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
-  .nav { grid-row: 2; flex-direction: row; align-items: center; padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); border-right: 0; border-top: 1px solid var(--line); gap: 4px; }
+  html, body { overflow-x: hidden; }
+  .shell { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; width: 100%; max-width: 100vw; }
+  .nav { grid-row: 2; min-width: 0; flex-direction: row; align-items: center; padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); border-right: 0; border-top: 1px solid var(--line); gap: 4px; }
   .brand, .profile-name { display: none; }
-  .nav-list { flex-direction: row; overflow-x: auto; overflow-y: hidden; gap: 2px; }
-  .nav-item { flex-direction: column; gap: 2px; padding: 6px 10px; width: auto; font-size: 11px; align-items: center; }
+  .nav-pin { flex: none; }
+  .nav-list { flex: 1; min-width: 0; flex-direction: row; overflow-x: auto; overflow-y: hidden; gap: 2px; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .nav-list::-webkit-scrollbar { display: none; }
+  .nav-foot { flex: none; }
+  /* у всех пунктов одинаковая ширина, включая Хаб */
+  .nav-item { flex: none; flex-direction: column; gap: 2px; padding: 6px 4px; width: 68px; font-size: 11px; align-items: center; }
+  .nav-label { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .nav-item.add { margin: 0; }
   .nav-foot { border-top: 0; padding: 0; }
   .profile-btn { flex: none; padding: 4px; }
@@ -170,6 +176,16 @@ h1 .upd-btn { margin-left: 12px; padding: 4px 10px; font-size: 13px; vertical-al
 }
 
 .lang-mod { margin-top: 10px; }
+
+/* окно «Модули» на телефоне: иконка и описание в первой строке, кнопки отдельной строкой на всю ширину */
+@media (max-width: 720px) {
+  .store-item { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 10px 12px; }
+  .store-info { overflow-wrap: anywhere; }
+  .store-status { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+  .store-status:empty { display: none; }
+  .store-status .row-gap { width: 100%; justify-content: flex-end; }
+  .store-status > .btn:only-child { width: 100%; }
+}
 
 /* окно «Модули»: разделы */
 .store-section { display: flex; flex-direction: column; gap: 8px; }

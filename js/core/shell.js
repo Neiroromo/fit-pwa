@@ -8,6 +8,7 @@ import { translator, getSettings } from './i18n.js';
 export function buildShell(app) {
   const { registry, router } = app;
   const list = h('div', { class: 'nav-list' });
+  const pin = h('div', { class: 'nav-pin' }); // Хаб всегда на месте, остальные модули прокручиваются
   const profileName = h('span', { class: 'profile-name' });
   let profileAv = h('span');
   const profileBtn = h('button', { class: 'profile-btn', title: 'Профиль и настройки', onClick: () => openProfile(app, profileBtn) }, profileAv, profileName);
@@ -15,6 +16,7 @@ export function buildShell(app) {
   const bellBtn = h('button', { class: 'icon-btn bell', title: 'Уведомления', 'aria-label': 'Уведомления', onClick: () => openNotifications(app, bellBtn) }, icon('bell'), bellDot);
   const nav = h('nav', { class: 'nav' },
     h('div', { class: 'brand' }, h('span', { class: 'brand-mark' }, 'F'), h('span', { class: 'brand-name' }, 'Fit')),
+    pin,
     list,
     h('div', { class: 'nav-foot' }, profileBtn, bellBtn),
   );
@@ -23,11 +25,13 @@ export function buildShell(app) {
 
   function renderNav() {
     const cur = router.current();
+    const link = m => h('a', { class: 'nav-item' + (m.id === cur ? ' active' : ''), href: '#/' + m.id, title: m.name },
+      icon(m.icon, 22), h('span', { class: 'nav-label' }, m.name),
+      registry.needsUpdate(m.id) ? h('span', { class: 'upd-dot', title: 'Доступно обновление' }) : null);
+    const items = registry.navItems();
+    pin.replaceChildren(...items.filter(m => m.id === 'hub').map(link));
     list.replaceChildren(
-      ...registry.navItems().map(m =>
-        h('a', { class: 'nav-item' + (m.id === cur ? ' active' : ''), href: '#/' + m.id, title: m.name },
-          icon(m.icon, 22), h('span', { class: 'nav-label' }, m.name),
-          registry.needsUpdate(m.id) ? h('span', { class: 'upd-dot', title: 'Доступно обновление' }) : null)),
+      ...items.filter(m => m.id !== 'hub').map(link),
       h('button', { class: 'nav-item add', title: 'Скачать модуль', onClick: () => openStore(app) },
         icon('plus', 22), h('span', { class: 'nav-label' }, 'Модули')),
     );
