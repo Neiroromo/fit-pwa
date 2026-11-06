@@ -3,6 +3,7 @@
 
 import { h, raw, icon, iconBtn, toast, dismissable } from './ui.js';
 import { LANGS, getSettings, saveSettings, translator } from './i18n.js';
+import { getReminderSettings, saveReminderSettings, reminderOn } from './reminders.js';
 
 /** Имя для показа: введённое пользователем как есть; если не задано (или осталось старое «Гость») — «Гость» на языке приложения. */
 export const shownName = p => (p.name && p.name !== 'Гость' ? p.name : translator('app').t('Гость'));
@@ -40,7 +41,7 @@ export async function loadDemo(app, name) {
   await app.db.importAll(await res.json());
 }
 
-export function openProfile(app, anchor) {
+export function openProfile(app, anchor, startView = 'main') {
   const prev = document.querySelector('.popover');
   prev?._close?.();
   if (prev?.dataset.kind === 'profile') return; // повторное нажатие на кнопку профиля закрывает окно
@@ -48,7 +49,7 @@ export function openProfile(app, anchor) {
   document.body.append(pop);
   const close = dismissable(pop, { ignore: [anchor] });
   pop._close = close;
-  const stack = ['main'];
+  const stack = startView === 'main' ? ['main'] : ['main', startView];
 
   const row = (ico, label, { sub, onClick, soon } = {}) =>
     h('button', { class: 'menu-row', disabled: !!soon, onClick },
@@ -65,8 +66,9 @@ export function openProfile(app, anchor) {
     main: () => [
       h('div', { class: 'profile-card' }, avatarEl(app.profile, 48),
         h('div', null, h('strong', null, raw(shownName(app.profile))), h('div', { class: 'muted small' }, 'Локальный профиль'))),
-      row('user', 'Имя и аватар', { onClick: () => go('profile') }),
+      row('user', 'Личные данные', { sub: 'Имя, аватар, пол, дата рождения', onClick: () => go('profile') }),
       row('google', 'Войти через Google', { sub: 'Синхронизация данных между устройствами', soon: true }),
+      row('bell', 'Напоминания', { sub: 'По модулям и функциям', onClick: () => go('reminders') }),
       row('grid', 'Настроить модули', { onClick: () => { close(); app.openStore(); } }), // то же окно, что и кнопка «Модули» в навигации
       row('globe', 'Язык', { sub: LANGS[getSettings().app], onClick: () => go('lang') }),
       row('database', 'Данные на устройстве', { onClick: () => go('data') }),
@@ -77,6 +79,12 @@ export function openProfile(app, anchor) {
       const preview = h('div', { class: 'avatar-preview' }, avatarEl(app.profile, 72));
       const file = h('input', { type: 'file', accept: 'image/*', hidden: true });
       const draft = { ...app.profile };
+      // пол и дата рождения принадлежат пользователю, а не модулю: их используют все модули (через ctx.user())
+      const birth = h('input', { class: 'input', type: 'date', value: draft.birth || '', max: new Date().toISOString().slice(0, 10), min: '1900-01-01' });
+      const sexBox = h('div', { class: 'size-chips' });
+      const drawSex = () => sexBox.replaceChildren(...[['m', 'Мужской'], ['f', 'Женский']].map(([id, label]) =>
+        h('button', { type: 'button', class: 'chip-btn' + (draft.sex === id ? ' on' : ''), onClick: () => { draft.sex = draft.sex === id ? null : id; drawSex(); } }, label)));
+      drawSex();
       const refresh = () => preview.replaceChildren(avatarEl({ ...draft, name: name.value }, 72));
       file.addEventListener('change', async () => {
         if (!file.files[0]) return;
@@ -84,7 +92,7 @@ export function openProfile(app, anchor) {
       });
       name.addEventListener('input', refresh);
       return [
-        head('Имя и аватар'),
+        head('Личные данные'),
         h('div', { class: 'form' },
           preview,
           h('div', { class: 'row-gap' },
@@ -92,9 +100,12 @@ export function openProfile(app, anchor) {
             h('button', { class: 'btn', onClick: () => { draft.avatar = null; refresh(); } }, 'Убрать')),
           file,
           h('label', { class: 'field' }, h('span', null, 'Имя'), name),
+          h('div', { class: 'field' }, h('span', null, 'Пол'), sexBox),
+          h('label', { class: 'field' }, h('span', null, 'Дата рождения'), birth),
+          h('p', { class: 'muted small' }, 'Пол и дата рождения нужны модулям для расчётов, например нормы калорий. Они хранятся только на этом устройстве.'),
           h('p', { class: 'muted small' }, 'Изменение доступно при локальном использовании. После входа через Google имя и аватар подтянутся из аккаунта.'),
           h('button', { class: 'btn primary', onClick: async () => {
-            app.profile = { name: name.value.trim(), avatar: draft.avatar };
+            app.profile = { ...app.profile, name: name.value.trim(), avatar: draft.avatar, sex: draft.sex ?? null, birth: birth.value || '' };
             await app.db.kv.set('app/profile', app.profile);
             app.shell.renderProfile();
             stack.pop(); render();
@@ -134,6 +145,46 @@ export function openProfile(app, anchor) {
             setTimeout(() => location.reload(), 600);
           } }, 'Применить')),
       ];
+    },
+
+    // Напоминания: общее окно для всех модулей. Каждый установленный модуль приносит свои напоминания (manifest.reminders).
+    reminders: () => {
+      const box = h('div', { class: 'form rem' });
+      (async () => {
+        const s = await getReminderSettings(app.db);
+        const save = () => saveReminderSettings(app.db, s);
+        const sw = (checked, label, hint, onChange) => {
+          const cb = h('input', { type: 'checkbox' });
+          cb.checked = checked;
+          cb.addEventListener('change', () => onChange(cb.checked));
+          return h('label', { class: 'rem-row' }, cb, h('span', { class: 'grow' }, h('strong', null, label), hint ? h('span', { class: 'muted small block' }, hint) : null));
+        };
+        const time = (key, label) => {
+          const i = h('input', { class: 'input time', type: 'time', value: s.quiet[key] });
+          i.addEventListener('change', () => { if (i.value) { s.quiet[key] = i.value; save(); } });
+          return h('label', { class: 'field' }, h('span', null, label), i);
+        };
+        const perm = typeof Notification !== 'undefined' ? Notification.permission : 'unsupported';
+        const mods = app.registry.installed().filter(m => (m.reminders ?? []).length);
+        const kids = [
+          h('p', { class: 'muted small' }, 'Напоминания приходят, пока приложение открыто: в колокольчик, всплывающим сообщением и системным уведомлением. Без сервера доставить их в закрытое приложение нельзя.'),
+          perm === 'default' ? h('button', { class: 'btn', onClick: async () => { await Notification.requestPermission(); render(); } }, 'Разрешить системные уведомления') : null,
+          perm === 'granted' ? h('p', { class: 'muted small' }, 'Системные уведомления разрешены.') : null,
+          perm === 'denied' ? h('p', { class: 'muted small' }, 'Системные уведомления запрещены в настройках браузера.') : null,
+          h('div', { class: 'rem-group' },
+            sw(s.quiet.on, 'Тихие часы', 'В это время напоминания не показываются', on => { s.quiet.on = on; save(); }),
+            h('div', { class: 'row-gap' }, time('from', 'С'), time('to', 'До'))),
+          ...mods.map(m => {
+            const tr = translator(m.id, getSettings().app).tr;
+            return h('div', { class: 'rem-group' },
+              h('div', { class: 'rem-mod' }, icon(m.icon, 18), h('strong', null, raw(tr(m.name)))),
+              ...m.reminders.map(r => sw(reminderOn(s, m.id, r), raw(tr(r.title)), r.description ? raw(tr(r.description)) : null, on => { s.enabled[`${m.id}.${r.id}`] = on; save(); })));
+          }),
+          mods.length ? null : h('p', { class: 'muted' }, 'Установленные модули пока не предлагают напоминаний. Они появятся здесь сами, когда вы скачаете модуль с напоминаниями (например, «Дневник питания»).'),
+        ].filter(Boolean);
+        box.replaceChildren(...kids);
+      })();
+      return [head('Напоминания'), box];
     },
 
     data: () => {

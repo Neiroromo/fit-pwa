@@ -4,6 +4,7 @@ import { buildShell, openStore, updateButton, notifyUpdates } from './core/shell
 import { ui, createUi, setAppTranslator } from './core/ui.js';
 import { initI18n, preload, translator, contentLang } from './core/i18n.js';
 import { loadDemo } from './core/profile.js';
+import { startReminders } from './core/reminders.js';
 
 const db = createDb(new IdbAdapter());
 const registry = createRegistry(db);
@@ -19,7 +20,16 @@ const router = {
   },
 };
 
-const app = { db, registry, router, profile: { name: '', avatar: null } };
+const app = { db, registry, router, profile: { name: '', avatar: null, sex: null, birth: '' } };
+
+/** Возраст в полных годах по дате рождения 'YYYY-MM-DD'; null, если дата не задана или неправдоподобна. */
+function ageOf(birth, now = new Date()) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(birth ?? '')) return null;
+  const [y, m, d] = birth.split('-').map(Number);
+  let a = now.getFullYear() - y;
+  if (now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < d)) a--;
+  return a >= 10 && a <= 110 ? a : null;
+}
 
 /** Контекст, который получает каждый модуль. Модуль не знает о ядре ничего сверх этого. */
 function moduleContext(id) {
@@ -28,6 +38,12 @@ function moduleContext(id) {
   return {
     id,
     db: scoped,
+    /** Общее хранилище модулей (collection, kv): сюда модуль публикует то, что могут читать другие, например профиль тела из «Мониторинга». Читать можно всегда; если публикующего модуля нет, данных просто нет. */
+    shared: db.scope('shared'),
+    /** Личные данные пользователя из профиля приложения: {name, sex: 'm'|'f'|null, birth: 'YYYY-MM-DD'|'', age: число|null}. Не зависят от установленных модулей. */
+    user: () => ({ name: app.profile.name, sex: app.profile.sex ?? null, birth: app.profile.birth ?? '', age: ageOf(app.profile.birth) }),
+    /** Открывает окно «Личные данные» профиля (например, чтобы заполнить пол и дату рождения). */
+    openProfile: (view = 'profile') => { const b = document.querySelector('.profile-btn'); if (b) { document.querySelector('.popover')?._close?.(); import('./core/profile.js').then(m => m.openProfile(app, b, view)); } },
     ui: createUi(() => T.tr),
     t: T.t,
     plural: T.plural,
@@ -59,7 +75,7 @@ async function boot() {
   await initI18n(db, registry.installed().map(m => m.id));
   app.t = translator('app').t;
   setAppTranslator(translator('app').tr);
-  app.profile = await db.kv.get('app/profile', app.profile);
+  app.profile = { ...app.profile, ...(await db.kv.get('app/profile', {})) };
   app.shell = buildShell(app);
   app.openStore = () => openStore(app);
   document.getElementById('app').replaceChildren(app.shell.root);
@@ -67,6 +83,7 @@ async function boot() {
   app.shell.refreshBell();
   registry.subscribe(() => app.shell.renderNav());
   notifyUpdates(app).catch(console.error);
+  startReminders(app, moduleContext); // напоминания модулей (см. core/reminders.js)
 
   let cleanup = null;
   let token = 0;

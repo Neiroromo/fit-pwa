@@ -9,6 +9,21 @@
 
 export const DEFAULT_REST = 90;
 
+/**
+ * Публикует в общее хранилище (ctx.shared, ключ 'activity') число и длительность выполненных тренировок по дням: {v: 1, days: {'YYYY-MM-DD': {n, sec}}}.
+ * Их читают другие модули (например, питание добавляет калории за тренировку). Вызывается при открытии модуля и после изменения истории.
+ */
+export async function publishActivity(ctx) {
+  const days = {};
+  for (const s of await ctx.db.collection('sessions').list()) {
+    const k = dayKey(s.startedAt);
+    const d = (days[k] ??= { n: 0, sec: 0 });
+    d.n++;
+    d.sec += s.durationSec ?? 0;
+  }
+  await ctx.shared.kv.set('activity', { v: 1, by: 'workouts', days });
+}
+
 const pad = n => String(n).padStart(2, '0');
 
 export function dayKey(d) {

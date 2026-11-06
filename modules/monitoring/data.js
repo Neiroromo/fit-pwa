@@ -105,14 +105,27 @@ export function removeEntry(ctx, date) {
   return ctx.db.collection('entries').remove(date);
 }
 
+// Профиль тела хранит только то, что относится к телу: рост (settings.height) и вес (записи entries).
+// Пол и дата рождения — в профиле пользователя (ctx.user()), активность и цель по весу — в модуле питания: они нужны для питания, а не для замеров.
 const DEFAULT_SETTINGS = { height: null, split: { arms: false, legs: false }, hidden: [] };
 
 export async function getSettings(ctx) {
   const s = await ctx.db.kv.get('settings', null);
-  return { ...DEFAULT_SETTINGS, ...(s ?? {}), split: { ...DEFAULT_SETTINGS.split, ...(s?.split ?? {}) }, hidden: [...(s?.hidden ?? [])] };
+  return {
+    ...DEFAULT_SETTINGS, ...(s ?? {}), split: { ...DEFAULT_SETTINGS.split, ...(s?.split ?? {}) }, hidden: [...(s?.hidden ?? [])],
+  };
 }
 
 export const saveSettings = (ctx, s) => ctx.db.kv.set('settings', s);
+
+/**
+ * Публикует данные тела в общее хранилище (ключ 'body'): {v: 2, heightCm, weights: [[день, кг]] за последние 120 записей}.
+ * Их читают другие модули (например, питание для расчёта нормы). Вызывается при открытии модуля и после любого изменения веса или роста.
+ */
+export async function publishBody(ctx, entries, settings) {
+  const weights = entries.filter(e => e.weight != null).slice(-120).map(e => [e.date, e.weight]);
+  await ctx.shared.kv.set('body', { v: 2, by: 'monitoring', heightCm: settings.height, weights });
+}
 
 // ---------- выборки ----------
 /** Последнее известное значение показателя (get(entry) → число|undefined) не позже даты upTo. */

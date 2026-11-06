@@ -175,3 +175,22 @@ h1 .upd-btn { margin-left: 12px; padding: 4px 10px; font-size: 13px; vertical-al
 .store-section { display: flex; flex-direction: column; gap: 8px; }
 .store-title { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
 .store-status .row-gap { flex-wrap: wrap; justify-content: flex-end; }
+
+/* тост с действием («Отменить») */
+.toast { display: flex; align-items: center; gap: 14px; }
+.toast-act { background: none; border: 0; color: var(--accent); font-weight: 600; padding: 2px 4px; }
+
+/* окно «Напоминания» в профиле */
+.rem { gap: 10px; }
+.rem-group { display: flex; flex-direction: column; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 12px; }
+.rem-mod { display: flex; align-items: center; gap: 8px; }
+.rem-row { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+.rem-row input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+.input.time { width: auto; }
+
+/* крупные цели нажатия на сенсорных экранах */
+@media (pointer: coarse) {
+  .icon-btn { width: 44px; height: 44px; }
+  .chip-btn { padding: 8px 12px; }
+  .menu-row { padding: 14px 10px; }
+}

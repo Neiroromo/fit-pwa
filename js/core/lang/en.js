@@ -25,14 +25,14 @@ export default {
   'Календарь, программы тренировок, запуск тренировки с таймерами и историей весов.': 'Calendar, workout plans, and a workout runner with timers and weight history.',
   '~3 МБ (с каталогом упражнений)': '~3 MB (with the exercise catalog)',
   'Дневник питания': 'Nutrition diary',
-  'Учёт приёмов пищи, калорий и БЖУ.': 'Track meals, calories and macros.',
+  'Приёмы пищи с КБЖУ, база продуктов и штрихкоды, свои блюда и рецепты с обменом по QR, вода, таблетки по расписанию, история и расчёт нормы по данным тела.': 'Meals with calories and macros, a food database and barcodes, your own dishes and recipes shared via QR, water, scheduled pills, history and a calorie goal calculated from your body data.', '~1,5 МБ (с базой продуктов)': '~1.5 MB (with the food database)',
   'Активность': 'Activity',
   'Шаги, прогулки, пробежки и ежедневная активность.': 'Steps, walks, runs and daily activity.',
   'Мониторинг': 'Monitoring',
   'Мониторинг тела (вес, процент жира, замеры, размеры одежды и обуви) и медицинский (давление, пульс, температура) с историей и графиками.': 'Body monitoring (weight, body fat, measurements, clothing and shoe sizes) and medical monitoring (blood pressure, pulse, temperature) with history and charts.',
 
   // профиль
-  'Локальный профиль': 'Local profile', 'Имя и аватар': 'Name and avatar',
+  'Локальный профиль': 'Local profile', 'Имя и аватар': 'Name and avatar', 'Напоминания': 'Reminders', 'По модулям и функциям': 'By module and feature', 'Настроить напоминания': 'Reminder settings', 'Отменить': 'Undo', 'Тихие часы': 'Quiet hours', 'В это время напоминания не показываются': 'Reminders are not shown during this time', 'С': 'From', 'До': 'To', 'Разрешить системные уведомления': 'Allow system notifications', 'Системные уведомления разрешены.': 'System notifications are allowed.', 'Системные уведомления запрещены в настройках браузера.': 'System notifications are blocked in the browser settings.', 'Напоминания приходят, пока приложение открыто: в колокольчик, всплывающим сообщением и системным уведомлением. Без сервера доставить их в закрытое приложение нельзя.': 'Reminders arrive while the app is open: in the bell, as a pop-up and as a system notification. Without a server they cannot be delivered to a closed app.', 'Установленные модули пока не предлагают напоминаний. Они появятся здесь сами, когда вы скачаете модуль с напоминаниями (например, «Дневник питания»).': 'The installed modules do not offer reminders yet. They will appear here by themselves when you download a module with reminders (for example, “Food diary”).', 'Личные данные': 'Personal details', 'Имя, аватар, пол, дата рождения': 'Name, avatar, sex, date of birth', 'Пол': 'Sex', 'Мужской': 'Male', 'Женский': 'Female', 'Дата рождения': 'Date of birth', 'Пол и дата рождения нужны модулям для расчётов, например нормы калорий. Они хранятся только на этом устройстве.': 'Sex and date of birth are used by modules for calculations such as your calorie goal. They are stored only on this device.',
   'Войти через Google': 'Sign in with Google', 'Синхронизация данных между устройствами': 'Sync data between devices',
   'Настроить модули': 'Manage modules', 'Данные на устройстве': 'Data on this device', 'Подписка': 'Subscription',
   'Язык': 'Language',

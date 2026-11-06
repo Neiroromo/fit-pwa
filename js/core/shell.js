@@ -188,6 +188,7 @@ export async function openNotifications(app, anchor) {
     const items = (await col.list()).sort((a, b) => b.ts - a.ts);
     pop.replaceChildren(
       h('div', { class: 'pop-head' }, h('strong', null, 'Уведомления'),
+        iconBtn('sliders', 'Настроить напоминания', () => { pop._close?.(); document.querySelector('.profile-btn') && import('./profile.js').then(m => m.openProfile(app, document.querySelector('.profile-btn'), 'reminders')); }),
         items.length ? h('button', { class: 'link', onClick: async () => {
           for (const n of items) await col.remove(n.id);
           app.shell.refreshBell();

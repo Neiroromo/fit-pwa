@@ -1,0 +1,93 @@
+{
+  "id": "nutrition",
+  "name": "Дневник питания",
+  "icon": "nutrition",
+  "version": "0.5.4",
+  "entry": "index.js",
+  "files": [
+    "data.js",
+    "norm.js",
+    "normui.js",
+    "foods.js",
+    "pills.js",
+    "history.js",
+    "charts.js",
+    "seed.js",
+    "share.js",
+    "fooddb.js",
+    "offapi.js",
+    "scan.js",
+    "i18n.en.json",
+    "vendor/qrcode.js",
+    "vendor/jsQR.js",
+    "vendor/zxing.js",
+    "data/base.bin",
+    "data/ru.bin"
+  ],
+  "styles": [
+    "nutrition.css"
+  ],
+  "widgets": [
+    {
+      "id": "kcal",
+      "title": "Калории и БЖУ",
+      "description": "Съеденное за сегодня к норме",
+      "sizes": [
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "id": "water",
+      "title": "Вода",
+      "description": "Выпито за сегодня к норме",
+      "sizes": [
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    {
+      "id": "pills",
+      "title": "Таблетки",
+      "description": "Ближайший приём таблеток",
+      "sizes": [
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ]
+    }
+  ],
+  "reminders": [
+    {
+      "id": "pills",
+      "title": "Таблетки по расписанию",
+      "description": "Когда пора принять таблетку",
+      "default": true
+    },
+    {
+      "id": "water",
+      "title": "Выпить воды",
+      "description": "Через заданное время без воды (интервал и часы — в настройках дневника)",
+      "default": false
+    },
+    {
+      "id": "fasting",
+      "title": "Цель голодания достигнута",
+      "description": "Когда пройдено заданное число часов",
+      "default": true
+    }
+  ]
+}

@@ -128,3 +128,6 @@
 .m-hint { padding: 0 8px 4px; line-height: 1.45; }
 .m-hint[hidden], .shoe-note[hidden] { display: none; }
 .shoe-note { padding: 0 8px; }
+
+/* поле с подписью (используется формой роста и др.) */
+.nf-cell { display: flex; flex-direction: column; gap: 4px; }

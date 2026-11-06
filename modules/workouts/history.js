@@ -2,7 +2,7 @@
 // по нажатию справа открываются упражнения с подходами, по нажатию на упражнение ещё правее — график максимального веса.
 // На узких экранах показывается только последняя ступень, назад — стрелкой в её заголовке.
 
-import { fmtClock, makeFmt } from './data.js';
+import { fmtClock, makeFmt, publishActivity } from './data.js';
 
 const PERIODS = [
   { days: 30, label: '1 мес' },
@@ -50,6 +50,7 @@ export async function openHistory(page, ctx, { onBack }) {
     const ok = await confirmDialog(ctx.t('Удалить из истории тренировку «{name}» от {date}? Это действие нельзя отменить.', { name: s.name, date: fmt.date(s.startedAt) }), { okText: 'Удалить', danger: true });
     if (!ok) return;
     await ctx.db.collection('sessions').remove(s.id);
+    publishActivity(ctx).catch(console.error);
     sessions.splice(sessions.indexOf(s), 1);
     if (sel === s.id) { sel = null; exKey = null; }
     toast('Тренировка удалена из истории');

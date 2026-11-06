@@ -147,5 +147,11 @@
   "Лента проходит по лбу над бровями и ушами и по самой выступающей части затылка. Нужен для шапок и шлемов.": "The tape runs across the forehead above the eyebrows and ears and around the most prominent part of the back of the head. Used for hats and helmets.",
   "Над щиколоткой, по самой тонкой части. Нужен для носков, высокой обуви и фиксаторов.": "Just above the ankle at the thinnest part. Used for socks, high boots and braces.",
   "Встаньте на лист бумаги, отметьте самую дальнюю точку большого пальца и пятку, измерьте расстояние. Лучше вечером; если стопы разные, берите большую. По длине стопы показывается примерный размер обуви.": "Stand on a sheet of paper, mark the tip of the longest toe and the heel, and measure the distance. Better in the evening; if your feet differ, use the larger one. An approximate shoe size is shown from the foot length.",
-  "Расстояние между самыми широкими точками стопы (у основания пальцев). Нужна, чтобы выбирать узкую или широкую колодку.": "The distance between the widest points of the foot (at the base of the toes). Helps you choose a narrow or wide shoe last."
+  "Расстояние между самыми широкими точками стопы (у основания пальцев). Нужна, чтобы выбирать узкую или широкую колодку.": "The distance between the widest points of the foot (at the base of the toes). Helps you choose a narrow or wide shoe last.",
+  "Пол": "Sex",
+  "Мужской": "Male",
+  "Женский": "Female",
+  "Взвеситься": "Weigh in",
+  "Утром, если сегодня вес ещё не внесён": "In the morning, if today's weight is not entered yet",
+  "Пора взвеситься: сегодня вес ещё не внесён": "Time to weigh in: today's weight is not entered yet"
 }

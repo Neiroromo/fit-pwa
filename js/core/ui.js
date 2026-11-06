@@ -77,6 +77,16 @@ const ICONS = {
   history: '<path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4h4"/><path d="M12 8v4l3 2"/>',
   chart: '<path d="M4 4v16h16"/><path d="M7 15l4-4 3 3 5-6"/>',
   globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+  book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 7h6"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  bolt: '<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>',
+  bookmark: '<path d="M6 4h12v17l-6-4-6 4z"/>',
+  swap: '<path d="M4 8h13M13 4l4 4-4 4M20 16H7M11 12l-4 4 4 4"/>',
+  undo: '<path d="M9 6L4 11l5 5M4 11h9a5 5 0 0 1 0 10h-4"/>',
+  timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 3h6"/>',
+  copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/>',
+  drop: '<path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/>',
+  pill: '<rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-40 12 12)"/><path d="M9.5 8.7l5.8 6.6"/>',
   database: '<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/>',
 };
 
@@ -136,12 +146,14 @@ export function createUi(getTr = () => appTr) {
     });
   }
 
-  function toast(text) {
+  /** Всплывающее сообщение. С opts.action («Отменить») показывается дольше и содержит кнопку: onAction вызывается по нажатию. */
+  function toast(text, opts) {
     document.querySelector('.toast')?.remove();
-    const t = h('div', { class: 'toast' }, text);
+    const t = h('div', { class: 'toast' }, h('span', null, text),
+      opts?.action ? h('button', { class: 'toast-act', onClick: () => { clearTimeout(toastTimer); t.remove(); opts.onAction?.(); } }, opts.action) : null);
     document.body.append(t);
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.remove(), 2600);
+    toastTimer = setTimeout(() => t.remove(), opts?.action ? 7000 : 2600);
   }
 
   return { h, raw, icon, iconBtn, modal, confirmDialog, toast, uid, clamp, dismissable };

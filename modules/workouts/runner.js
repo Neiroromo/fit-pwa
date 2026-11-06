@@ -1,7 +1,7 @@
 // Окно идущей тренировки: общий таймер, упражнения, подходы, таймер отдыха.
 // Состояние (active) сохраняется в kv после каждого изменения — тренировка переживает перезагрузку.
 
-import { fmtClock, beep } from './data.js';
+import { fmtClock, beep, publishActivity } from './data.js';
 import { openDetail } from './catalog.js';
 
 export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
@@ -195,6 +195,7 @@ export function openRunner(el, ctx, s, { restDefault, onExit, onFinish }) {
           .filter(ex => ex.sets.length),
       });
       ctx.notify(ctx.t('Тренировка «{name}» завершена: {time}', { name: s.name, time: fmtClock(elapsed()) }));
+      publishActivity(ctx).catch(console.error);
     }
     await ctx.db.kv.set('active', null);
     dispose(false);

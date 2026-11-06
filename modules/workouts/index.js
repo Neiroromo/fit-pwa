@@ -1,6 +1,6 @@
 // Модуль «Тренировки»: список тренировок, история, редактор, запуск. Календарь — виджет для Хаба.
 
-import { DEFAULT_REST, dayKey, groupByDay, fmtClock, makeFmt, startOfWeek, buildActive } from './data.js';
+import { DEFAULT_REST, dayKey, groupByDay, fmtClock, makeFmt, startOfWeek, buildActive, publishActivity } from './data.js';
 import { monthGrid } from './calendar.js';
 import { openEditor } from './editor.js';
 import { openRunner } from './runner.js';
@@ -14,6 +14,7 @@ export default {
     const { h, icon, iconBtn, confirmDialog, toast, modal } = ctx.ui;
     const { plural } = ctx;
     const fmt = makeFmt(ctx);
+    publishActivity(ctx).catch(console.error); // история тренировок для других модулей (например, питания)
     await refreshCustom(ctx); // свои упражнения нужны каталогу, подсказкам, карточкам и импорту
     const templatesCol = ctx.db.collection('templates');
     const sessionsCol = ctx.db.collection('sessions');

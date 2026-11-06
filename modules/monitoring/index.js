@@ -4,6 +4,7 @@ import {
   MEASURES, GROUPS, SECTIONS, SIDE_NAME, LIMITS, shoeSizes, dayKey, parseDay, num, inRange, measureOf, sideKeys, splitKey,
   listEntries, putEntry, removeEntry, getSettings, saveSettings, lastValue, points,
   MEDICAL, VITAL_LABEL, listVitals, putVital, removeVital, vitalPoints,
+  publishBody,
 } from './data.js';
 import { estimateFat } from './estimate.js';
 import { buildFigure } from './figure.js';
@@ -78,6 +79,9 @@ export default {
     let entries = await listEntries(ctx);
     let vitals = await listVitals(ctx);
     let settings = await getSettings(ctx);
+    // профиль тела и вес публикуются в общее хранилище: их читают другие модули (например, дневник питания)
+    const publish = () => publishBody(ctx, entries, settings).catch(console.error);
+    publish();
     // form — то, что набрано в форме ввода; хранится здесь, чтобы не потеряться при смене настроек
     const state = { tab: 'input', cat: 'fitness', hcat: 'all', vform: null, hview: 'dynamics', metric: 'weight', trend: true, dview: 'chart', period: 90, date: dayKey(), form: null };
 
@@ -116,6 +120,7 @@ export default {
       const change = async next => {
         settings = { ...settings, ...next };
         await saveSettings(ctx, settings);
+        publish();
         render();
       };
       const check = (checked, label, onChange) => {
@@ -282,6 +287,7 @@ export default {
         }
         await putEntry(ctx, out);
         entries = await listEntries(ctx);
+        publish();
         state.form = null;
         toast('Сохранено');
         renderInput();
@@ -547,6 +553,7 @@ export default {
             if (!(await confirmDialog(ctx.t('Удалить запись от {date}?', { date: fmtDayLong(e.date) }), { okText: 'Удалить', danger: true }))) return;
             await removeEntry(ctx, e.date);
             entries = await listEntries(ctx);
+            publish();
             if (state.form?.date === e.date) state.form = null;
             renderHistory();
           }, 'danger'));
@@ -564,6 +571,20 @@ export default {
     if (params?.hcat) state.hcat = params.hcat;
     if (params?.metric) state.metric = params.metric;
     render();
+  },
+
+  // ---------- напоминания (включаются в «Профиль → Напоминания») ----------
+  reminders: {
+    async check(ctx, { now, on }) {
+      const out = [];
+      const d = new Date(now);
+      if (on.weight && d.getHours() >= 9) {
+        const today = dayKey(d);
+        const has = (await listEntries(ctx)).some(e => e.date === today && e.weight != null);
+        if (!has) out.push({ key: `weight-${today}`, text: ctx.t('Пора взвеситься: сегодня вес ещё не внесён') });
+      }
+      return out;
+    },
   },
 
   // ---------- виджеты для Хаба ----------

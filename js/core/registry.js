@@ -67,7 +67,7 @@ export function createRegistry(db) {
       }
       const entry = {
         id: manifest.id, name: manifest.name, icon: manifest.icon, version: manifest.version,
-        entry: manifest.entry, styles: manifest.styles ?? [], files, widgets: manifest.widgets ?? [], content: manifest.content ?? [],
+        entry: manifest.entry, styles: manifest.styles ?? [], files, widgets: manifest.widgets ?? [], content: manifest.content ?? [], reminders: manifest.reminders ?? [],
       };
       installed = installed.filter(m => m.id !== id);
       installed.push(entry);

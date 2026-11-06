@@ -1,0 +1,251 @@
+/* Стили модуля «Дневник питания» (токены ядра). Классы с префиксом nut-/nf-/food-; блок QR повторяет стили модуля тренировок. */
+.nut-view { display: flex; flex-direction: column; gap: 14px; }
+.nut-daybar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.nut-date { width: auto; min-width: 170px; }
+.nut-h { font-size: 15px; font-weight: 650; margin: 4px 0 -4px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+.bar { height: 10px; border-radius: 6px; background: var(--panel-2); overflow: hidden; }
+.bar.thin { height: 6px; }
+.bar > i { display: block; height: 100%; border-radius: 6px; background: var(--accent); transition: width .25s; }
+.bar.over > i { background: var(--danger); }
+.bar.done > i { background: var(--ok); }
+.over { color: var(--danger); }
+
+.nut-sum, .nut-water, .nut-pills { display: flex; flex-direction: column; gap: 12px; }
+.nut-kcal { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.nut-kcal-val { font-size: 30px; font-weight: 650; line-height: 1.1; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.nut-kcal-val .muted { font-size: 15px; font-weight: 400; }
+.nut-macros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.nut-macro { display: flex; flex-direction: column; gap: 6px; }
+.nut-macro-head { display: flex; justify-content: space-between; gap: 6px; font-size: 13px; flex-wrap: wrap; }
+.nut-macro-head .muted { font-weight: 400; }
+
+.nut-meals { display: flex; flex-direction: column; gap: 10px; }
+.nut-meal { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; }
+.nut-meal-head { display: flex; align-items: center; gap: 4px; }
+.nut-meal-title { display: block; text-align: left; background: none; border: 0; color: var(--text); padding: 4px 6px; border-radius: 10px; min-width: 0; }
+.nut-meal-title:hover { background: var(--panel-2); }
+.nut-sub { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.nut-detail { gap: 14px; }
+
+.nut-sec-head { display: flex; align-items: center; gap: 8px; }
+.nut-water-custom { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; }
+.nut-water-custom .input { width: 80px; text-align: right; }
+.nut-pill-list { display: flex; flex-direction: column; }
+.nut-pill { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-top: 1px solid var(--line); }
+.nut-times { margin-top: 6px; }
+.nut-times .chip-btn { display: inline-flex; align-items: center; gap: 4px; }
+.nut-pill-edit { display: flex; align-items: center; gap: 8px; }
+.nut-pill-fields { display: flex; flex-direction: column; gap: 6px; }
+.nut-logrow { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
+
+/* форма блюда и ввод количества */
+.nf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.nf-cell { display: flex; flex-direction: column; gap: 4px; }
+.nf-sub { font-size: 12px; color: var(--muted); }
+.nf-portion { display: flex; gap: 10px; flex-wrap: wrap; }
+.nf-portion[hidden] { display: none; }
+.nf-portion .input.num { width: 100px; }
+.nf-preview { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 10px; background: var(--panel-2); }
+.input.num { text-align: right; }
+.input.bad { border-color: var(--danger); }
+
+/* списки блюд */
+.food-list { display: flex; flex-direction: column; gap: 6px; max-height: 52dvh; overflow-y: auto; }
+.food-item { display: flex; align-items: center; gap: 6px; width: 100%; padding: 6px 8px 6px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--text); }
+.food-item:not(.static):hover { background: var(--panel-2); border-color: var(--accent); }
+.food-main { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; text-align: left; background: none; border: 0; color: inherit; padding: 4px 0; }
+.food-item .icon-btn.fav.on { color: #e6b422; }
+.food-item .icon-btn.fav.on svg { fill: currentColor; }
+.tag { margin-left: 8px; padding: 1px 7px; border-radius: 6px; font-size: 11px; font-weight: 500; background: var(--panel-2); color: var(--muted); border: 1px solid var(--line); }
+.cnt { margin-left: 6px; opacity: .7; font-size: 11px; }
+
+/* настройки: три колонки на широком экране */
+.modal:has(.nut-set) { width: min(960px, 100%); }
+.nut-set { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+.nut-col { display: flex; flex-direction: column; gap: 8px; align-content: start; }
+.nut-colhead { font-size: 17px; font-weight: 650; padding-bottom: 6px; border-bottom: 1px solid var(--line); margin-top: 6px; }
+.nut-col > .nut-colhead:first-child { margin-top: 0; }
+.nut-sec-row { display: flex; align-items: center; gap: 2px; }
+@media (max-width: 1000px) { .nut-set { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .nut-set { grid-template-columns: minmax(0, 1fr); gap: 18px; } .nut-macros { gap: 8px; } }
+
+/* QR и сканер (как в модуле тренировок) */
+.share { display: grid; gap: 12px; }
+.qr-box { background: #fff; padding: 8px; border-radius: 12px; width: min(100%, 280px); margin: 0 auto; }
+.qr-box img { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+.input.seed { font-family: ui-monospace, Consolas, monospace; font-size: 12px; word-break: break-all; resize: none; }
+.scan-video { width: 100%; border-radius: 12px; background: #000; aspect-ratio: 4 / 3; object-fit: cover; }
+.warn { color: var(--text); font-weight: 600; }
+.row-gap.wrap { flex-wrap: wrap; }
+
+/* составные блюда, дополнительно */
+.nf-more { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.nf-more summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+.nf-more[open] summary { margin-bottom: 8px; }
+.nf-items { display: flex; flex-direction: column; gap: 4px; }
+.nf-item { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+
+/* таблетки по расписанию */
+.chip-btn.slot { display: inline-flex; align-items: center; gap: 5px; }
+.chip-btn.slot.done, .chip-btn.slot.extra { background: color-mix(in srgb, var(--ok) 22%, var(--panel-2)); border-color: var(--ok); color: var(--text); }
+.chip-btn.slot.due { border-color: #e6b422; color: #e6b422; }
+.chip-btn.slot.missed { border-color: var(--danger); color: var(--danger); }
+.slot-t { font-size: 11px; }
+.nut-time { display: inline-flex; align-items: center; gap: 2px; }
+.input.time { width: auto; padding: 6px 8px; }
+.nut-pill-edit { padding: 10px 0; border-bottom: 1px solid var(--line); align-items: flex-start; }
+
+/* баннер, заметки */
+.nut-banner { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 12px; border-radius: 10px; background: color-mix(in srgb, var(--accent) 12%, var(--panel)); border: 1px solid var(--accent); font-size: 13.5px; }
+.nut-note { display: flex; flex-direction: column; gap: 8px; }
+.nut-note textarea, .nut-detail textarea { resize: vertical; }
+.nut-notetext { color: var(--text); font-style: italic; opacity: .85; margin-top: 2px; white-space: pre-wrap; }
+
+/* история */
+.nut-filters { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.nut-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.nut-tile { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.nut-tile strong { font-size: 22px; font-weight: 650; }
+.nut-hcard { display: flex; flex-direction: column; gap: 10px; }
+.nut-chart { display: flex; flex-direction: column; gap: 6px; }
+.nut-readout { min-height: 20px; }
+.nut-svg { width: 100%; height: auto; display: block; }
+.nut-svg .grid { stroke: var(--line); stroke-width: 1; }
+.nut-svg .axis { fill: var(--muted); font-size: 11px; }
+.nut-svg .goal { stroke: var(--text); stroke-opacity: .55; stroke-width: 1.2; stroke-dasharray: 5 4; }
+.nut-svg .goal-t { fill: var(--text); fill-opacity: .7; }
+.nut-svg .bar-g { outline: none; }
+.nut-svg .bar-g:hover .bar-r, .nut-svg .bar-g:focus .bar-r, .nut-svg .bar-on .bar-r { opacity: .75; }
+.nut-share { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--panel-2); }
+.nut-share i { display: block; height: 100%; }
+.nut-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; }
+.nut-legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+.nut-adh { display: flex; align-items: center; gap: 10px; }
+.nut-adh-bar { width: 90px; flex: none; }
+.nut-table-wrap { overflow-x: auto; }
+.nut-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.nut-table th, .nut-table td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.nut-table th:first-child, .nut-table td:first-child { text-align: left; }
+.nut-table th { color: var(--muted); font-weight: 500; }
+
+/* окно нормы */
+.nut-norm { gap: 10px; }
+.nut-step { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.nut-step.total { border-bottom: 0; padding: 10px 12px; border-radius: 10px; background: var(--panel-2); }
+.nut-step.total strong { font-size: 20px; }
+.nut-set-note { grid-column: 1 / -1; }
+.nut-pill-fields .nf-sub { margin-top: 4px; }
+
+.nut-meals .chip-btn, .nut-meal .chip-btn { display: inline-flex; align-items: center; gap: 5px; }
+
+/* активность в окне нормы */
+.nut-act { display: flex; flex-direction: column; gap: 6px; }
+.nut-act-item { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text); }
+.nut-act-item:hover { border-color: var(--accent); }
+.nut-act-item.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
+
+/* встроенный справочник, товары и онлайн-поиск в выборе блюда */
+.food-ext { display: flex; flex-direction: column; gap: 10px; }
+.food-sec { display: flex; flex-direction: column; gap: 6px; }
+.food-sec .food-item { background: var(--panel); }
+
+/* ===== 0.5.0 ===== */
+/* полоска недели */
+.nut-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.nut-wd { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text); }
+.nut-wd:hover { border-color: var(--accent); }
+.nut-wd.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.nut-wd.on .muted { color: inherit; opacity: .8; }
+.nut-wd.today:not(.on) { border-color: var(--accent); }
+/* будущие дни: тусклые, как неактивные кнопки (нажать можно, чтобы спланировать блюда) */
+.nut-wd.future:not(.on) { background: var(--bg); border-color: var(--line); opacity: .45; }
+.nut-wd.future:not(.on):hover { opacity: .75; border-color: var(--line); }
+.nut-wd.future:not(.on) strong, .nut-wd.future:not(.on) .muted { color: var(--muted); }
+
+/* кольцо калорий */
+.nut-sum-top { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.nut-ring { position: relative; width: 112px; height: 112px; flex: none; }
+.nut-ring-svg { width: 100%; height: 100%; display: block; }
+.nut-ring-svg circle { fill: none; stroke-width: 10; }
+.ring-bg { stroke: var(--panel-2); }
+.ring-fg { stroke: var(--accent); stroke-linecap: round; transition: stroke-dasharray .3s; }
+.ring-fg.over { stroke: var(--danger); }
+.nut-ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; }
+.nut-ring-text strong { font-size: 22px; }
+.nut-sum-info { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; min-width: 0; }
+.tag.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 50%, var(--line)); margin-left: 0; }
+
+/* блюдо в приёме: нажатие правит, корзина — при наведении, план — пунктиром */
+.nut-item-main { display: block; text-align: left; background: none; border: 0; color: var(--text); padding: 2px 4px; border-radius: 8px; min-width: 0; }
+.nut-item-main:hover { background: var(--panel-2); }
+.nut-item .row-del { opacity: 0; transition: opacity .12s; }
+.nut-item:hover .row-del, .nut-item:focus-within .row-del { opacity: 1; }
+@media (pointer: coarse) { .nut-item .row-del { display: none; } }
+.icon-btn.ok { color: var(--ok); }
+.nut-item.planned .nut-item-main span:first-child { opacity: .8; }
+.nut-item.planned { border-bottom-style: dashed; }
+.nut-chev-gap { width: 36px; flex: none; }
+.nut-portions { margin-top: 2px; }
+.nut-portions .chip-btn { font-size: 12px; }
+
+/* голодание */
+.nut-fast { display: flex; flex-direction: column; gap: 12px; }
+.nut-fast-list { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.nut-fast-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); }
+.nut-fast-row:last-child { border-bottom: 0; }
+
+/* ===== блоки приёма: цвет, отступы, иерархия ===== */
+:root { --nut-p: #3987e5; --nut-f: #d95926; --nut-cb: #199e70; }
+.mp-p, .mt-p { --mc: var(--nut-p); }
+.mp-f, .mt-f { --mc: var(--nut-f); }
+.mp-cb, .mt-cb { --mc: var(--nut-cb); }
+
+/* цветные «таблетки» Б / Ж / У */
+.mp-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.mp { font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; white-space: nowrap;
+  background: color-mix(in srgb, var(--mc) 20%, transparent); color: color-mix(in srgb, var(--mc) 50%, var(--text)); border: 1px solid color-mix(in srgb, var(--mc) 35%, transparent); }
+
+/* окно приёма: крупный итог */
+.nut-detail { gap: 16px; }
+.nut-hero { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 14px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, var(--panel-2)), var(--panel-2)); border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line)); }
+.nut-hero-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.nut-hero-kcal { font-size: 40px; font-weight: 700; line-height: 1; display: flex; align-items: baseline; gap: 6px; }
+.nut-hero-kcal .muted { font-size: 16px; font-weight: 400; }
+
+/* три плитки макронутриентов */
+.nut-mtiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.nut-mtile { display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 12px;
+  background: color-mix(in srgb, var(--mc) 13%, var(--panel-2)); border: 1px solid color-mix(in srgb, var(--mc) 38%, var(--line)); }
+.mt-name { display: flex; align-items: center; gap: 6px; font-size: 13px; color: color-mix(in srgb, var(--mc) 40%, var(--text)); }
+.mt-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mc); flex: none; }
+.mt-val { font-size: 24px; font-weight: 700; line-height: 1.1; color: color-mix(in srgb, var(--mc) 55%, var(--text)); }
+.mt-unit { font-size: 13px; font-weight: 400; opacity: .8; }
+
+/* заголовки секций */
+.nut-secthead { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 4px; border-top: 1px solid var(--line); margin-top: 2px; padding-top: 14px; }
+.nut-secthead h3 { margin: 0; font-size: 12px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.nut-tools { gap: 8px; }
+.nut-empty { padding: 18px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; }
+
+/* блюда — отдельные карточки с воздухом между ними */
+.nut-items, .nut-items.flat { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; border: 0; }
+.nut-item { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2); position: relative; }
+.nut-meal .nut-item { background: color-mix(in srgb, var(--panel-2) 75%, var(--panel)); }
+.nut-item:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.nut-item.planned { border-style: dashed; background: transparent; }
+.nut-item-main { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 0; background: none; border: 0; color: var(--text); text-align: left; min-width: 0; border-radius: 8px; }
+.nut-item-main:hover { background: none; }
+.ni-name { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.ni-sub { line-height: 1.3; }
+.ni-kcal { display: flex; flex-direction: column; align-items: flex-end; min-width: 56px; line-height: 1.15; }
+.ni-kcal strong { font-size: 20px; }
+.nut-item .row-del { opacity: 0; transition: opacity .12s; }
+.nut-item:hover .row-del, .nut-item:focus-within .row-del { opacity: 1; }
+
+/* карточка приёма на странице дня */
+.nut-meal { gap: 12px; }
+.nut-meal-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.nm-kcal { font-size: 18px; }
+@media (max-width: 560px) { .nut-mtiles { gap: 6px; } .nut-mtile { padding: 10px 8px; } .mt-val { font-size: 20px; } .nut-hero-kcal { font-size: 34px; } }
