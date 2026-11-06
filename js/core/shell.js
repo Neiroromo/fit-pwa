@@ -39,6 +39,8 @@ export function buildShell(app) {
     profileAv.replaceWith(profileAv = avatarEl(p, 32));
   }
 
+  window.addEventListener('fitpwa:google', renderProfile); // вход/выход Google меняет имя в блоке профиля
+
   async function refreshBell() {
     const items = await app.db.collection('app/notifications').list();
     bellDot.hidden = !items.some(n => !n.read);

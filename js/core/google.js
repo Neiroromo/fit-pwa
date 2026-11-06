@@ -8,6 +8,7 @@
 export const CLIENT_ID = '238703702723-e50dvetph6q7nci560pi4hhbbac7poku.apps.googleusercontent.com';
 const SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
 const HINT_KEY = 'fitpwa-google-linked'; // только флаг «входили раньше»; сам токен не сохраняется
+const USER_KEY = 'fitpwa-google-user';   // {name, email}: показывается в профиле, пока аккаунт подключён
 
 let token = null;
 let expiresAt = 0;
@@ -19,6 +20,15 @@ const store = {
   get: () => { try { return localStorage.getItem(HINT_KEY); } catch { return null; } },
   set: v => { try { v ? localStorage.setItem(HINT_KEY, v) : localStorage.removeItem(HINT_KEY); } catch { /* приватный режим */ } },
 };
+
+/** Подключённый аккаунт Google ({name, email}) из последней успешной сессии или null. */
+export function getUser() {
+  try { return JSON.parse(localStorage.getItem(USER_KEY)) || null; } catch { return null; }
+}
+function setUser(u) {
+  try { u ? localStorage.setItem(USER_KEY, JSON.stringify(u)) : localStorage.removeItem(USER_KEY); } catch { /* приватный режим */ }
+  window.dispatchEvent(new CustomEvent('fitpwa:google'));
+}
 
 function loadGis() {
   if (window.google?.accounts?.oauth2) return Promise.resolve();
@@ -44,7 +54,11 @@ async function ensureClient() {
       token = r.access_token;
       expiresAt = Date.now() + (Number(r.expires_in) || 3600) * 1000 - 60000;
       store.set('1');
-      p?.resolve(token);
+      // имя и почту берём из Drive (about.get) — отдельный scope для профиля не нужен
+      api('drive/v3/about?fields=user(displayName,emailAddress)')
+        .then(a => setUser({ name: a.user?.displayName || '', email: a.user?.emailAddress || '' }))
+        .catch(() => {})
+        .finally(() => p?.resolve(token));
     },
     error_callback: e => {
       const p = pending; pending = null;
@@ -75,6 +89,7 @@ export function signOut() {
   const t = token;
   token = null; expiresAt = 0;
   store.set(null);
+  setUser(null);
   if (t && window.google?.accounts?.oauth2) google.accounts.oauth2.revoke(t, () => {});
 }
 

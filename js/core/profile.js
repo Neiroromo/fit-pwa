@@ -3,10 +3,23 @@
 
 import { h, raw, icon, iconBtn, toast, dismissable } from './ui.js';
 import { LANGS, getSettings, saveSettings, translator } from './i18n.js';
+import { getUser as getGoogleUser, isSignedIn as googleSignedIn, wasLinked as googleLinked } from './google.js';
 import { getReminderSettings, saveReminderSettings, reminderOn } from './reminders.js';
 
 /** Имя для показа: введённое пользователем как есть; если не задано (или осталось старое «Гость») — «Гость» на языке приложения. */
-export const shownName = p => (p.name && p.name !== 'Гость' ? p.name : translator('app').t('Гость'));
+export const shownName = p => {
+  const g = googleLinked() ? getGoogleUser() : null; // подключён Google — показываем имя из аккаунта
+  return g?.name || (p.name && p.name !== 'Гость' ? p.name : translator('app').t('Гость'));
+};
+
+/** Цветной логотип Google (признак подключённого аккаунта). */
+export function googleLogo(size = 20) {
+  const span = document.createElement('span');
+  span.className = 'icon';
+  span.style.setProperty('--s', size + 'px');
+  span.innerHTML = '<svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.5-.8-3-.8-4.6s.3-3.1.8-4.6l-7.9-6.2C.9 16.4 0 20.100 0 24s.9 7.600 2.600 10.800l7.900-6.200z"/><path fill="#34A853" d="M24 48c6.500 0 11.900-2.100 15.900-5.800l-7.500-5.800c-2.100 1.400-4.800 2.300-8.400 2.300-6.300 0-11.600-4.100-13.500-9.900l-7.900 6.200C6.500 42.600 14.600 48 24 48z"/></svg>';
+  return span;
+}
 
 export function avatarEl(profile, size = 36) {
   const el = h('span', { class: 'avatar', style: { width: size + 'px', height: size + 'px', fontSize: size * 0.42 + 'px' } });
@@ -53,7 +66,7 @@ export function openProfile(app, anchor, startView = 'main') {
 
   const row = (ico, label, { sub, onClick, soon } = {}) =>
     h('button', { class: 'menu-row', disabled: !!soon, onClick },
-      icon(ico, 20),
+      typeof ico === 'string' ? icon(ico, 20) : ico,
       h('span', { class: 'grow' }, label, sub ? h('small', { class: 'muted' }, sub) : null),
       soon ? h('span', { class: 'chip' }, 'Скоро') : icon('chevR', 18));
 
@@ -65,9 +78,9 @@ export function openProfile(app, anchor, startView = 'main') {
   const views = {
     main: () => [
       h('div', { class: 'profile-card' }, avatarEl(app.profile, 48),
-        h('div', null, h('strong', null, raw(shownName(app.profile))), h('div', { class: 'muted small' }, 'Локальный профиль'))),
+        h('div', null, h('strong', null, raw(shownName(app.profile))), h('div', { class: 'muted small' }, googleLinked() && getGoogleUser()?.email ? getGoogleUser().email : 'Локальный профиль'))),
       row('user', 'Личные данные', { sub: 'Имя, аватар, пол, дата рождения', onClick: () => go('profile') }),
-      row('google', 'Google', { sub: 'Синхронизация данных между устройствами (тест)', onClick: () => go('google') }),
+      row(googleLinked() ? googleLogo(20) : 'google', 'Google', { sub: googleLinked() ? 'Подключено' : 'Синхронизация данных между устройствами (тест)', onClick: () => go('google') }),
       row('bell', 'Напоминания', { sub: 'По модулям и функциям', onClick: () => go('reminders') }),
       row('grid', 'Настроить модули', { onClick: () => { close(); app.openStore(); } }), // то же окно, что и кнопка «Модули» в навигации
       row('globe', 'Язык', { sub: LANGS[getSettings().app], onClick: () => go('lang') }),
@@ -193,28 +206,32 @@ export function openProfile(app, anchor, startView = 'main') {
       const log = h('pre', { class: 'muted small', style: { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } });
       const say = t => { log.textContent += (log.textContent ? '\n' : '') + t; };
       const g = () => import('./google.js');
+      const signBtn = h('button', { class: 'btn', onClick: null }, googleLogo(16), 'Войти через Google');
       const refresh = async () => {
         const m = await g();
-        status.textContent = m.isSignedIn() ? 'Подключено к Google (сессия активна).' : m.wasLinked() ? 'Входили раньше; нажмите «Войти», чтобы продолжить сессию.' : 'Не подключено.';
+        signBtn.disabled = m.isSignedIn();
+        const u = m.getUser();
+        status.textContent = m.isSignedIn() ? `Подключено: ${u?.email || 'аккаунт Google'} (сессия активна).` : m.wasLinked() ? 'Входили раньше; нажмите «Войти», чтобы продолжить сессию.' : 'Не подключено.';
       };
       refresh();
       const run = fn => async () => {
         try { await fn(await g()); } catch (e) { say('Ошибка: ' + (e.message || e)); }
         refresh();
       };
+      signBtn.onclick = run(async m => { await m.signIn(); say('Вход выполнен.'); app.shell.renderProfile(); });
       return [
         head('Google'),
         h('div', { class: 'form' },
           status,
           h('p', { class: 'muted small' }, 'Тестовый режим. Данные приложения хранятся в скрытой папке вашего Google Диска; остальные файлы приложению недоступны.'),
-          h('button', { class: 'btn', onClick: run(async m => { await m.signIn(); say('Вход выполнен.'); }) }, icon('google', 16), 'Войти через Google'),
+          signBtn,
           h('button', { class: 'btn', onClick: run(async m => {
             const stamp = new Date().toISOString();
             const meta = await m.putJson('connection-test.json', { app: 'fit-pwa', stamp });
             const back = await m.getJson('connection-test.json');
             say(`Записано и прочитано: ${back?.stamp === stamp ? 'совпадает ✓' : 'НЕ совпадает'}\nИзменён: ${meta.modifiedTime}\nФайлов в папке: ${(await m.listFiles()).length}`);
           }) }, icon('database', 16), 'Проверить Диск (записать и прочитать)'),
-          h('button', { class: 'btn', onClick: run(async m => { m.signOut(); say('Отключено, доступ отозван.'); }) }, 'Отключить'),
+          h('button', { class: 'btn', onClick: run(async m => { m.signOut(); say('Отключено, доступ отозван.'); app.shell.renderProfile(); }) }, 'Отключить'),
           log),
       ];
     },
