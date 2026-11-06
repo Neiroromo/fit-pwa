@@ -208,8 +208,10 @@ export function openProfile(app, anchor, startView = 'main') {
       const say = t => { log.textContent += (log.textContent ? '\n' : '') + t; };
       const g = () => import('./google.js');
       const signBtn = h('button', { class: 'btn', onClick: null }, googleLogo(16), 'Войти через Google');
+      const offBtn = h('button', { class: 'btn', hidden: true }, 'Отключить'); // виден только когда аккаунт подключён
       const refresh = async () => {
         const m = await g();
+        offBtn.hidden = !m.wasLinked();
         signBtn.disabled = m.isSignedIn();
         const u = m.getUser();
         status.textContent = m.isSignedIn() ? `Подключено: ${u?.email || 'аккаунт Google'} (сессия активна).` : m.wasLinked() ? 'Входили раньше; нажмите «Войти», чтобы продолжить сессию.' : 'Не подключено.';
@@ -219,6 +221,7 @@ export function openProfile(app, anchor, startView = 'main') {
         try { await fn(await g()); } catch (e) { say('Ошибка: ' + (e.message || e)); }
         refresh();
       };
+      offBtn.onclick = run(async m => { m.signOut(); say('Отключено, доступ отозван.'); app.shell.renderProfile(); });
       signBtn.onclick = run(async m => { await m.signIn(); say('Вход выполнен.'); app.shell.renderProfile(); });
       return [
         head('Google'),
@@ -236,7 +239,7 @@ export function openProfile(app, anchor, startView = 'main') {
             if (!(await confirmDialog('Удалить все данные приложения из вашего Google Диска? Данные на этом устройстве останутся. Действие необратимо.', { okText: 'Удалить с Диска', danger: true }))) return;
             say(`Удалено файлов на Диске: ${await m.deleteAllFiles()}`);
           }) }, icon('trash', 16), 'Удалить данные на Google Диске'),
-          h('button', { class: 'btn', onClick: run(async m => { m.signOut(); say('Отключено, доступ отозван.'); app.shell.renderProfile(); }) }, 'Отключить'),
+          offBtn,
           log),
       ];
     },
