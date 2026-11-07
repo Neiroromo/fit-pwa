@@ -217,7 +217,7 @@ export function openPicker(ctx, { onPick, current, query }) {
     m.el.querySelector('h2').textContent = ctx.t('Каталог упражнений');
     body.replaceChildren(
       h('div', { class: 'row-gap' }, h('div', { class: 'grow' }, search),
-        h('button', { class: 'btn', onClick: () => showForm(null) }, icon('plus', 16), 'Своё упражнение')),
+        h('button', { class: 'btn', title: 'Своё упражнение', 'aria-label': 'Своё упражнение', onClick: () => showForm(null) }, icon('plus', 18))),
       filters, list);
     renderFilters(); renderList();
   }

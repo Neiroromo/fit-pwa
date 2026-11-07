@@ -103,7 +103,7 @@ export default {
 
     function render() {
       // раздел (фитнес / медицина) выбирается во вводе; в истории тот же выбор — фильтр с пунктом «Всё»
-      const catBar = state.tab === 'input' ? tabs([['fitness', 'Тело'], ['medical', 'Медицина']], state.cat, c => { state.cat = c; render(); }) : null;
+      const catBar = state.tab === 'input' ? tabs([['fitness', 'Тело'], ['medical', 'Медицина'], ['clothes', 'Одежда']], state.cat, c => { state.cat = c; render(); }) : null;
       page.replaceChildren(...[
         h('header', { class: 'page-head' }, h('h1', null, 'Мониторинг'), iconBtn('sliders', 'Настройки мониторинга', openSettings)),
         tabs([['input', 'Ввод'], ['history', 'История']], state.tab, t => { state.tab = t; render(); }),
@@ -181,6 +181,7 @@ export default {
 
     function renderInput() {
       const form = formFor(state.date);
+      const clothes = state.cat === 'clothes'; // «Одежда»: только размеры для одежды и обуви, без схемы тела
       const fig = buildFigure(ctx, { onHover: id => markRow(id) });
       fig.setHidden(hiddenSet());
       const list = h('div', { class: 'm-list' });
@@ -219,10 +220,9 @@ export default {
       // --- замеры ---
       function drawMeasures() {
         const rows = [];
-        for (const sec of SECTIONS) {
+        for (const sec of SECTIONS.filter(s => s.id === (clothes ? 'clothes' : 'body'))) {
           const items = visible().filter(m => m.section === sec.id);
           if (!items.length) continue;
-          rows.push(h('div', { class: 'm-sub' }, sec.name));
           for (const m of items) {
             const sided = m.group && settings.split[m.group];
             const field = key => numInput(() => form.vals[key] ?? '', v => (form.vals[key] = v), hint(key), m.range ?? LIMITS.measure);
@@ -232,7 +232,7 @@ export default {
             // как измерять: у замеров со схемы — подсказка по линии, у всех — значок в строке (работает и на сенсорных экранах)
             const tipEl = h('p', { class: 'm-hint muted small', hidden: true }, m.tip);
             const info = iconBtn('info', 'Как измерить', () => { tipEl.hidden = !tipEl.hidden; }, 'm-info');
-            const r = h('div', { class: 'm-row', 'data-k': m.id }, h('span', { class: 'm-name' }, m.name), info, body);
+            const r = h('div', { class: 'm-row' + (sided ? ' sided' : ''), 'data-k': m.id }, h('span', { class: 'm-name' }, m.name), info, body);
             r.addEventListener('pointerenter', () => fig.highlight(m.id));
             r.addEventListener('pointerleave', () => fig.highlight(null));
             r.addEventListener('focusin', () => fig.highlight(m.id));
@@ -298,16 +298,17 @@ export default {
 
       drawMeasures();
       updateEstimate();
-      view.replaceChildren(h('div', { class: 'mon-input' },
-        h('div', { class: 'card mon-fig' }, fig.el, h('p', { class: 'muted small' }, 'Наведите на линию на схеме, чтобы увидеть, как правильно сделать замер.')),
+      view.replaceChildren(h('div', { class: 'mon-input' + (clothes ? ' one' : '') },
+        clothes ? null : h('div', { class: 'card mon-fig' }, fig.el, h('p', { class: 'muted small' }, 'Наведите на линию на схеме, чтобы увидеть, как правильно сделать замер.')),
         h('div', { class: 'mon-form' },
           h('div', { class: 'card mon-main' },
             h('label', { class: 'field' }, h('span', null, 'Дата'), date),
-            h('div', { class: 'mon-two' },
-              h('label', { class: 'field' }, h('span', null, 'Вес, кг'), numInput(() => form.weight, v => (form.weight = v), hintOf(e => e.weight), LIMITS.weight)),
-              h('label', { class: 'field' }, h('span', null, 'Рост, см'), numInput(() => form.height, v => (form.height = v), '—', LIMITS.height))),
-            h('label', { class: 'field' }, h('span', null, 'Процент жира, %'), fatInput),
-            estBox),
+            ...(clothes ? [] : [
+              h('div', { class: 'mon-two' },
+                h('label', { class: 'field' }, h('span', null, 'Вес, кг'), numInput(() => form.weight, v => (form.weight = v), hintOf(e => e.weight), LIMITS.weight)),
+                h('label', { class: 'field' }, h('span', null, 'Рост, см'), numInput(() => form.height, v => (form.height = v), '—', LIMITS.height))),
+              h('label', { class: 'field' }, h('span', null, 'Процент жира, %'), fatInput),
+              estBox])),
           h('div', { class: 'card' }, h('strong', null, 'Замеры, см'), list),
           h('button', { class: 'btn primary wide', onClick: save }, icon('check', 16), 'Сохранить'))));
 
@@ -414,17 +415,21 @@ export default {
     // Экран «Динамика»: слева плитки показателей (текущее значение, изменение за период, мини-график), справа большой график выбранного.
     // Один ряд фильтров сверху (период) действует на всё ниже.
     const fromMs = () => (state.period ? Date.now() - state.period * DAY : 0);
+    const phone = () => matchMedia('(max-width: 720px)').matches;
+    const scroller = () => page.closest('#view') ?? page.parentElement;
 
     /** Показатели обоих разделов, отфильтрованные по выбранному разделу истории. */
     function metricsList() {
       const hidden = hiddenSet();
       const fit = [
-        { id: 'weight', cat: 'fitness', section: 'body', name: 'Вес', unit: 'кг', get: e => e.weight, tau: 7 },
-        { id: 'fat', cat: 'fitness', section: 'body', name: 'Процент жира', unit: '%', get: e => e.fat, tau: 10 },
-        ...visible().map(m => ({ id: m.id, cat: 'fitness', section: m.section, name: m.name, unit: 'см', measure: true, tau: 10 })),
+        { id: 'weight', section: 'body', name: 'Вес', unit: 'кг', get: e => e.weight, tau: 7 },
+        { id: 'fat', section: 'body', name: 'Процент жира', unit: '%', get: e => e.fat, tau: 10 },
+        ...visible().map(m => ({ id: m.id, section: m.section, name: m.name, unit: 'см', measure: true, tau: 10 })),
       ];
-      const med = MEDICAL.filter(m => !hidden.has(m.id)).map(m => ({ id: m.id, cat: 'medical', section: 'medical', name: m.name, unit: m.unit, vital: m.keys, tau: 7 }));
-      return [...fit, ...med].filter(m => state.hcat === 'all' || m.cat === state.hcat);
+      const med = MEDICAL.filter(m => !hidden.has(m.id)).map(m => ({ id: m.id, section: 'medical', name: m.name, unit: m.unit, vital: m.keys, tau: 7 }));
+      // разделы истории: Тело (вес, жир, замеры тела), Медицина, Одежда (размеры)
+      const want = { fitness: 'body', medical: 'medical', clothes: 'clothes' }[state.hcat];
+      return [...fit, ...med].filter(m => !want || m.section === want);
     }
 
     /** Ряды показателя: тренд считается по всей истории, чтобы он не менялся от выбранного периода; pts — только выбранный период. */
@@ -449,12 +454,25 @@ export default {
       });
     }
 
+    const hasHistory = series => series.some(s => s.all.length > 0);
+
     function tile(metric, series) {
       const withPts = series.filter(s => s.pts.length);
       const value = withPts.length ? withPts.map(s => fmtNum(s.pts.at(-1).v)).join(' / ') : '—';
       const deltas = series.map(s => (s.pts.length > 1 ? signed(s.pts.at(-1).v - s.pts[0].v) : null));
       const delta = deltas.some(d => d != null) ? deltas.map(d => d ?? '—').join(' / ') : '';
-      return h('button', { class: 'tile' + (metric.id === state.metric ? ' on' : '') + (withPts.length ? '' : ' empty'), onClick: () => { state.metric = metric.id; renderHistory(); } },
+      const open = () => {
+        state.metric = metric.id;
+        if (phone()) { // на телефоне график открывается отдельным экраном; место в списке запоминается
+          state.listScroll = scroller()?.scrollTop ?? 0;
+          state.detail = metric.id;
+          renderHistory();
+          scroller()?.scrollTo(0, 0);
+        } else renderHistory();
+      };
+      // показатель, по которому записей ещё не было вообще, неактивен: не нажимается и не выделяется
+      const noHistory = !hasHistory(series);
+      return h('button', { class: 'tile' + (metric.id === state.metric && !phone() && !noHistory ? ' on' : '') + (withPts.length ? '' : ' empty') + (noHistory ? ' nohist' : ''), disabled: noHistory, 'aria-disabled': noHistory ? 'true' : null, onClick: noHistory ? null : open },
         h('span', { class: 'tile-name' }, metric.name),
         h('span', { class: 'tile-val' }, raw(value), withPts.length ? h('span', { class: 'muted small' }, metric.unit) : null),
         h('span', { class: 'tile-delta muted small' }, raw(delta)),
@@ -510,15 +528,33 @@ export default {
     }
 
     function renderHistory() {
-      const cats = tabs([['all', 'Всё'], ['fitness', 'Тело'], ['medical', 'Медицина']], state.hcat, c => { state.hcat = c; renderHistory(); });
+      const cats = tabs([['all', 'Всё'], ['fitness', 'Тело'], ['medical', 'Медицина'], ['clothes', 'Одежда']], state.hcat, c => { state.hcat = c; renderHistory(); });
       const filters = h('div', { class: 'dyn-filters' },
         state.hview === 'dynamics' ? tabs(PERIODS.map(p => [p.days, p.label]), state.period, d => { state.period = d; renderHistory(); }) : h('span'),
         tabs([['dynamics', 'Динамика'], ['log', 'Записи']], state.hview, v => { state.hview = v; renderHistory(); }));
-      if (state.hview === 'log') { view.replaceChildren(cats, filters, logHistory()); return; }
+      if (state.hview === 'log') { state.detail = null; view.replaceChildren(cats, filters, logHistory()); return; }
 
       const list = metricsList().map(m => [m, seriesOf(m)]);
+      // телефон: график выбранного показателя — отдельный экран с кнопкой «Назад»; список остаётся на том же месте прокрутки
+      if (state.detail && phone()) {
+        const found = list.find(([m, s]) => m.id === state.detail && hasHistory(s));
+        if (found) {
+          const back = () => {
+            state.detail = null;
+            renderHistory();
+            scroller()?.scrollTo(0, state.listScroll ?? 0);
+          };
+          const periods = tabs(PERIODS.map(p => [p.days, p.label]), state.period, d => { state.period = d; renderHistory(); });
+          view.replaceChildren(
+            h('button', { class: 'chip-btn back-btn', onClick: back }, icon('chevL', 16), 'Назад'),
+            periods, mainCard(found[0], found[1]));
+          return;
+        }
+        state.detail = null;
+      }
       if (!list.length) { view.replaceChildren(cats, filters, h('p', { class: 'muted empty' }, 'Нет включённых показателей. Включите их в настройках.')); return; }
-      if (!list.some(([m]) => m.id === state.metric)) state.metric = list[0][0].id;
+      // выбранным не может быть показатель без истории: берём первый, у которого она есть
+      if (!list.some(([m, s]) => m.id === state.metric && hasHistory(s))) state.metric = (list.find(([, s]) => hasHistory(s)) ?? list[0])[0].id;
       const [cur, curSeries] = list.find(([m]) => m.id === state.metric);
       // заголовки групп плиток, если показано больше одной группы
       const tiles = [];
@@ -534,21 +570,23 @@ export default {
 
     function logHistory() {
       const items = [];
-      if (state.hcat !== 'medical') for (const e of entries) items.push({ ts: parseDay(e.date).getTime(), kind: 'fit', e });
-      if (state.hcat !== 'fitness') for (const v of vitals) items.push({ ts: v.ts, kind: 'med', v });
+      const clothesOnly = state.hcat === 'clothes';
+      const hasClothes = e => Object.keys(e.m ?? {}).some(k => measureOf(splitKey(k)[0])?.section === 'clothes');
+      if (state.hcat !== 'medical') for (const e of entries) if (!clothesOnly || hasClothes(e)) items.push({ ts: parseDay(e.date).getTime(), kind: 'fit', e });
+      if (state.hcat === 'all' || state.hcat === 'medical') for (const v of vitals) items.push({ ts: v.ts, kind: 'med', v });
       if (!items.length) return h('p', { class: 'muted empty' }, 'Записей пока нет. Добавьте первую на вкладке «Ввод».');
       items.sort((a, b) => b.ts - a.ts);
       const tag = text => (state.hcat === 'all' ? h('span', { class: 'chip' }, text) : null);
 
       const fitRow = e => {
         const hidden = hiddenSet();
-        const n = Object.keys(e.m ?? {}).filter(k => !hidden.has(splitKey(k)[0])).length;
-        const bits = [e.weight != null ? `${fmtNum(e.weight)} ${ctx.t('кг')}` : null, e.fat != null ? `${fmtNum(e.fat)} %` : null,
+        const n = Object.keys(e.m ?? {}).filter(k => !hidden.has(splitKey(k)[0]) && (!clothesOnly || measureOf(splitKey(k)[0])?.section === 'clothes')).length;
+        const bits = [!clothesOnly && e.weight != null ? `${fmtNum(e.weight)} ${ctx.t('кг')}` : null, !clothesOnly && e.fat != null ? `${fmtNum(e.fat)} %` : null,
           n ? ctx.t('замеров: {n}', { n }) : null].filter(Boolean);
         return h('div', { class: 'log-row' },
           h('div', { class: 'grow' }, h('strong', null, raw(fmtDayLong(e.date))), h('span', { class: 'muted small block' }, raw(bits.join(' · ')))),
-          tag('Тело'),
-          iconBtn('edit', 'Редактировать', () => { state.date = e.date; state.form = null; state.tab = 'input'; state.cat = 'fitness'; render(); }),
+          tag(clothesOnly ? 'Одежда' : 'Тело'),
+          iconBtn('edit', 'Редактировать', () => { state.date = e.date; state.form = null; state.tab = 'input'; state.cat = clothesOnly ? 'clothes' : 'fitness'; render(); }),
           iconBtn('trash', 'Удалить', async () => {
             if (!(await confirmDialog(ctx.t('Удалить запись от {date}?', { date: fmtDayLong(e.date) }), { okText: 'Удалить', danger: true }))) return;
             await removeEntry(ctx, e.date);
@@ -569,7 +607,7 @@ export default {
 
     if (params?.tab) state.tab = params.tab;
     if (params?.hcat) state.hcat = params.hcat;
-    if (params?.metric) state.metric = params.metric;
+    if (params?.metric) { state.metric = params.metric; if (phone() && params.tab === 'history') state.detail = params.metric; }
     render();
   },
 

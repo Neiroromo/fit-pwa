@@ -455,5 +455,8 @@
   "Предыдущая неделя": "Previous week",
   "Следующая неделя": "Next week",
   "Будущий день: можно запланировать блюда": "Future day: you can plan dishes",
-  "план": "plan"
+  "план": "plan",
+  "Приём «{name}» очищен: удалено блюд {n}": "Meal “{name}” cleared: {n} dishes removed",
+  "Приём «{name}» удалён": "Meal “{name}” deleted",
+  "Приём «{name}» скрыт": "Meal “{name}” hidden"
 }

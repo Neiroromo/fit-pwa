@@ -52,7 +52,7 @@ button:disabled { cursor: default; }
 .brand-mark { width: 30px; height: 30px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; }
 .nav-list { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; }
 .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--muted); text-decoration: none; background: none; border: 0; text-align: left; width: 100%; }
-.nav-item:hover { background: var(--panel-2); color: var(--text); }
+@media (hover: hover) { .nav-item:hover { background: var(--panel-2); color: var(--text); } }
 .nav-item.active { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
 .nav-item { position: relative; }
 .upd-dot { position: absolute; top: 8px; left: 28px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--bg); }
@@ -60,21 +60,21 @@ h1 .upd-btn { margin-left: 12px; padding: 4px 10px; font-size: 13px; vertical-al
 .nav-item.add { border: 1px dashed var(--line); margin-top: 6px; }
 .nav-foot { display: flex; align-items: center; gap: 6px; padding-top: 10px; border-top: 1px solid var(--line); }
 .profile-btn { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px; border: 0; background: none; border-radius: 10px; text-align: left; }
-.profile-btn:hover { background: var(--panel-2); }
+@media (hover: hover) { .profile-btn:hover { background: var(--panel-2); } }
 .profile-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .avatar { display: inline-grid; place-items: center; border-radius: 50%; background: var(--panel-2); border: 1px solid var(--line); color: var(--accent); font-weight: 650; overflow: hidden; flex: none; }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .icon-btn { position: relative; display: inline-grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background: none; color: var(--muted); flex: none; }
-.icon-btn:hover { background: var(--panel-2); color: var(--text); }
-.icon-btn.danger:hover { color: var(--danger); }
+@media (hover: hover) { .icon-btn:hover { background: var(--panel-2); color: var(--text); } }
+@media (hover: hover) { .icon-btn.danger:hover { color: var(--danger); } }
 .icon-btn.off { opacity: .25; pointer-events: none; }
 .bell .dot { position: absolute; top: 7px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 
 /* ---------- Кнопки, поля ---------- */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); }
-.btn:hover:not(:disabled) { border-color: #3a4050; }
+@media (hover: hover) { .btn:hover:not(:disabled) { border-color: #3a4050; } }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
 .btn.danger { background: var(--danger); border-color: var(--danger); color: #1a0808; font-weight: 600; }
 .btn.sm { padding: 6px 12px; font-size: 13.5px; }
@@ -84,7 +84,7 @@ h1 .upd-btn { margin-left: 12px; padding: 4px 10px; font-size: 13px; vertical-al
 .chip { font-size: 12px; padding: 3px 9px; border-radius: 99px; background: var(--panel-2); color: var(--muted); border: 1px solid var(--line); white-space: nowrap; }
 .chip.ok { color: var(--ok); }
 .chip-btn { padding: 4px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); font-size: 13px; color: var(--muted); }
-.chip-btn:hover { color: var(--text); border-color: var(--accent); }
+@media (hover: hover) { .chip-btn:hover { color: var(--text); border-color: var(--accent); } }
 .chip-btn.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .size-chips { display: flex; gap: 6px; flex-wrap: wrap; }
 
@@ -111,13 +111,13 @@ h1 .upd-btn { margin-left: 12px; padding: 4px 10px; font-size: 13px; vertical-al
 .pop-head strong { flex: 1; }
 .profile-card { display: flex; align-items: center; gap: 12px; padding: 10px 8px 12px; }
 .menu-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 10px; border: 0; background: none; border-radius: 10px; text-align: left; }
-.menu-row:hover:not(:disabled) { background: var(--panel-2); }
+@media (hover: hover) { .menu-row:hover:not(:disabled) { background: var(--panel-2); } }
 .menu-row:disabled { opacity: .6; }
 .menu-row small { display: block; }
 .avatar-preview { display: grid; place-items: center; padding: 6px; }
 .mod-list { display: flex; flex-direction: column; gap: 2px; }
 .mod-row { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 10px; }
-.mod-row:hover { background: var(--panel-2); }
+@media (hover: hover) { .mod-row:hover { background: var(--panel-2); } }
 .popover > .btn { margin: 6px 4px 4px; }
 .notif-list { display: flex; flex-direction: column; gap: 2px; }
 .notif { display: flex; flex-direction: column; padding: 9px 10px; border-radius: 10px; gap: 2px; }
@@ -146,7 +146,7 @@ h1 .upd-btn { margin-left: 12px; padding: 4px 10px; font-size: 13px; vertical-al
 .cell-bg { border: 1px dashed #2f3440; border-radius: var(--r); background: color-mix(in srgb, var(--accent) 3%, transparent); }
 .drop-hint { border-radius: var(--r); background: color-mix(in srgb, var(--accent) 18%, transparent); border: 2px solid var(--accent); z-index: 0; pointer-events: none; }
 .hub-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 2px dashed var(--line); border-radius: 18px; background: none; color: var(--accent); }
-.hub-empty:hover { border-color: var(--accent); }
+@media (hover: hover) { .hub-empty:hover { border-color: var(--accent); } }
 .picker { display: flex; flex-direction: column; gap: 8px; }
 .picker .group { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-top: 6px; }
 .picker-item { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
@@ -177,15 +177,46 @@ h1 .upd-btn { margin-left: 12px; padding: 4px 10px; font-size: 13px; vertical-al
 
 .lang-mod { margin-top: 10px; }
 
-/* окно «Модули» на телефоне: иконка и описание в первой строке, кнопки отдельной строкой на всю ширину */
+/* окно «Модули» на телефоне: компактные карточки, иконка и текст в первой строке, кнопки отдельной строкой */
 @media (max-width: 720px) {
-  .store-item { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 10px 12px; }
-  .store-info { overflow-wrap: anywhere; }
-  .store-status { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+  .store { gap: 8px; }
+  .store-intro { font-size: 13px; line-height: 1.4; }
+  .store-section { gap: 6px; }
+  .store-item { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 8px 10px; padding: 10px; border-radius: 12px; }
+  /* установленные модули: всё в одну строку (ручка, иконка, текст, действия) */
+  .store-item.inline { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; }
+  .store-item.sortable { grid-template-columns: auto auto minmax(0, 1fr) auto; }
+  .store-item.inline .store-status { grid-column: auto; justify-content: flex-end; }
+  .store-item.inline .store-status .row-gap { width: auto; flex-wrap: nowrap; }
+  .store-ico { width: 34px; height: 34px; border-radius: 10px; }
+  .store-ico .icon { --s: 20px; }
+  .store-info { overflow-wrap: anywhere; gap: 1px; }
+  .store-info strong { font-size: 14.5px; line-height: 1.3; }
+  .store-info .muted { font-size: 12.5px; line-height: 1.35; }
+  .store-info > span:not(.small) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .store-info .small { font-size: 11.5px; }
+  .store-status { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 6px; }
   .store-status:empty { display: none; }
-  .store-status .row-gap { width: 100%; justify-content: flex-end; }
+  .store-status .row-gap { width: 100%; justify-content: flex-end; gap: 6px; }
+  .store-status .btn { padding: 7px 12px; font-size: 13.5px; }
   .store-status > .btn:only-child { width: 100%; }
+  .store-status .icon-btn { width: 36px; height: 36px; }
+  .store-arrow { display: none; } /* порядок меняется перетаскиванием за ручку */
+  .store-title { margin-top: 2px; }
 }
+
+/* ручка перетаскивания модулей и карточка в движении */
+.drag-handle { align-self: center; display: inline-grid; place-items: center; width: 28px; height: 36px; margin-left: -4px; border: 0; background: none; color: var(--muted); border-radius: 8px; cursor: grab; touch-action: none; flex: none; }
+.drag-handle:active { cursor: grabbing; color: var(--text); }
+.store-item.sortable.dragging { position: relative; z-index: 5; background: var(--panel-2); border-color: var(--accent); box-shadow: 0 12px 30px rgba(0, 0, 0, .5); transition: none; }
+.store-item.sortable { user-select: none; -webkit-user-select: none; }
+
+/* поля даты не вылезают за края (iPhone) и всплывающие окна не прокручиваются вбок */
+.input[type="date"], .input[type="time"] { min-width: 0; max-width: 100%; -webkit-appearance: none; appearance: none; display: block; min-height: 44px; text-align: left; }
+.input::-webkit-date-and-time-value { text-align: left; min-height: 1.4em; }
+.field, .form { min-width: 0; }
+.popover { overflow-x: hidden; }
+.popover > * { min-width: 0; max-width: 100%; }
 
 /* окно «Модули»: разделы */
 .store-section { display: flex; flex-direction: column; gap: 8px; }
@@ -209,4 +240,63 @@ h1 .upd-btn { margin-left: 12px; padding: 4px 10px; font-size: 13px; vertical-al
   .icon-btn { width: 44px; height: 44px; }
   .chip-btn { padding: 8px 12px; }
   .menu-row { padding: 14px 10px; }
+}
+
+/* ---------- Телефон: поля ввода, выделение текста, окна, уведомления ---------- */
+/* страница под открытым окном не прокручивается, а прокрутка внутри окна не «протекает» на фон */
+body.modal-open #view { overflow: hidden; }
+.overlay { overscroll-behavior: contain; }
+.modal-body, .popover { overscroll-behavior: contain; }
+
+@media (pointer: coarse) {
+  /* iPhone увеличивает страницу при фокусе в поле со шрифтом меньше 16px и потом не возвращает масштаб */
+  input, select, textarea, .input, .input.num, .input.big { font-size: 16px; }
+  /* долгое нажатие по интерфейсу не выделяет текст и не открывает меню «Копировать…», из-за которых страница под окном начинала прокручиваться */
+  body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  input, textarea, [contenteditable="true"] { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+}
+
+@media (max-width: 720px) {
+  /* сообщения («Удалено» + «Отменить») на всю ширину над нижней панелью */
+  .toast { left: 12px; right: 12px; transform: none; bottom: calc(78px + env(safe-area-inset-bottom)); max-width: none; justify-content: space-between; padding: 12px 14px; font-size: 14px; line-height: 1.35; }
+  .toast-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .toast-act { flex: none; padding: 8px 4px 8px 10px; font-size: 15px; }
+}
+
+/* сообщение: полоска таймера по нижнему краю заполняется до исчезновения; на ПК нажатия проходят сквозь сообщение, на телефоне его можно смахнуть вниз */
+.toast { pointer-events: none; overflow: hidden; }
+.toast-act { pointer-events: auto; }
+.toast-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--accent); transform: scaleX(0); transform-origin: left; animation: toast-fill linear forwards; pointer-events: none; }
+@keyframes toast-fill { to { transform: scaleX(1); } }
+@media (pointer: coarse) { .toast { pointer-events: auto; touch-action: none; } }
+@media (prefers-reduced-motion: reduce) { .toast-bar { animation-duration: 0s !important; transform: scaleX(1); opacity: .4; } }
+
+@media (max-width: 720px) {
+  /* окна на телефоне: меньше отступов и заголовок поменьше */
+  .overlay { padding: 10px; }
+  .modal-head { padding: 10px 8px 4px 16px; }
+  .modal-head h2 { font-size: 17px; }
+  .modal-body { padding: 6px 14px 14px; gap: 10px; }
+  .modal-actions { padding: 10px 14px 14px; }
+}
+
+/* перетаскивание модулей в нижней панели (телефон): взятый модуль приподнят */
+@media (max-width: 720px) {
+  .nav-item { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+  .nav-list.sorting { overflow-x: hidden; }
+  .nav-item.lifted { position: relative; z-index: 5; background: var(--panel-2); color: var(--accent); box-shadow: 0 6px 18px rgba(0, 0, 0, .55); transform-origin: center; scale: 1.08; transition: none; }
+}
+
+/* поля в строках не отказываются сжиматься до собственной ширины по умолчанию (иначе строка шире экрана) */
+.input { min-width: 0; }
+.page { min-width: 0; max-width: 100%; }
+
+/* плашка «Доступно обновление модуля» (ядро): всегда над страницей модуля, чужие стили её не обрезают */
+.upd-bar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 8px 8px 14px; border: 1px solid var(--accent); border-radius: var(--r); background: color-mix(in srgb, var(--accent) 12%, var(--panel)); overflow: visible; }
+.upd-bar .upd-text { min-width: 0; font-size: 14px; }
+.upd-bar .upd-btn { flex: none; margin: 0; }
+
+/* iPhone увеличивает страницу при фокусе в любое поле со шрифтом меньше 16px; !important — чтобы стили модулей (в том числе у будущих) этого не вернули */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea { font-size: 16px !important; }
 }

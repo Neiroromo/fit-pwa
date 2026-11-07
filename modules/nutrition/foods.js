@@ -407,7 +407,7 @@ export async function openPicker(ctx, { date, meal, mealName, meals = [], onDone
     const s = sets();
     if (!q && !s[tab].length && tab !== 'all') tab = s.here.length ? 'here' : s.recent.length ? 'recent' : 'all';
     const keys = Object.keys(NAMES).filter(k => k !== 'tpl' || !pick).filter(k => k !== 'here' || meal);
-    fill(tabs, keys.map(k => h('button', { type: 'button', class: 'chip-btn' + (!q && tab === k ? ' on' : ''), onClick: () => { tab = k; q = ''; search.value = ''; draw(); drawExt(); } },
+    fill(tabs, keys.map(k => h('button', { type: 'button', class: 'chip-btn' + (!q && tab === k ? ' on' : ''), onClick: () => { tab = k; q = ''; search.value = ''; syncSearchMode(); draw(); drawExt(); } },
       NAMES[k], k === 'all' ? null : h('span', { class: 'cnt' }, raw(String(s[k].length))))));
     if (!q && tab === 'tpl') {
       fill(list, s.tpl.length ? s.tpl.map(tplRow) : [h('p', { class: 'muted' }, 'Шаблонов пока нет. Откройте приём с блюдами и нажмите «Сохранить как шаблон».')]);
@@ -497,18 +497,23 @@ export async function openPicker(ctx, { date, meal, mealName, meals = [], onDone
     }
   }
 
-  search.addEventListener('input', () => { q = search.value; draw(); drawExt(); });
+  const actions = h('div', { class: 'row-gap wrap pick-actions' },
+    h('button', { class: 'btn', title: 'Сканировать штрихкод', onClick: () => openBarcodeScanner(ctx, handleBarcode) }, icon('qr', 16), 'Штрихкод'),
+    pick ? null : h('button', { class: 'btn', title: 'Быстро добавить калории без продукта', onClick: () => { m.close(); openQuickAdd(ctx, { date, meal, meals, onDone }); } }, icon('bolt', 16), 'Быстро'),
+    h('button', { class: 'btn', onClick: () => openFoodForm(ctx, null, { onSaved: reload }) }, icon('plus', 16), 'Создать блюдо'));
+  const foot = h('p', { class: 'muted small' }, 'Справочник: USDA FoodData Central (CC0). Товары: Open Food Facts (ODbL), данные вносят пользователи.');
+  const syncSearchMode = () => { const on = !!q.trim(); actions.hidden = on; tabs.hidden = on; foot.hidden = on; };
+  search.addEventListener('input', () => { q = search.value; syncSearchMode(); draw(); drawExt(); });
   const reload = async () => { foods = await listFoods(ctx); draw(); };
   const m = modal({
     title: title ? ctx.t(title) : ctx.t('Добавить в «{meal}»', { meal: ctx.t(mealName) }),
     wide: true,
     body: h('div', { class: 'form' },
-      h('div', { class: 'row-gap wrap' }, h('div', { class: 'grow' }, search),
-        h('button', { class: 'btn', title: 'Сканировать штрихкод', onClick: () => openBarcodeScanner(ctx, handleBarcode) }, icon('qr', 16), 'Штрихкод'),
-        pick ? null : h('button', { class: 'btn', title: 'Быстро добавить калории без продукта', onClick: () => { m.close(); openQuickAdd(ctx, { date, meal, meals, onDone }); } }, icon('bolt', 16), 'Быстро'),
-        h('button', { class: 'btn', onClick: () => openFoodForm(ctx, null, { onSaved: reload }) }, icon('plus', 16), 'Создать блюдо')),
+      // поле поиска — на всю ширину и закреплено сверху; пока идёт поиск, кнопки действий и вкладки скрыты, остаются только результаты
+      h('div', { class: 'pick-search' }, search),
+      actions,
       tabs, list, ext,
-      h('p', { class: 'muted small' }, 'Справочник: USDA FoodData Central (CC0). Товары: Open Food Facts (ODbL), данные вносят пользователи.')),
+      foot),
   });
   tab = sets().here.length ? 'here' : sets().recent.length ? 'recent' : 'all';
   draw();

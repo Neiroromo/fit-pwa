@@ -34,13 +34,13 @@
 /* список тренировок */
 .wk-list { display: flex; flex-direction: column; gap: 10px; }
 .wk-row { position: relative; border-radius: var(--r); overflow: hidden; }
-/* красная подложка и подпись «Удалить» нужны только для свайпа на сенсорных экранах */
+/* красная подложка и подпись «Удалить» появляются только во время свайпа на сенсорных экранах (иначе красные края видны на углах карточки) */
 .wk-bg { display: none; }
 @media (hover: none), (pointer: coarse) {
-  .wk-row { background: var(--danger); }
-  .wk-bg { display: flex; }
+  .wk-bg { display: flex; opacity: 0; pointer-events: none; }
+  .wk-row.swiping .wk-bg { opacity: 1; }
 }
-.wk-bg { position: absolute; inset: 0; align-items: center; justify-content: flex-end; gap: 8px; padding-right: 22px; color: #1a0808; font-weight: 600; }
+.wk-bg { position: absolute; inset: 0; align-items: center; justify-content: flex-end; gap: 8px; padding-right: 22px; background: var(--danger); border-radius: var(--r); color: #1a0808; font-weight: 600; }
 .wk-content { position: relative; display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); touch-action: pan-y; transition: transform .2s; user-select: none; }
 .wk-content .grow { cursor: pointer; }
 
@@ -208,14 +208,37 @@ textarea.input.comment { resize: none; overflow: hidden; line-height: 1.4; min-h
 .tag-x { display: inline-grid; place-items: center; border: 0; background: none; color: inherit; padding: 2px; border-radius: 50%; opacity: .75; }
 .tag-x:hover { opacity: 1; }
 
-/* подсказки поверх окна (позиция задаётся в float.js) */
-.ex-sug.float { position: fixed; z-index: 70; background: var(--panel); box-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
-
-/* полоса прокрутки у плавающих подсказок */
-.ex-sug.float .ex-sug-item { padding-right: 18px; }
-.sug-bar { position: absolute; top: 5px; bottom: 5px; right: 4px; width: 4px; border-radius: 2px; background: var(--line); pointer-events: none; }
-.sug-thumb { position: absolute; left: 0; right: 0; border-radius: 2px; background: var(--muted); }
+/* подсказки под полем: внутри обёртки поля, position: absolute (float.js) */
+.tag-wrap, .ex-name-wrap { position: relative; min-width: 0; }
+.ex-name-wrap { flex: 1 1 0; }
+.ex-name-wrap .input { width: 100%; }
+.ex-sug.drop { position: absolute; left: 0; right: 0; top: 100%; margin-top: 4px; z-index: 60; background: var(--panel); box-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
+.ex-sug.drop.up { top: auto; bottom: 100%; margin-top: 0; margin-bottom: 4px; }
+/* список тегов прилегает к границе поля тегов */
+.ex-sug.drop.tags { margin-top: -1px; border-top-left-radius: 0; border-top-right-radius: 0; }
+.ex-sug.drop.tags.up { margin-top: 0; margin-bottom: -1px; border-radius: 10px 10px 0 0; }
 
 /* удаление из истории */
 .hrow { cursor: pointer; }
 .hist-del { width: 28px; height: 28px; margin: -4px -4px -4px 0; }
+
+/* подсказки: прокручиваемый список высотой в три строки; прокрутка не передаётся окну и странице под ним */
+.ex-sug { max-height: 132px; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+@media (pointer: coarse) { .ex-sug { max-height: 150px; } .ex-sug-item { padding: 11px 12px; } }
+
+/* редактор: поле названия может сжиматься, окно не растёт шире экрана */
+.ex-top .input { min-width: 0; flex: 1; }
+.ex-tools { display: contents; }
+.ex-card, .ex-list, .ex-opts { min-width: 0; max-width: 100%; }
+.page-head > * { min-width: 0; }
+.page-head h1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.page-head > .btn { flex: none; }
+@media (max-width: 720px) {
+  /* первая строка: номер и поле названия на всю ширину; вторая: кнопки справа */
+  .ex-top { flex-wrap: wrap; row-gap: 4px; }
+  .ex-top .input { flex: 1 1 0; }
+  .ex-tools { display: flex; flex: 1 0 100%; justify-content: flex-end; gap: 2px; }
+  .ex-opts { gap: 10px 18px; }
+}
+.page > .row-gap { flex-wrap: wrap; }
+

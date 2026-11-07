@@ -8,6 +8,7 @@ import { openShare, openImport } from './share.js';
 import { openHistory } from './history.js';
 import { refreshCustom } from './customstore.js';
 import { openPicker } from './catalog.js';
+import { swipeRemove } from './swipe.js';
 
 export default {
   async mount(page, ctx, params) {
@@ -68,11 +69,11 @@ export default {
 
       box.replaceChildren(...templates.map(t => {
         const last = lastDone.get(t.id);
+        // удаляем сразу, без вопроса; внизу появляется сообщение с «Отменить»
         const remove = async () => {
-          if (!(await confirmDialog(ctx.t('Удалить тренировку «{name}»? История выполненных тренировок сохранится.', { name: t.name }), { okText: 'Удалить', danger: true }))) return false;
           await templatesCol.remove(t.id);
           showHome();
-          return true;
+          toast(ctx.t('Тренировка «{name}» удалена', { name: t.name }), { action: 'Отменить', onAction: async () => { await templatesCol.put(t); showHome(); } });
         };
         const content = h('div', { class: 'wk-content' },
           h('div', { class: 'grow', onClick: () => showEditor(t) },
@@ -84,40 +85,9 @@ export default {
           iconBtn('trash', 'Удалить тренировку', remove, 'danger desktop-only'),
           t.draft ? null : iconBtn('play', 'Начать тренировку', () => startWorkout(t, active), 'solid'));
         const row = h('div', { class: 'wk-row' + (t.draft ? ' draft' : '') }, h('div', { class: 'wk-bg' }, icon('trash', 20), 'Удалить'), content);
-        swipeToDelete(content, remove);
+        swipeRemove(row, content, remove);
         return row;
       }));
-    }
-
-    /** Зажать и потянуть влево — удалить. Только для касаний: на ПК (мышь) для этого есть кнопка-корзина. */
-    function swipeToDelete(el, onCommit) {
-      let sx = 0, dx = 0, down = false, moved = false, suppress = false, pid = 0;
-      el.addEventListener('pointerdown', e => {
-        if (e.pointerType === 'mouse' || e.target.closest('button')) return;
-        sx = e.clientX; dx = 0; down = true; moved = false; pid = e.pointerId;
-      });
-      el.addEventListener('pointermove', e => {
-        if (!down) return;
-        dx = e.clientX - sx;
-        if (!moved && Math.abs(dx) > 8) { moved = true; el.setPointerCapture(pid); el.style.transition = 'none'; }
-        if (moved) el.style.transform = `translateX(${Math.min(0, dx)}px)`;
-      });
-      const end = async () => {
-        if (!down) return;
-        down = false;
-        el.style.transition = '';
-        if (!moved) return;
-        suppress = true;
-        setTimeout(() => (suppress = false), 0);
-        if (dx < -el.offsetWidth * 0.35) {
-          el.style.transform = 'translateX(-30%)';
-          if (await onCommit()) return;
-        }
-        el.style.transform = '';
-      };
-      el.addEventListener('pointerup', end);
-      el.addEventListener('pointercancel', end);
-      el.addEventListener('click', e => { if (suppress) { e.stopPropagation(); e.preventDefault(); } }, true);
     }
 
     // ---------- действия ----------

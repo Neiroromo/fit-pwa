@@ -24,7 +24,7 @@
 .nut-meal { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; }
 .nut-meal-head { display: flex; align-items: center; gap: 4px; }
 .nut-meal-title { display: block; text-align: left; background: none; border: 0; color: var(--text); padding: 4px 6px; border-radius: 10px; min-width: 0; }
-.nut-meal-title:hover { background: var(--panel-2); }
+@media (hover: hover) { .nut-meal-title:hover { background: var(--panel-2); } }
 .nut-sub { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .nut-detail { gap: 14px; }
 
@@ -53,7 +53,7 @@
 /* списки блюд */
 .food-list { display: flex; flex-direction: column; gap: 6px; max-height: 52dvh; overflow-y: auto; }
 .food-item { display: flex; align-items: center; gap: 6px; width: 100%; padding: 6px 8px 6px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--text); }
-.food-item:not(.static):hover { background: var(--panel-2); border-color: var(--accent); }
+@media (hover: hover) { .food-item:not(.static):hover { background: var(--panel-2); border-color: var(--accent); } }
 .food-main { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; text-align: left; background: none; border: 0; color: inherit; padding: 4px 0; }
 .food-item .icon-btn.fav.on { color: #e6b422; }
 .food-item .icon-btn.fav.on svg { fill: currentColor; }
@@ -116,7 +116,7 @@
 .nut-svg .goal { stroke: var(--text); stroke-opacity: .55; stroke-width: 1.2; stroke-dasharray: 5 4; }
 .nut-svg .goal-t { fill: var(--text); fill-opacity: .7; }
 .nut-svg .bar-g { outline: none; }
-.nut-svg .bar-g:hover .bar-r, .nut-svg .bar-g:focus .bar-r, .nut-svg .bar-on .bar-r { opacity: .75; }
+@media (hover: hover) { .nut-svg .bar-g:hover .bar-r, .nut-svg .bar-g:focus .bar-r, .nut-svg .bar-on .bar-r { opacity: .75; } }
 .nut-share { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--panel-2); }
 .nut-share i { display: block; height: 100%; }
 .nut-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; }
@@ -142,7 +142,7 @@
 /* активность в окне нормы */
 .nut-act { display: flex; flex-direction: column; gap: 6px; }
 .nut-act-item { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text); }
-.nut-act-item:hover { border-color: var(--accent); }
+@media (hover: hover) { .nut-act-item:hover { border-color: var(--accent); } }
 .nut-act-item.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
 
 /* встроенный справочник, товары и онлайн-поиск в выборе блюда */
@@ -154,13 +154,13 @@
 /* полоска недели */
 .nut-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
 .nut-wd { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text); }
-.nut-wd:hover { border-color: var(--accent); }
+@media (hover: hover) { .nut-wd:hover { border-color: var(--accent); } }
 .nut-wd.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .nut-wd.on .muted { color: inherit; opacity: .8; }
 .nut-wd.today:not(.on) { border-color: var(--accent); }
 /* будущие дни: тусклые, как неактивные кнопки (нажать можно, чтобы спланировать блюда) */
 .nut-wd.future:not(.on) { background: var(--bg); border-color: var(--line); opacity: .45; }
-.nut-wd.future:not(.on):hover { opacity: .75; border-color: var(--line); }
+@media (hover: hover) { .nut-wd.future:not(.on):hover { opacity: .75; border-color: var(--line); } }
 .nut-wd.future:not(.on) strong, .nut-wd.future:not(.on) .muted { color: var(--muted); }
 
 /* кольцо калорий */
@@ -178,9 +178,9 @@
 
 /* блюдо в приёме: нажатие правит, корзина — при наведении, план — пунктиром */
 .nut-item-main { display: block; text-align: left; background: none; border: 0; color: var(--text); padding: 2px 4px; border-radius: 8px; min-width: 0; }
-.nut-item-main:hover { background: var(--panel-2); }
+@media (hover: hover) { .nut-item-main:hover { background: var(--panel-2); } }
 .nut-item .row-del { opacity: 0; transition: opacity .12s; }
-.nut-item:hover .row-del, .nut-item:focus-within .row-del { opacity: 1; }
+@media (hover: hover) { .nut-item:hover .row-del, .nut-item:focus-within .row-del { opacity: 1; } }
 @media (pointer: coarse) { .nut-item .row-del { display: none; } }
 .icon-btn.ok { color: var(--ok); }
 .nut-item.planned .nut-item-main span:first-child { opacity: .8; }
@@ -233,19 +233,49 @@
 .nut-items, .nut-items.flat { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; border: 0; }
 .nut-item { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2); position: relative; }
 .nut-meal .nut-item { background: color-mix(in srgb, var(--panel-2) 75%, var(--panel)); }
-.nut-item:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+@media (hover: hover) { .nut-item:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); } }
 .nut-item.planned { border-style: dashed; background: transparent; }
 .nut-item-main { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 0; background: none; border: 0; color: var(--text); text-align: left; min-width: 0; border-radius: 8px; }
-.nut-item-main:hover { background: none; }
+@media (hover: hover) { .nut-item-main:hover { background: none; } }
 .ni-name { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .ni-sub { line-height: 1.3; }
 .ni-kcal { display: flex; flex-direction: column; align-items: flex-end; min-width: 56px; line-height: 1.15; }
 .ni-kcal strong { font-size: 20px; }
 .nut-item .row-del { opacity: 0; transition: opacity .12s; }
-.nut-item:hover .row-del, .nut-item:focus-within .row-del { opacity: 1; }
+@media (hover: hover) { .nut-item:hover .row-del, .nut-item:focus-within .row-del { opacity: 1; } }
 
 /* карточка приёма на странице дня */
 .nut-meal { gap: 12px; }
 .nut-meal-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 .nm-kcal { font-size: 18px; }
 @media (max-width: 560px) { .nut-mtiles { gap: 6px; } .nut-mtile { padding: 10px 8px; } .mt-val { font-size: 20px; } .nut-hero-kcal { font-size: 34px; } }
+
+/* ---- телефон: свайп влево удаляет приём / блюдо, свайп по неделе листает недели ---- */
+.swipe { position: relative; overflow: hidden; border-radius: var(--r); }
+.swipe-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; padding-right: 22px; background: color-mix(in srgb, var(--danger) 55%, var(--bg)); color: #fff; opacity: 0; pointer-events: none; }
+.swipe-bg.ready { background: var(--danger); }
+.swipe-front { position: relative; touch-action: pan-y; }
+.swipe-x { touch-action: pan-y; }
+.nut-item.swipe-front { border-radius: var(--r); }
+
+/* КБЖУ в сводке: название и значение всегда в две строки, чтобы полоски «Углеводы» не съезжали ниже остальных */
+.nut-macros { align-items: start; }
+@media (max-width: 640px) {
+  .nut-macro-head { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; gap: 0; }
+  .nut-macro-head strong { white-space: nowrap; font-size: 13px; }
+  .nut-macro-head strong .muted { font-size: 12px; }
+}
+
+/* выбор блюда: крупное поле поиска на всю ширину, закреплено сверху */
+.pick-search { position: sticky; top: -8px; z-index: 3; margin: -8px -20px 0; padding: 10px 20px 8px; background: var(--panel); }
+.pick-search .input { font-size: 17px; padding: 14px 16px; min-height: 52px; border-radius: 14px; }
+.pick-actions[hidden], .food-ext:empty { display: none; }
+
+/* листание недели: полоска дней выезжает с той стороны, куда листали */
+@keyframes nut-slide-next { from { opacity: 0; transform: translateX(55%); } to { opacity: 1; transform: none; } }
+@keyframes nut-slide-prev { from { opacity: 0; transform: translateX(-55%); } to { opacity: 1; transform: none; } }
+.nut-week.slide-next { animation: nut-slide-next .26s cubic-bezier(.22, .8, .3, 1); }
+.nut-week.slide-prev { animation: nut-slide-prev .26s cubic-bezier(.22, .8, .3, 1); }
+@media (prefers-reduced-motion: reduce) { .nut-week.slide-next, .nut-week.slide-prev { animation: none; } }
+
+.nut-week-clip { overflow: hidden; touch-action: pan-y; overscroll-behavior-x: none; margin: 0 -2px; padding: 0 2px; }

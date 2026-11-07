@@ -178,5 +178,6 @@
   "Все упражнения": "All exercises",
   "Удалить из истории": "Delete from history",
   "Тренировка удалена из истории": "Workout deleted from history",
-  "Удалить из истории тренировку «{name}» от {date}? Это действие нельзя отменить.": "Delete the workout “{name}” of {date} from history? This cannot be undone."
+  "Удалить из истории тренировку «{name}» от {date}? Это действие нельзя отменить.": "Delete the workout “{name}” of {date} from history? This cannot be undone.",
+  "Тренировка «{name}» удалена": "Workout “{name}” deleted"
 }

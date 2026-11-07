@@ -3,14 +3,14 @@
 
 import { GROUPS, MUSCLES, LEVEL, EQUIP_ALIAS, labels, equipKeys, parseQuery, scoreName } from './catalog.js';
 import { saveCustom } from './customstore.js';
-import { floatShow, floatHide } from './float.js';
+import { dropShow, dropHide, revealSelected, trackPress } from './float.js';
 
 const MAX_IMAGES = 4;
 const IMAGE_SIDE = 800; // длинная сторона после уменьшения, пикселей
 
 /**
  * Поле тегов: выбранные теги стоят прямо в поле ввода, как «плашки», и после них можно набирать дальше.
- * По фокусу и при вводе поверх окна показываются 3 подсказки (колесо мыши их прокручивает).
+ * По фокусу и при вводе поверх окна показывается прокручиваемый список подсказок (видно три).
  * Tab / стрелки — перебор, Enter — добавить выбранную подсказку или набранный текст как новый тег,
  * Backspace в пустом поле — убрать последний тег, Esc — убрать подсказки (текст остаётся). get() возвращает выбранные ключи.
  */
@@ -19,10 +19,11 @@ function tagPicker(ctx, { options, labelOf, selected = [], placeholder }) {
   const sel = [...selected];
   const opts = [...new Set([...options, ...selected])];
   const pills = h('span', { class: 'tag-pills' });
-  const sug = h('div', { class: 'ex-sug', hidden: true });
+  const sug = h('div', { class: 'ex-sug tags', hidden: true });
   const input = h('input', { placeholder, maxlength: '40', autocomplete: 'off' });
   const box = h('div', { class: 'tag-box', onClick: () => input.focus() }, pills, input);
-  let list = [], at = -1, win = 0;
+  const wrap = h('div', { class: 'tag-wrap' }, box, sug); // список — внутри обёртки, под полем
+  let list = [], at = -1;
 
   const drawPills = fresh => {
     pills.replaceChildren(...sel.map(k => h('span', { class: 'tag-pill' + (k === fresh ? ' fresh' : '') },
@@ -31,17 +32,14 @@ function tagPicker(ctx, { options, labelOf, selected = [], placeholder }) {
     input.placeholder = sel.length ? '' : ctx.t(placeholder);
   };
   const drawSug = () => {
-    sug.replaceChildren(...list.slice(win, win + 3).map((k, i) => h('button', {
-      type: 'button', class: 'ex-sug-item' + (win + i === at ? ' on' : ''), tabindex: '-1',
-      onPointerdown: e => { e.preventDefault(); add(k); },
+    // выбор — по click: свайп по списку листает его, а не выбирает тег
+    sug.replaceChildren(...list.map((k, i) => h('button', {
+      type: 'button', class: 'ex-sug-item' + (i === at ? ' on' : ''), tabindex: '-1',
+      onClick: () => add(k),
     }, raw(labelOf(k)))));
-    if (list.length) floatShow(sug, box, { total: list.length, start: win, size: 3 }); else floatHide(sug);
+    if (list.length) { dropShow(sug, box); revealSelected(sug); } else dropHide(sug); // список прилегает к границе поля
   };
-  sug.addEventListener('wheel', e => {
-    e.preventDefault();
-    win = Math.min(Math.max(0, list.length - 3), Math.max(0, win + (e.deltaY > 0 ? 1 : -1)));
-    drawSug();
-  }, { passive: false });
+  const pressing = trackPress(sug); // поле ввода не теряет фокус, пока список листают
 
   /** Пересчитывает подсказки под набранный текст: совпадение по началу любого слова, уже выбранные не предлагаются. */
   const compute = () => {
@@ -50,15 +48,13 @@ function tagPicker(ctx, { options, labelOf, selected = [], placeholder }) {
     list = pq
       ? free.map(k => ({ k, score: Math.min(...[labelOf(k), k].map(t => scoreName(t, pq) ?? Infinity)) })).filter(x => x.score !== Infinity).sort((a, b) => a.score - b.score).map(x => x.k)
       : free;
-    at = -1; win = 0;
+    at = -1;
     drawSug();
   };
   const move = d => {
     const to = Math.min(list.length - 1, Math.max(-1, at + d));
     if (to === at) return;
     at = to;
-    if (at >= win + 3) win = at - 2;
-    if (at >= 0 && at < win) win = at;
     drawSug();
   };
   function remove(key) {
@@ -82,18 +78,23 @@ function tagPicker(ctx, { options, labelOf, selected = [], placeholder }) {
   }
   input.addEventListener('focus', compute);
   input.addEventListener('input', compute);
-  input.addEventListener('blur', () => { list = []; at = -1; floatHide(sug); });
+  input.addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== input && !pressing()) { list = []; at = -1; dropHide(sug); } }, 150));
   input.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); add(at >= 0 ? list[at] : null); return; }
+    if (e.key === 'Enter') {
+      e.preventDefault(); e.stopPropagation();
+      // текст набран или подсказка выбрана стрелками — добавляем тег; поле пустое и выбора нет — ввод закончен (клавиатура телефона скрывается)
+      if (input.value.trim() || at >= 0) add(at >= 0 ? list[at] : null); else input.blur();
+      return;
+    }
     if (e.key === 'Backspace' && !input.value && sel.length) { e.preventDefault(); remove(sel.at(-1)); return; }
     if (!list.length) return;
     const down = e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey);
     const up = e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey && at > 0);
     if (down || up) { e.preventDefault(); move(down ? 1 : -1); }
-    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); list = []; at = -1; floatHide(sug); }
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); list = []; at = -1; dropHide(sug); }
   });
   drawPills();
-  return { el: box, get: () => [...sel] };
+  return { el: wrap, get: () => [...sel] };
 }
 
 async function downscale(file) {

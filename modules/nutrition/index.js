@@ -11,6 +11,7 @@ import {
 import { numField, openAmount, openQuickAdd, openPicker, openFoodsManager, fmt, extrasText } from './foods.js';
 import { pillsCard, logsOfDay } from './pills.js';
 import { renderHistory } from './history.js';
+import { swipeDelete, swipeSides } from './swipe.js';
 import { openNorm, normSuggestion, applyNorm } from './normui.js';
 
 const MACROS = [
@@ -41,7 +42,8 @@ export default {
     const { h, icon, iconBtn, confirmDialog, toast, raw, modal } = ctx.ui;
     let settings = await getSettings(ctx);
     if (await seedFoods(ctx, settings)) toast('Добавлено 7 примеров блюд: их можно менять и удалять в «Мои блюда»');
-    const state = { date: dayKey(), tab: 'day', period: 30, hview: 'chart' };
+    const state = { date: dayKey(), week: null, tab: 'day', period: 30, hview: 'chart' };
+    state.week = shiftDay(state.date, -((parseDay(state.date).getDay() + 6) % 7));
     const view = h('div', { class: 'nut-view' });
     let allLog = [];
 
@@ -50,18 +52,25 @@ export default {
 
     // ---------- каркас ----------
     /** Полоска недели с выбранным днём: переход на любой день недели одним нажатием, в том числе вперёд (для плана). */
+    // Показанная неделя (state.week — её понедельник) не зависит от выбранного дня: листание недель день не меняет,
+    // он подсвечивается, только когда попадает в показанную неделю.
+    const mondayOf = k => shiftDay(k, -((parseDay(k).getDay() + 6) % 7));
+    const shiftWeek = n => { state.week = shiftDay(state.week, n * 7); state.anim = n > 0 ? 'next' : 'prev'; render(); };
     function weekStrip() {
-      const monday = shiftDay(state.date, -((parseDay(state.date).getDay() + 6) % 7));
-      return h('div', { class: 'nut-week' }, [0, 1, 2, 3, 4, 5, 6].map(i => {
+      const monday = state.week;
+      const anim = state.anim; state.anim = null; // анимация при листании недели: новая неделя выезжает с той стороны, куда листали
+      const strip = h('div', { class: 'nut-week' + (anim ? ' slide-' + anim : '') }, [0, 1, 2, 3, 4, 5, 6].map(i => {
         const k = shiftDay(monday, i), d = parseDay(k);
         return h('button', { type: 'button', class: 'nut-wd' + (k === state.date ? ' on' : '') + (k === dayKey() ? ' today' : '') + (k > dayKey() ? ' future' : '') + (k < dayKey() ? ' past' : ''), title: k > dayKey() ? ctx.t('Будущий день: можно запланировать блюда') : null, onClick: () => { state.date = k; render(); } },
           h('span', { class: 'muted small' }, raw(d.toLocaleDateString(ctx.locale, { weekday: 'short' }))), h('strong', null, raw(String(d.getDate()))));
       }));
+      swipeSides(strip, { onPrev: () => shiftWeek(-1), onNext: () => shiftWeek(1) }); // на телефоне недели листаются свайпом
+      return h('div', { class: 'nut-week-clip' }, strip); // рамка обрезает сдвинутую полоску: страница не получает горизонтальной прокрутки
     }
 
-    /** Период недели выбранного дня: «2 – 8 нояб.». */
+    /** Период показанной недели: «2 – 8 нояб.». */
     function weekLabel() {
-      const monday = shiftDay(state.date, -((parseDay(state.date).getDay() + 6) % 7));
+      const monday = state.week;
       const f = k => parseDay(k).toLocaleDateString(ctx.locale, { day: 'numeric', month: 'short' });
       return `${f(monday)} – ${f(shiftDay(monday, 6))}`;
     }
@@ -78,9 +87,9 @@ export default {
         state.tab === 'day' ? [
           // навигация по неделям: «Назад», «Сегодня», «Вперёд» листают недельную полоску; справа период недели и копирование дня
           h('div', { class: 'nut-daybar' },
-            iconBtn('chevL', 'Предыдущая неделя', () => { state.date = shiftDay(state.date, -7); render(); }),
-            h('button', { class: 'btn sm', onClick: () => { state.date = dayKey(); render(); } }, 'Сегодня'),
-            iconBtn('chevR', 'Следующая неделя', () => { state.date = shiftDay(state.date, 7); render(); }),
+            iconBtn('chevL', 'Предыдущая неделя', () => shiftWeek(-1)),
+            h('button', { class: 'btn sm', onClick: () => { state.date = dayKey(); state.week = mondayOf(state.date); render(); } }, 'Сегодня'),
+            iconBtn('chevR', 'Следующая неделя', () => shiftWeek(1)),
             h('span', { class: 'muted small nut-weeklabel' }, raw(weekLabel())),
             h('span', { class: 'grow' }),
             iconBtn('copy', 'Копировать день', () => copyDay())),
@@ -163,8 +172,8 @@ export default {
       const orphan = [...new Set(day.filter(x => !known.has(x.meal)).map(x => x.meal))]; // приём удалён, а записи остались
       return h('section', { class: 'nut-meals' },
         h('h2', { class: 'nut-h' }, 'Приёмы пищи'),
-        ...shown.map(m => mealCard(m, day.filter(x => x.meal === m.id), note)),
-        ...orphan.map(id => mealCard({ id, name: 'Другое', on: true, orphan: true }, day.filter(x => x.meal === id), note)),
+        ...shown.map(m => { const its = day.filter(x => x.meal === m.id); return swipeDelete(ctx.ui, mealCard(m, its, note), () => deleteMeal(m, its)); }),
+        ...orphan.map(id => { const its = day.filter(x => x.meal === id), m = { id, name: 'Другое', on: true, orphan: true }; return swipeDelete(ctx.ui, mealCard(m, its, note), () => deleteMeal(m, its)); }),
         h('div', { class: 'row-gap wrap' },
           ...hidden.map(m => h('button', { class: 'chip-btn', onClick: async () => { m.on = true; await persist(); render(); } }, raw('+ ' + ctx.t(m.name)))),
           h('button', { class: 'chip-btn', onClick: addCustomMeal }, icon('plus', 14), 'Свой приём')));
@@ -180,7 +189,7 @@ export default {
     function itemRow(x, after) {
       const extra = extrasText(ctx, x, ['fib', 'sug', 'na']);
       const info = x.quick ? ctx.t('быстрое добавление') : `${fmt(ctx, x.amount)} ${ctx.t(x.unit === 'ml' ? 'мл' : 'г')}`;
-      return h('div', { class: 'nut-item' + (x.planned ? ' planned' : '') },
+      const row = h('div', { class: 'nut-item' + (x.planned ? ' planned' : '') },
         h('button', { type: 'button', class: 'nut-item-main grow', title: 'Изменить', onClick: () => editItem(x, after) },
           h('span', { class: 'ni-name' }, raw(x.name || ctx.t('Быстрое добавление')), x.planned ? h('span', { class: 'tag' }, 'в плане') : null),
           h('span', { class: 'ni-sub muted small' }, raw(extra ? `${info} · ${extra}` : info)),
@@ -188,6 +197,25 @@ export default {
         h('div', { class: 'ni-kcal' }, h('strong', null, raw(`${x.kcal}`)), h('span', { class: 'muted small' }, raw(ctx.t('ккал')))),
         x.planned ? iconBtn('check', 'Отметить съеденным', async () => { const { planned, ...rest } = x; await putLog(ctx, rest); after(); }, 'ok') : null,
         iconBtn('trash', 'Удалить', () => removeWithUndo(ctx, 'log', x, 'Блюдо удалено', after), 'danger row-del'));
+      // на телефоне блюдо удаляется свайпом влево (с кнопкой «Отменить»)
+      return swipeDelete(ctx.ui, row, () => removeWithUndo(ctx, 'log', x, 'Блюдо удалено', after));
+    }
+
+    /** Удаление приёма свайпом: есть блюда — убираются блюда этого дня; пусто — свой приём удаляется, обычный скрывается. Всё с отменой. */
+    async function deleteMeal(meal, items) {
+      const name = ctx.t(meal.name);
+      if (items.length) {
+        for (const x of items) await ctx.db.collection('log').remove(x.id);
+        await render();
+        toast(ctx.t('Приём «{name}» очищен: удалено блюд {n}', { name, n: items.length }), { action: 'Отменить', onAction: async () => { for (const x of items) await putLog(ctx, x); render(); } });
+        return;
+      }
+      if (meal.orphan) return;
+      const was = settings.meals.map(m => ({ ...m }));
+      if (meal.custom) settings.meals = settings.meals.filter(m => m.id !== meal.id); else meal.on = false;
+      await persist();
+      await render();
+      toast(ctx.t(meal.custom ? 'Приём «{name}» удалён' : 'Приём «{name}» скрыт', { name }), { action: 'Отменить', onAction: async () => { settings.meals = was; await persist(); render(); } });
     }
 
     function mealCard(meal, items, note) {

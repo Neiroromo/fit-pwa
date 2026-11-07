@@ -92,9 +92,42 @@
   .dyn-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   .mon-fig { position: static; }
 }
+@media (max-width: 900px) {
+  .tile-group { grid-column: 1 / -1; }   /* заголовок группы не занимает ячейку плитки */
+}
 @media (max-width: 480px) {
   .m-row { flex-wrap: wrap; }
   .m-row .input { width: 96px; }
+  /* плитки: график под значением, а не сбоку (в узкой плитке они налезали друг на друга) */
+  .tile { grid-template-columns: minmax(0, 1fr); grid-template-areas: "name" "val" "delta" "spark"; gap: 2px 0; padding: 10px; }
+  .tile-val { font-size: 18px; flex-wrap: wrap; row-gap: 0; }
+  .tile .spark, .tile-spark-empty { width: 100%; height: 26px; margin-top: 4px; }
+  .dyn-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dyn-hero-val { font-size: 36px; }
+}
+
+.mon-input.one { grid-template-columns: minmax(0, 1fr); max-width: 560px; }
+.back-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; padding: 8px 14px 8px 8px; font-size: 14px; }
+
+/* правая и левая отдельно: на узком экране название и «?» в первой строке, два поля поровну во второй */
+@media (max-width: 520px) {
+  .m-row.sided { display: grid; grid-template-columns: minmax(0, 1fr) auto; row-gap: 6px; }
+  .m-row.sided .m-pair { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .m-row.sided .m-side { min-width: 0; }
+  .m-row.sided .m-side .input { width: 100%; }
+  .m-row.sided .m-info { margin-left: 0; }
+}
+
+/* iPhone (Safari): поля даты/времени не сжимаются сами и вылезают из сетки; шрифт меньше 16px заставляет страницу увеличиваться при вводе */
+.mon-two > *, .mon-form .field, .mon-form .nf-cell { min-width: 0; }
+.mon-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mon-view .input { min-width: 0; max-width: 100%; }
+.mon-view input[type="date"], .mon-view input[type="time"] {
+  -webkit-appearance: none; appearance: none; display: block; min-height: 44px; text-align: left;
+}
+.mon-view input::-webkit-date-and-time-value { text-align: left; min-height: 1.4em; }
+@media (pointer: coarse) {
+  .mon-view .input { font-size: 16px; }
 }
 .mon-log { display: flex; flex-direction: column; gap: 10px; }
 
@@ -131,3 +164,6 @@
 
 /* поле с подписью (используется формой роста и др.) */
 .nf-cell { display: flex; flex-direction: column; gap: 4px; }
+
+/* показатель без единой записи: неактивная плитка */
+.tile.nohist, .tile.nohist:hover { opacity: .4; cursor: default; background: var(--panel); pointer-events: none; user-select: none; }

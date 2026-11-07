@@ -2,7 +2,7 @@
   "id": "nutrition",
   "name": "Дневник питания",
   "icon": "nutrition",
-  "version": "0.5.4",
+  "version": "0.5.9",
   "entry": "index.js",
   "files": [
     "data.js",
@@ -16,7 +16,7 @@
     "share.js",
     "fooddb.js",
     "offapi.js",
-    "scan.js",
+    "scan.js", "swipe.js",
     "i18n.en.json",
     "vendor/qrcode.js",
     "vendor/jsQR.js",

@@ -78,7 +78,7 @@ async function boot() {
   setAppTranslator(translator('app').tr);
   app.profile = { ...app.profile, ...(await db.kv.get('app/profile', {})) };
   app.shell = buildShell(app);
-  app.openStore = () => openStore(app);
+  app.openStore = opts => openStore(app, opts);
   document.getElementById('app').replaceChildren(app.shell.root);
   app.shell.renderProfile();
   app.shell.refreshBell();
@@ -106,13 +106,12 @@ async function boot() {
       page.className = 'page';
       app.shell.view.replaceChildren(page);
       const stop = await mod.mount(page, moduleContext(id), params);
-      // кнопка «Обновить» рядом с названием модуля; модуль перерисовывает заголовок сам, поэтому следим за страницей
+      // Плашка с кнопкой «Обновить» — отдельный блок наверху страницы, принадлежит ядру: стили и перерисовка заголовка самого модуля
+      // (обрезка текста, переполнение, replaceChildren) не могут её скрыть. Модуль перерисовывает страницу сам, поэтому следим за ней.
       let obs = null;
       if (registry.needsUpdate(id)) {
-        const put = () => {
-          const h1 = page.querySelector('h1');
-          if (h1 && !h1.querySelector('.upd-btn')) h1.append(updateButton(app, id));
-        };
+        const bar = ui.h('div', { class: 'upd-bar' }, ui.h('span', { class: 'upd-text' }, app.t('Доступно обновление модуля')), updateButton(app, id));
+        const put = () => { if (bar.parentElement !== page || page.firstElementChild !== bar) page.prepend(bar); };
         put();
         obs = new MutationObserver(put);
         obs.observe(page, { childList: true, subtree: true });

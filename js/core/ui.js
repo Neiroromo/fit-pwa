@@ -34,7 +34,14 @@ export function append(el, kids, tr = same) {
   return el;
 }
 
-export const uid = () => crypto.randomUUID();
+/** Уникальный id. crypto.randomUUID есть только в защищённом контексте (https или localhost), а по http://IP-адрес его нет: тогда getRandomValues. */
+export const uid = () => {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  const b = crypto.getRandomValues(new Uint8Array(16));
+  b[6] = (b[6] & 0x0f) | 0x40; b[8] = (b[8] & 0x3f) | 0x80;
+  const x = [...b].map(v => v.toString(16).padStart(2, '0')).join('');
+  return `${x.slice(0, 8)}-${x.slice(8, 12)}-${x.slice(12, 16)}-${x.slice(16, 20)}-${x.slice(20)}`;
+};
 export const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
 
 const ICONS = {
@@ -50,6 +57,7 @@ const ICONS = {
   chevL: '<path d="M15 6l-6 6 6 6"/>',
   chevD: '<path d="M6 9l6 6 6-6"/>',
   chevU: '<path d="M6 15l6-6 6 6"/>',
+  grip: '<circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>',
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   check: '<path d="M5 12l5 5 9-10"/>',
   play: '<path d="M7 4l13 8-13 8z"/>',
@@ -115,6 +123,7 @@ export function createUi(getTr = () => appTr) {
     const close = () => {
       overlay.remove();
       document.removeEventListener('keydown', onKey);
+      document.body.classList.toggle('modal-open', !!document.querySelector('.overlay, .popover')); // фон снова прокручивается, когда закрыто последнее окно
       onClose?.();
     };
     const onKey = e => e.key === 'Escape' && close();
@@ -124,9 +133,10 @@ export function createUi(getTr = () => appTr) {
     );
     if (actions?.length) box.append(h('div', { class: 'modal-actions' }, actions));
     overlay.append(box);
-    overlay.addEventListener('pointerdown', e => e.target === overlay && close());
+    overlay.addEventListener('pointerdown', e => { if (e.target === overlay) { close(); swallowNextClick(); } }); // нажатие на фон только закрывает окно, кнопка под фоном не срабатывает
     document.addEventListener('keydown', onKey);
     document.body.append(overlay);
+    document.body.classList.add('modal-open'); // пока окно открыто, страница под ним не прокручивается
     return { el: box, close };
   }
 
@@ -149,11 +159,46 @@ export function createUi(getTr = () => appTr) {
   /** Всплывающее сообщение. С opts.action («Отменить») показывается дольше и содержит кнопку: onAction вызывается по нажатию. */
   function toast(text, opts) {
     document.querySelector('.toast')?.remove();
-    const t = h('div', { class: 'toast' }, h('span', null, text),
+    const t = h('div', { class: 'toast', role: 'status' }, h('span', { class: 'toast-text' }, text),
       opts?.action ? h('button', { class: 'toast-act', onClick: () => { clearTimeout(toastTimer); t.remove(); opts.onAction?.(); } }, opts.action) : null);
+    const ms = opts?.action ? 7000 : 2600;
+    // нижний край сообщения постепенно заполняется цветом: так видно, когда оно исчезнет
+    const bar = h('i', { class: 'toast-bar', 'aria-hidden': 'true' });
+    bar.style.animationDuration = ms + 'ms';
+    t.append(bar);
     document.body.append(t);
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.remove(), opts?.action ? 7000 : 2600);
+    toastTimer = setTimeout(() => t.remove(), ms);
+    swipeDownToDismiss(t, () => { clearTimeout(toastTimer); t.remove(); });
+  }
+
+  /** На телефоне сообщение можно смахнуть вниз. */
+  function swipeDownToDismiss(el, onDismiss) {
+    if (!matchMedia('(pointer: coarse)').matches) return;
+    let id = null, sy = 0, dy = 0;
+    el.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'touch' || id != null || e.target.closest('.toast-act')) return;
+      id = e.pointerId; sy = e.clientY; dy = 0;
+      el.style.transition = 'none';
+      try { el.setPointerCapture(id); } catch { /* ignore */ }
+    });
+    el.addEventListener('pointermove', e => {
+      if (e.pointerId !== id) return;
+      dy = Math.max(0, e.clientY - sy); // вверх не тянется
+      el.style.transform = `translateY(${dy}px)`;
+      el.style.opacity = String(Math.max(0.3, 1 - dy / 120));
+    });
+    const end = e => {
+      if (e.pointerId !== id) return;
+      id = null;
+      el.style.transition = 'transform .18s ease, opacity .18s ease';
+      if (e.type === 'pointerup' && dy > 36) {
+        el.style.transform = 'translateY(140%)'; el.style.opacity = '0';
+        setTimeout(onDismiss, 170);
+      } else { el.style.transform = ''; el.style.opacity = ''; }
+    };
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
   }
 
   return { h, raw, icon, iconBtn, modal, confirmDialog, toast, uid, clamp, dismissable };
@@ -162,20 +207,27 @@ export function createUi(getTr = () => appTr) {
 let toastTimer;
 
 /** Закрывается по клику вне и Escape. Возвращает close(). */
+/** Гасит ближайший click (на 500 мс): им заканчивается нажатие, которым закрыли окно, и оно не должно попасть в кнопку под фоном. */
+function swallowNextClick() {
+  const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); };
+  document.addEventListener('click', swallow, { capture: true, once: true });
+  setTimeout(() => document.removeEventListener('click', swallow, true), 500);
+}
+
 export function dismissable(el, { ignore = [], onClose } = {}) {
+  document.body.classList.add('modal-open'); // пока открыто всплывающее окно, страница под ним не прокручивается
   const close = () => {
     el.remove();
+    document.body.classList.toggle('modal-open', !!document.querySelector('.overlay, .popover'));
     document.removeEventListener('pointerdown', onDown, true);
     document.removeEventListener('keydown', onKey);
     onClose?.();
   };
   const onDown = e => {
     if (el.contains(e.target) || ignore.some(i => i?.contains(e.target))) return;
+    if (!el.isConnected) { close(); return; } // окно уже убрано другим путём: только снять слушатели, нажатие не гасим
     close();
-    // нажатие на фон только закрывает окно: следующий за ним click на кнопке под фоном не должен сработать
-    const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); };
-    document.addEventListener('click', swallow, { capture: true, once: true });
-    setTimeout(() => document.removeEventListener('click', swallow, true), 500);
+    swallowNextClick(); // нажатие на фон только закрывает окно: следующий за ним click на кнопке под фоном не должен сработать
   };
   const onKey = e => e.key === 'Escape' && close();
   setTimeout(() => document.addEventListener('pointerdown', onDown, true));

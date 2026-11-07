@@ -69,8 +69,9 @@ export function createRegistry(db) {
         id: manifest.id, name: manifest.name, icon: manifest.icon, version: manifest.version,
         entry: manifest.entry, styles: manifest.styles ?? [], files, widgets: manifest.widgets ?? [], content: manifest.content ?? [], reminders: manifest.reminders ?? [],
       };
-      installed = installed.filter(m => m.id !== id);
-      installed.push(entry);
+      // при обновлении модуль остаётся на своём месте в навигации; новый добавляется в конец
+      const at = installed.findIndex(m => m.id === id);
+      if (at >= 0) installed[at] = entry; else installed.push(entry);
       await persist();
       emit();
       return entry;
@@ -93,6 +94,16 @@ export function createRegistry(db) {
       const j = i + dir;
       if (i < 0 || j < 0 || j >= installed.length) return;
       [installed[i], installed[j]] = [installed[j], installed[i]];
+      await persist();
+      emit();
+    },
+
+    /** Перемещает модуль на позицию to (перетаскивание в списке модулей). */
+    async moveTo(id, to) {
+      const i = installed.findIndex(m => m.id === id);
+      if (i < 0 || to < 0 || to >= installed.length || i === to) return;
+      const [mod] = installed.splice(i, 1);
+      installed.splice(to, 0, mod);
       await persist();
       emit();
     },

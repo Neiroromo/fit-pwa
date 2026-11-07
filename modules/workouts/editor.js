@@ -4,7 +4,7 @@
 // Esc вне полей — выход (новая тренировка сохраняется как черновик).
 
 import { openPicker, displayName, suggest } from './catalog.js';
-import { floatShow, floatHide } from './float.js';
+import { dropShow, dropHide, revealSelected, trackPress } from './float.js';
 
 /** Поле растёт вместе с текстом. */
 const autosize = ta => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; };
@@ -35,40 +35,34 @@ export function openEditor(el, ctx, template, { onDone }) {
     dropFloating();
     list.replaceChildren(...draft.exercises.map((ex, i) => {
       const exName = h('input', { class: 'input fld', placeholder: 'Название упражнения', value: ex.name, maxlength: '60', autocomplete: 'off' });
-      const sug = h('div', { class: 'ex-sug', hidden: true }); // выпадает поверх окна (float.js)
-      // Подсказок может быть больше трёх: показывается окно из 3 штук, которое сдвигается вслед за выбором (Tab / стрелки)
-      let sugList = [], sugAt = -1, sugWin = 0, sugToken = 0;
-      const hideSug = () => { sugToken++; sugList = []; sugAt = -1; sugWin = 0; floatHide(sug); sug.replaceChildren(); };
+      const sug = h('div', { class: 'ex-sug', hidden: true }); // выпадает под полем, внутри его обёртки (float.js)
+      // Подсказки — обычный прокручиваемый список (видно три, остальное листается мышью, пальцем или стрелками / Tab)
+      let sugList = [], sugAt = -1, sugToken = 0;
+      const hideSug = () => { sugToken++; sugList = []; sugAt = -1; dropHide(sug); sug.replaceChildren(); };
       const choose = found => { applyPick(ex, found); render(); list.children[i]?.querySelectorAll('.fld')[1]?.focus(); };
       const showSug = async () => {
         const mine = ++sugToken;
         const found = exName.value.trim() ? await suggest(exName.value, 30).catch(() => []) : [];
         if (mine !== sugToken || document.activeElement !== exName) return;
-        sugList = found; sugAt = -1; sugWin = 0;
+        sugList = found; sugAt = -1;
         drawSug();
       };
       const drawSug = () => {
         const lang = ctx.contentLang('exercises');
-        sug.replaceChildren(...sugList.slice(sugWin, sugWin + 3).map((f, k) => h('button', {
-          class: 'ex-sug-item' + (sugWin + k === sugAt ? ' on' : ''), tabindex: '-1', onPointerdown: e => { e.preventDefault(); choose(f); },
+        // выбор — по click, а не по касанию: иначе свайп по списку сразу выбирал бы упражнение, а не листал его
+        sug.replaceChildren(...sugList.map((f, k) => h('button', {
+          type: 'button', class: 'ex-sug-item' + (k === sugAt ? ' on' : ''), tabindex: '-1', onClick: () => choose(f),
         },
         raw(displayName(f, lang)),
         f.ru && f.n !== displayName(f, lang) ? h('span', { class: 'muted small' }, raw(f.n)) : null)));
-        if (sugList.length) floatShow(sug, exName, { total: sugList.length, start: sugWin, size: 3 }); else floatHide(sug);
+        if (sugList.length) { dropShow(sug, exName); revealSelected(sug); } else dropHide(sug);
       };
-      // колесо мыши прокручивает подсказки (окно из трёх скользит по списку)
-      sug.addEventListener('wheel', e => {
-        e.preventDefault();
-        sugWin = Math.min(Math.max(0, sugList.length - 3), Math.max(0, sugWin + (e.deltaY > 0 ? 1 : -1)));
-        drawSug();
-      }, { passive: false });
-      /** Сдвигает выбор на d; окно из трёх следует за ним. Возвращает false, если сдвинуться некуда. */
+      const pressing = trackPress(sug); // поле не теряет фокус, пока список листают
+      /** Сдвигает выбор на d. Возвращает false, если сдвинуться некуда. */
       const moveSug = d => {
         const to = Math.min(sugList.length - 1, Math.max(-1, sugAt + d));
         if (to === sugAt) return false;
         sugAt = to;
-        if (sugAt >= sugWin + 3) sugWin = sugAt - 2;
-        if (sugAt >= 0 && sugAt < sugWin) sugWin = sugAt;
         drawSug();
         return true;
       };
@@ -78,7 +72,7 @@ export function openEditor(el, ctx, template, { onDone }) {
         showSug();
       });
       exName.addEventListener('focus', showSug);
-      exName.addEventListener('blur', hideSug);
+      exName.addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== exName && !pressing()) hideSug(); }, 150));
       exName.addEventListener('keydown', e => {
         if (!sugList.length) return;
         const down = e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey);
@@ -120,11 +114,13 @@ export function openEditor(el, ctx, template, { onDone }) {
       return h('div', { class: 'card ex-card' },
         h('div', { class: 'ex-top' },
           h('span', { class: 'ex-num' }, String(i + 1)),
-          exName,
-          iconBtn('search', 'Выбрать из каталога', () => pick(ex)),
-          iconBtn('chevU', 'Выше', () => { move(i, -1); }, i === 0 ? 'off' : ''),
-          iconBtn('chevD', 'Ниже', () => { move(i, 1); }, i === draft.exercises.length - 1 ? 'off' : ''),
-          iconBtn('trash', 'Удалить упражнение', () => { draft.exercises.splice(i, 1); render(); }, 'danger')),
+          h('div', { class: 'ex-name-wrap' }, exName, sug),
+          // на телефоне кнопки переходят на вторую строку, и поле названия занимает всю ширину
+          h('div', { class: 'ex-tools' },
+            iconBtn('search', 'Выбрать из каталога', () => pick(ex)),
+            iconBtn('chevU', 'Выше', () => { move(i, -1); }, i === 0 ? 'off' : ''),
+            iconBtn('chevD', 'Ниже', () => { move(i, 1); }, i === draft.exercises.length - 1 ? 'off' : ''),
+            iconBtn('trash', 'Удалить упражнение', () => { draft.exercises.splice(i, 1); render(); }, 'danger'))),
         comment,
         h('div', { class: 'ex-opts' },
           h('div', { class: 'stepper' }, h('span', { class: 'muted' }, 'Подходов'),

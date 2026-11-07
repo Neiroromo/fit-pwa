@@ -83,7 +83,7 @@ export function openProfile(app, anchor, startView = 'main') {
       row('user', 'Личные данные', { sub: 'Имя, аватар, пол, дата рождения', onClick: () => go('profile') }),
       row(googleLinked() ? googleLogo(20) : 'google', 'Google', { sub: googleLinked() ? 'Подключено' : 'Синхронизация данных между устройствами (тест)', onClick: () => go('google') }),
       row('bell', 'Напоминания', { sub: 'По модулям и функциям', onClick: () => go('reminders') }),
-      row('grid', 'Настроить модули', { onClick: () => { close(); app.openStore(); } }), // то же окно, что и кнопка «Модули» в навигации
+      row('grid', 'Настроить модули', { onClick: () => { close(); app.openStore({ onClose: () => openProfile(app, anchor) }); } }), // то же окно, что и кнопка «Модули»; закрытие возвращает в настройки профиля
       row('globe', 'Язык', { sub: LANGS[getSettings().app], onClick: () => go('lang') }),
       row('database', 'Данные на устройстве', { onClick: () => go('data') }),
     ],
