@@ -1,6 +1,6 @@
 // Модуль «Тренировки»: список тренировок, история, редактор, запуск. Календарь — виджет для Хаба.
 
-import { DEFAULT_REST, dayKey, groupByDay, fmtClock, makeFmt, startOfWeek, buildActive, publishActivity } from './data.js';
+import { DEFAULT_REST, dayKey, groupByDay, fmtClock, makeFmt, startOfWeek, buildActive, publishActivity, sortTemplates, weekdayIdx, weekdayNames } from './data.js';
 import { monthGrid } from './calendar.js';
 import { openEditor } from './editor.js';
 import { openRunner } from './runner.js';
@@ -9,6 +9,7 @@ import { openHistory } from './history.js';
 import { refreshCustom } from './customstore.js';
 import { openPicker } from './catalog.js';
 import { swipeRemove } from './swipe.js';
+import { enableSort } from './reorder.js';
 
 export default {
   async mount(page, ctx, params) {
@@ -26,8 +27,8 @@ export default {
     async function showHome() {
       disposeRunner?.();
       disposeRunner = null;
-      const [templates, sessions, active] = await Promise.all([templatesCol.list(), sessionsCol.list(), ctx.db.kv.get('active')]);
-      templates.sort((a, b) => a.createdAt - b.createdAt);
+      const [tpls, sessions, active] = await Promise.all([templatesCol.list(), sessionsCol.list(), ctx.db.kv.get('active')]);
+      const templates = sortTemplates(tpls);
 
       const listBox = h('div', { class: 'wk-list' });
 
@@ -67,6 +68,14 @@ export default {
       const lastDone = new Map();
       for (const s of sessions) if (!lastDone.has(s.workoutId) || lastDone.get(s.workoutId) < s.startedAt) lastDone.set(s.workoutId, s.startedAt);
 
+      const dayNames = weekdayNames(ctx.locale), today = weekdayIdx();
+      // ручная сортировка: перетаскивание за ручку слева; порядок сохраняется в поле order
+      const moveTemplate = async (from, to) => {
+        const order = templates.slice();
+        order.splice(to, 0, order.splice(from, 1)[0]);
+        for (const [i, t] of order.entries()) if (t.order !== i) await templatesCol.put({ ...t, order: i });
+        showHome();
+      };
       box.replaceChildren(...templates.map(t => {
         const last = lastDone.get(t.id);
         // удаляем сразу, без вопроса; внизу появляется сообщение с «Отменить»
@@ -76,10 +85,13 @@ export default {
           toast(ctx.t('Тренировка «{name}» удалена', { name: t.name }), { action: 'Отменить', onAction: async () => { await templatesCol.put(t); showHome(); } });
         };
         const content = h('div', { class: 'wk-content' },
+          templates.length > 1 ? h('button', { class: 'drag-handle wk-handle', title: 'Перетащить, чтобы изменить порядок', 'aria-label': 'Перетащить' }, icon('grip', 18)) : null,
           h('div', { class: 'grow', onClick: () => showEditor(t) },
             h('strong', null, t.name, t.ai ? h('span', { class: 'ai-badge', title: `${ctx.t('Создано ИИ')}: ${t.ai.by}` }, 'ИИ') : null),
             h('span', { class: 'muted small block' },
-              `${t.exercises.length} ${plural(t.exercises.length, 'упражнение', 'упражнения', 'упражнений')}` + (last ? ctx.t(' · последняя: {date}', { date: fmt.date(last) }) : ''))),
+              `${t.exercises.length} ${plural(t.exercises.length, 'упражнение', 'упражнения', 'упражнений')}` + (last ? ctx.t(' · последняя: {date}', { date: fmt.date(last) }) : '')),
+            // дни недели, в которые планируется эта тренировка (сегодняшний выделен)
+            t.days?.length ? h('span', { class: 'wk-days block' }, [...t.days].sort().map(d => h('span', { class: 'wk-day' + (d === today ? ' today' : '') }, ctx.ui.raw(dayNames[d])))) : null),
           t.draft ? null : iconBtn('share', 'Поделиться тренировкой', () => openShare(ctx, t)),
           iconBtn('edit', 'Редактировать', () => showEditor(t)),
           iconBtn('trash', 'Удалить тренировку', remove, 'danger desktop-only'),
@@ -88,6 +100,7 @@ export default {
         swipeRemove(row, content, remove);
         return row;
       }));
+      enableSort(box, { itemSel: '.wk-row', handleSel: '.wk-handle', onMove: moveTemplate });
     }
 
     // ---------- действия ----------
@@ -179,7 +192,9 @@ export default {
       id: 'quick',
       async render(body, ctx) {
         const { h, icon } = ctx.ui;
-        const [templates, active] = await Promise.all([ctx.db.collection('templates').list().then(l => l.filter(t => !t.draft)), ctx.db.kv.get('active')]);
+        const [all, active] = await Promise.all([ctx.db.collection('templates').list().then(l => l.filter(t => !t.draft)), ctx.db.kv.get('active')]);
+        const today = weekdayIdx();
+        const templates = sortTemplates(all).sort((a, b) => (b.days?.includes(today) ? 1 : 0) - (a.days?.includes(today) ? 1 : 0)); // тренировки на сегодня — первыми
         const limit = ctx.size.h >= 2 ? 5 : 2;
         if (!templates.length && !active) {
           body.replaceChildren(h('button', { class: 'btn', onClick: () => ctx.router.go('workouts', { create: true }) }, icon('plus', 16), 'Создать тренировку'));

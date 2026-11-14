@@ -234,6 +234,21 @@
                 }
               }
             }
+          },
+          "days": {
+            "type": "array",
+            "maxItems": 7,
+            "items": {
+              "enum": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri",
+                "sat",
+                "sun"
+              ]
+            }
           }
         }
       }

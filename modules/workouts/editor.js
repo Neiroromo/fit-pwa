@@ -28,6 +28,18 @@ export function openEditor(el, ctx, template, { onDone }) {
     name.addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); draft.name = snap; name.value = snap; name.blur(); } });
   }
   const list = h('div', { class: 'ex-list' });
+  // дни недели, на которые назначена тренировка (можно несколько или ни одного)
+  draft.days = Array.isArray(draft.days) ? draft.days : [];
+  const dayBox = h('div', { class: 'size-chips' });
+  const drawDays = () => {
+    const names = [0, 1, 2, 3, 4, 5, 6].map(i => new Date(2024, 0, 1 + i).toLocaleDateString(ctx.locale, { weekday: 'short' }));
+    dayBox.replaceChildren(...names.map((n, i) => h('button', {
+      type: 'button', class: 'chip-btn' + (draft.days.includes(i) ? ' on' : ''),
+      onClick: () => { draft.days = draft.days.includes(i) ? draft.days.filter(d => d !== i) : [...draft.days, i].sort(); drawDays(); },
+    }, raw(n))));
+  };
+  drawDays();
+  const daysField = h('div', { class: 'wk-days-edit' }, h('span', { class: 'muted small' }, 'Дни недели для этой тренировки (необязательно)'), dayBox);
 
   const dropFloating = () => document.querySelectorAll('body > .ex-sug').forEach(e => e.remove());
 
@@ -217,6 +229,7 @@ export function openEditor(el, ctx, template, { onDone }) {
       h('div', { class: 'row-gap' }, iconBtn('chevL', 'Назад', leave), h('h1', null, isNew ? 'Новая тренировка' : 'Редактирование')),
       h('button', { class: 'btn primary', onClick: save }, icon('check', 16), 'Сохранить')),
     name,
+    daysField,
     list,
     h('div', { class: 'row-gap' },
       h('button', { class: 'btn', onClick: () => { draft.exercises.push(newExercise()); render(); list.lastElementChild?.querySelector('input')?.focus(); } },

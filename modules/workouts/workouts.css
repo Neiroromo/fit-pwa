@@ -242,3 +242,12 @@ textarea.input.comment { resize: none; overflow: hidden; line-height: 1.4; min-h
 }
 .page > .row-gap { flex-wrap: wrap; }
 
+
+/* дни недели у тренировки и сортировка перетаскиванием */
+.wk-days { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.wk-day { padding: 1px 8px; border-radius: 99px; border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); font-size: 11.5px; line-height: 1.5; }
+.wk-day.today { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); font-weight: 600; }
+.wk-days-edit { display: flex; flex-direction: column; gap: 6px; }
+.wk-handle { margin-right: -4px; }
+.wk-row.dragging { position: relative; z-index: 5; box-shadow: 0 14px 34px rgba(0, 0, 0, .55); }
+.wk-row.dragging .wk-content { border-color: var(--accent); background: var(--panel-2); }

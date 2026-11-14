@@ -181,5 +181,8 @@
   "Удалить из истории тренировку «{name}» от {date}? Это действие нельзя отменить.": "Delete the workout “{name}” of {date} from history? This cannot be undone.",
   "Тренировка «{name}» удалена": "Workout “{name}” deleted",
   "Создано ИИ": "Created by AI",
-  "ИИ": "AI"
+  "ИИ": "AI",
+  "Дни недели для этой тренировки (необязательно)": "Weekdays for this workout (optional)",
+  "Перетащить, чтобы изменить порядок": "Drag to change the order",
+  "Перетащить": "Drag"
 }

@@ -1,13 +1,22 @@
 // Общие функции модуля «Тренировки».
 //
 // Коллекции (в пространстве имён workouts/):
-//   templates — {id, name, exercises:[{id, name, comment, sets, warmup}]}
+//   templates — {id, name, exercises:[{id, name, comment, sets, warmup}], days?: [0..6] (дни недели, 0 = понедельник), order?: число (ручная сортировка)}
 //   sessions  — выполненные тренировки:
 //               {id, workoutId, name, startedAt, endedAt, durationSec,
 //                exercises:[{name, comment, sets:[{kind:'warmup'|'work', kg, reps, restSec}]}]}
 //   kv: 'active' — идущая сейчас тренировка (переживает перезагрузку), 'settings' — {rest}
 
 export const DEFAULT_REST = 90;
+
+/** Порядок тренировок: сначала расставленные вручную (order), затем новые — по дате создания. */
+export const sortTemplates = list => list.slice().sort((a, b) =>
+  ((a.order != null ? 0 : 1) - (b.order != null ? 0 : 1)) || (a.order != null ? a.order - b.order : (a.createdAt ?? 0) - (b.createdAt ?? 0)));
+
+/** Номер дня недели: 0 = понедельник … 6 = воскресенье. */
+export const weekdayIdx = (d = new Date()) => (new Date(d).getDay() + 6) % 7;
+/** Короткие названия дней недели начиная с понедельника на языке locale. */
+export const weekdayNames = locale => [0, 1, 2, 3, 4, 5, 6].map(i => new Date(2024, 0, 1 + i).toLocaleDateString(locale, { weekday: 'short' }));
 
 /**
  * Публикует в общее хранилище (ctx.shared, ключ 'activity') число и длительность выполненных тренировок по дням: {v: 1, days: {'YYYY-MM-DD': {n, sec}}}.

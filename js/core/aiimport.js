@@ -15,6 +15,10 @@ const GROUP_RU = { грудь: 'chest', спина: 'back', плечи: 'shoulde
 const LEVELS = ['beginner', 'intermediate', 'expert'];
 const MEALS_DEFAULT = [{ id: 'breakfast', name: 'Завтрак' }, { id: 'lunch', name: 'Обед' }, { id: 'dinner', name: 'Ужин' }, { id: 'snack', name: 'Перекус' }];
 const BATCHES_KEY = 'app/ai-imports';
+const WEEKDAYS = { mon: 0, tue: 1, wed: 2, thu: 3, fri: 4, sat: 5, sun: 6, пн: 0, вт: 1, ср: 2, чт: 3, пт: 4, сб: 5, вс: 6 };
+/** Дни недели из файла (mon…sun или пн…вс) → [0..6], 0 = понедельник. */
+const parseDays = v => (Array.isArray(v) ? [...new Set(v.map(d => { const k = String(d).trim().toLowerCase(); return WEEKDAYS[k.slice(0, 3)] ?? WEEKDAYS[k.slice(0, 2)]; }).filter(x => x != null))].sort() : []);
+const DAY_RU = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
 
 const norm = s => String(s ?? '').toLowerCase().replace(/ё/g, 'е').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 const noParens = s => norm(String(s ?? '').replace(/\([^)]*\)/g, ' '));
@@ -182,9 +186,10 @@ export async function buildPlan(app, data) {
       exs.push(item);
     }
     if (!exs.length) return row('workout', name, 'error', 'не осталось ни одного корректного упражнения');
-    records.push({ c: 'workouts/templates', rec: { id: uid(), name, exercises: exs, ai: mark } });
+    const days = parseDays(w.days);
+    records.push({ c: 'workouts/templates', rec: { id: uid(), name, exercises: exs, ...(days.length ? { days } : {}), ai: mark } });
     counts.workouts++;
-    row('workout', name, notes.length ? 'mapped' : 'new', `${exs.length} упр.` + (name !== w.name.trim() ? `; название занято, добавлено как «${name}»` : '') + (notes.length ? '; ' + notes.join('; ') : ''));
+    row('workout', name, notes.length ? 'mapped' : 'new', `${exs.length} упр.` + (days.length ? ` · ${days.map(d => DAY_RU[d]).join(', ')}` : '') + (name !== w.name.trim() ? `; название занято, добавлено как «${name}»` : '') + (notes.length ? '; ' + notes.join('; ') : ''));
   });
 
   // ---- меню ----
@@ -251,7 +256,13 @@ export async function buildPlan(app, data) {
 // ---------- запись, отмена, снятие меток ----------
 export async function commitPlan(app, plan) {
   const refs = [];
-  for (const { c, rec } of plan.records) { await app.db.collection(c).put(rec); refs.push([c, rec.id]); }
+  let last = 0;
+  for (const { c, rec } of plan.records) {
+    while (Date.now() === last) await new Promise(r => setTimeout(r, 1)); // у каждой записи своя миллисекунда создания: порядок тренировок в файле сохраняется
+    await app.db.collection(c).put(rec);
+    last = Date.now();
+    refs.push([c, rec.id]);
+  }
   const list = await app.db.kv.get(BATCHES_KEY, []);
   list.unshift({ id: plan.batch, at: Date.now(), by: plan.by, note: plan.note ?? '', counts: plan.counts, refs });
   await app.db.kv.set(BATCHES_KEY, list.slice(0, 20));
