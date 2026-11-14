@@ -184,5 +184,7 @@
   "ИИ": "AI",
   "Дни недели для этой тренировки (необязательно)": "Weekdays for this workout (optional)",
   "Перетащить, чтобы изменить порядок": "Drag to change the order",
-  "Перетащить": "Drag"
+  "Перетащить": "Drag",
+  "Созданное упражнение: добавлено по файлу от ИИ ({by}, {date}). Проверьте технику перед выполнением.": "Created exercise: added from an AI file ({by}, {date}). Check the technique before doing it.",
+  "Созданное упражнение: добавлено вами, в каталоге его нет.": "Created exercise: added by you, it is not in the catalog."
 }

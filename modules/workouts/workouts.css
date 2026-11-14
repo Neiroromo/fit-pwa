@@ -251,3 +251,9 @@ textarea.input.comment { resize: none; overflow: hidden; line-height: 1.4; min-h
 .wk-handle { margin-right: -4px; }
 .wk-row.dragging { position: relative; z-index: 5; box-shadow: 0 14px 34px rgba(0, 0, 0, .55); }
 .wk-row.dragging .wk-content { border-color: var(--accent); background: var(--panel-2); }
+
+/* пометка «созданное упражнение» в описании */
+.ex-origin { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px dashed var(--line); border-radius: 10px; background: var(--panel-2); font-size: 13.5px; }
+.ex-origin .ai-badge { margin-left: 0; flex: none; }
+.ex-origin > .icon { color: var(--accent); flex: none; }
+.ex-origin.ai { border-color: color-mix(in srgb, #8b5cf6 55%, var(--line)); }

@@ -126,6 +126,12 @@ export function renderDetail(ctx, ex, { onPick, onBack, onEdit, onDelete } = {})
         hasRu ? h('div', { class: 'size-chips' }, langChip('ru', 'RU'), langChip('en', 'EN')) : onlyEnglish ? h('span', { class: 'chip ok' }, raw('English')) : null,
         ex.custom && onEdit ? iconBtn('edit', 'Редактировать', () => onEdit(ex)) : null,
         ex.custom && onDelete ? iconBtn('trash', 'Удалить упражнение', () => onDelete(ex), 'danger') : null),
+      // пометка происхождения: своё упражнение пользователя или созданное по файлу от ИИ
+      ex.custom ? h('div', { class: 'ex-origin' + (ex.ai ? ' ai' : '') },
+        ex.ai ? h('span', { class: 'ai-badge' }, 'ИИ') : icon('user', 16),
+        h('span', null, ex.ai
+          ? ctx.t('Созданное упражнение: добавлено по файлу от ИИ ({by}, {date}). Проверьте технику перед выполнением.', { by: ex.ai.by, date: ex.ai.at ? new Date(ex.ai.at + 'T00:00:00').toLocaleDateString(ctx.locale, { day: 'numeric', month: 'long', year: 'numeric' }) : '' })
+          : ctx.t('Созданное упражнение: добавлено вами, в каталоге его нет.'))) : null,
       ex.img?.length ? h('div', { class: 'ex-imgs' }, ex.img.slice(0, 3).map(src => h('img', { src, alt: ex.n, loading: 'lazy' }))) : null,
       h('div', { class: 'row-gap wrap' }, tags.map(t => h('span', { class: 'chip' }, raw(t)))),
       ex.m?.length ? h('p', null, h('span', { class: 'muted' }, 'Основные мышцы: '), mus(ex.m)) : null,
