@@ -70,7 +70,7 @@ async function ensureClient() {
       api('drive/v3/about?fields=user(displayName,emailAddress,photoLink)')
         .then(async a => setUser({ name: a.user?.displayName || '', email: a.user?.emailAddress || '', photo: await loadPhoto(a.user?.photoLink) }))
         .catch(() => {})
-        .finally(() => p?.resolve(token));
+        .finally(() => { window.dispatchEvent(new CustomEvent('fitpwa:google')); p?.resolve(token); }); // интерфейс узнаёт, что сессия активна
     },
     error_callback: e => {
       const p = pending; pending = null;
@@ -95,6 +95,15 @@ export async function signIn({ interactive = true } = {}) {
     pending = { resolve, reject };
     c.requestAccessToken({ prompt: interactive ? (wasLinked() ? '' : 'consent') : 'none' });
   });
+}
+
+/**
+ * После перезагрузки страницы токена в памяти нет, хотя вход был: пробуем восстановить сессию тихо (без окна), если согласие уже дано.
+ * Не получилось (например, закончилась сессия Google) — ничего страшного: в профиле будет «Нужно войти заново».
+ */
+export async function restoreSession() {
+  if (!wasLinked() || isSignedIn()) return;
+  try { await signIn({ interactive: false }); } catch { /* нужен интерактивный вход */ }
 }
 
 export function signOut() {

@@ -99,4 +99,5 @@ export default {
   'Восстановить из копии': 'Restore from backup', 'В копии нет записей.': 'The backup has no records.', 'Настройки приложения': 'App settings', 'Общие данные': 'Shared data',
   'Данные восстановлены. Перезагрузка…': 'Data restored. Reloading…', 'Не удалось прочитать файл': 'Could not read the file',
   'Модули обновлены. Перезагрузка…': 'Modules updated. Reloading…', 'Обновить все ({n})': 'Update all ({n})',
+  'Нужно войти заново': 'Sign in again', 'Аккаунт подключён, но сессия закончилась. Нажмите «Войти через Google», чтобы продолжить.': 'The account is connected, but the session has expired. Tap “Sign in with Google” to continue.',
 };

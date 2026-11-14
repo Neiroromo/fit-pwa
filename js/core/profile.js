@@ -82,7 +82,7 @@ export function openProfile(app, anchor, startView = 'main') {
       h('div', { class: 'profile-card' }, avatarEl(app.profile, 48),
         h('div', null, h('strong', null, raw(shownName(app.profile))), h('div', { class: 'muted small' }, googleLinked() && getGoogleUser()?.email ? getGoogleUser().email : 'Локальный профиль'))),
       row('user', 'Личные данные', { sub: 'Имя, аватар, пол, дата рождения', onClick: () => go('profile') }),
-      row(googleLinked() ? googleLogo(20) : 'google', 'Google', { sub: googleLinked() ? 'Подключено' : 'Синхронизация данных между устройствами (тест)', onClick: () => go('google') }),
+      row(googleLinked() ? googleLogo(20) : 'google', 'Google', { sub: googleLinked() ? (googleSignedIn() ? 'Подключено' : 'Нужно войти заново') : 'Синхронизация данных между устройствами (тест)', onClick: () => go('google') }),
       row('bell', 'Напоминания', { sub: 'По модулям и функциям', onClick: () => go('reminders') }),
       row('grid', 'Настроить модули', { onClick: () => { close(); app.openStore({ onClose: () => openProfile(app, anchor) }); } }), // то же окно, что и кнопка «Модули»; закрытие возвращает в настройки профиля
       row('globe', 'Язык', { sub: LANGS[getSettings().app], onClick: () => go('lang') }),
@@ -215,7 +215,7 @@ export function openProfile(app, anchor, startView = 'main') {
         offBtn.hidden = !m.wasLinked();
         signBtn.disabled = m.isSignedIn();
         const u = m.getUser();
-        status.textContent = m.isSignedIn() ? `Подключено: ${u?.email || 'аккаунт Google'} (сессия активна).` : m.wasLinked() ? 'Входили раньше; нажмите «Войти», чтобы продолжить сессию.' : 'Не подключено.';
+        status.textContent = m.isSignedIn() ? `Подключено: ${u?.email || 'аккаунт Google'} (сессия активна).` : m.wasLinked() ? 'Аккаунт подключён, но сессия закончилась. Нажмите «Войти через Google», чтобы продолжить.' : 'Не подключено.';
       };
       refresh();
       const run = fn => async () => {
@@ -268,6 +268,9 @@ export function openProfile(app, anchor, startView = 'main') {
     },
   };
 
+  // вход в Google мог восстановиться уже после открытия окна: обновляем главный экран и экран Google
+  const onGoogle = () => { if (!pop.isConnected) return window.removeEventListener('fitpwa:google', onGoogle); if (['main', 'google'].includes(stack.at(-1))) render(); };
+  window.addEventListener('fitpwa:google', onGoogle);
   function go(v) { stack.push(v); render(); }
   function render() { pop.replaceChildren(...views[stack.at(-1)]().filter(Boolean)); }
   render();

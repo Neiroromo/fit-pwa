@@ -83,6 +83,7 @@ async function boot() {
   app.shell.renderProfile();
   app.shell.refreshBell();
   registry.subscribe(() => app.shell.renderNav());
+  import('./core/google.js').then(g => g.restoreSession()).catch(() => {}); // вход в Google переживает перезагрузку страницы (тихо, без окна)
   notifyUpdates(app).catch(console.error);
   startReminders(app, moduleContext); // напоминания модулей (см. core/reminders.js)
 
