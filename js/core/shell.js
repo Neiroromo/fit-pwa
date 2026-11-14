@@ -118,28 +118,76 @@ export function buildShell(app) {
 
 // ---------- Обновление модулей ----------
 
-/** Скачивает новую версию модуля и перезапускает страницу, чтобы всё применилось сразу. */
-export async function updateModule(app, id, onProgress) {
-  await app.registry.install(id, onProgress);
-  location.reload();
-  await new Promise(() => {}); // до перезагрузки ничего больше не делаем
+// Состояние обновлений общее для всего приложения: кнопка в заголовке модуля, кнопки в окне «Модули» и «Обновить все» показывают одно и то же
+// (процент и блокировку) и перерисовываются независимо друг от друга. Страница перезапускается один раз, когда закончились ВСЕ загрузки.
+const UPD = { progress: new Map(), jobs: new Map(), subs: new Set(), timer: null, needReload: false };
+const notifyUpd = () => [...UPD.subs].forEach(f => f());
+
+function scheduleReload(app) {
+  clearTimeout(UPD.timer);
+  UPD.timer = setTimeout(() => { if (!UPD.jobs.size) { toast(app.t('Модули обновлены. Перезагрузка…')); setTimeout(() => location.reload(), 300); } }, 700);
 }
 
-/** Кнопка «Обновить» для заголовка модуля. */
-export function updateButton(app, id) {
-  const btn = h('button', { class: 'btn primary upd-btn', title: 'Скачать обновление модуля и перезапустить страницу' }, icon('download', 14), 'Обновить');
-  btn.addEventListener('click', async () => {
-    btn.disabled = true;
-    btn.replaceChildren('0%');
+/** Скачивает новую версию модуля. Несколько обновлений могут идти одновременно; страница перезапускается после последнего. */
+export function updateModule(app, id) {
+  if (UPD.jobs.has(id)) return UPD.jobs.get(id);
+  clearTimeout(UPD.timer);
+  UPD.progress.set(id, 0);
+  notifyUpd();
+  const job = (async () => {
+    let ok = false;
     try {
-      await updateModule(app, id, p => (btn.textContent = Math.round(p * 100) + '%'));
-    } catch (e) {
-      btn.disabled = false;
-      btn.replaceChildren(icon('download', 14), app.t('Обновить'));
-      toast(app.t('Ошибка загрузки: {msg}', { msg: e.message }));
+      await app.registry.install(id, p => { UPD.progress.set(id, p); notifyUpd(); });
+      ok = true;
+    } finally {
+      UPD.progress.delete(id);
+      UPD.jobs.delete(id);
+      if (ok) UPD.needReload = true;
+      notifyUpd();
+      if (UPD.needReload && !UPD.jobs.size) scheduleReload(app); // и если часть загрузок закончилась ошибкой: уже скачанное всё равно применяем
     }
-  });
+  })();
+  UPD.jobs.set(id, job);
+  return job;
+}
+
+/** Кнопка следит за общим состоянием: пока модуль (или любой из ids) обновляется, она заблокирована и показывает процент. */
+function bindUpdateBtn(btn, ids, idle) {
+  let seen = false;
+  const paint = () => {
+    if (btn.isConnected) seen = true; else if (seen) { UPD.subs.delete(paint); return; } // кнопку убрали из страницы
+    const busy = ids().filter(id => UPD.progress.has(id));
+    if (busy.length) {
+      btn.disabled = true; btn.dataset.busy = '1';
+      btn.textContent = Math.round((busy.reduce((a, id) => a + UPD.progress.get(id), 0) / busy.length) * 100) + '%';
+    } else if (btn.dataset.busy) {
+      btn.disabled = false; delete btn.dataset.busy;
+      btn.replaceChildren(...idle());
+    }
+  };
+  UPD.subs.add(paint);
+  paint();
   return btn;
+}
+
+/** Кнопка «Обновить» для одного модуля: и в заголовке модуля, и в окне «Модули». */
+export function updateButton(app, id, size = 14) {
+  const idle = () => [icon('download', size), app.t('Обновить')];
+  const btn = h('button', { class: 'btn primary upd-btn', title: 'Скачать обновление модуля и перезапустить страницу' }, ...idle());
+  btn.addEventListener('click', () => updateModule(app, id).catch(e => toast(app.t('Ошибка загрузки: {msg}', { msg: e.message }))));
+  return bindUpdateBtn(btn, () => [id], idle);
+}
+
+/** «Обновить все»: когда обновлений несколько. */
+export function updateAllButton(app, ids) {
+  const idle = () => [icon('download', 16), app.t('Обновить все ({n})', { n: ids.length })];
+  const btn = h('button', { class: 'btn primary' }, ...idle());
+  btn.addEventListener('click', async () => {
+    const res = await Promise.allSettled(ids.map(id => updateModule(app, id)));
+    const bad = res.find(r => r.status === 'rejected');
+    if (bad) toast(app.t('Ошибка загрузки: {msg}', { msg: bad.reason?.message ?? '' }));
+  });
+  return bindUpdateBtn(btn, () => ids, idle);
 }
 
 /** Уведомление о доступных обновлениях (по одному на версию модуля). */
@@ -191,7 +239,7 @@ export function openStore(app, { onClose } = {}) {
         const cat = info(mod.id);
         const el = card(mod.icon, nameOf(mod), cat ? tr(cat.description) : '', `v${mod.version}`, [
           h('div', { class: 'row-gap' },
-            registry.needsUpdate(mod.id) ? downloadBtn(cat, 'Обновить') : null,
+            registry.needsUpdate(mod.id) || UPD.progress.has(mod.id) ? updateButton(app, mod.id, 16) : null,
             iconBtn('chevU', 'Выше', () => registry.move(mod.id, -1), 'store-arrow' + (i === 0 ? ' off' : '')),
             iconBtn('chevD', 'Ниже', () => registry.move(mod.id, 1), 'store-arrow' + (i === installed.length - 1 ? ' off' : '')),
             iconBtn('trash', 'Удалить', () => removeModule(mod), 'danger')),
@@ -207,6 +255,10 @@ export function openStore(app, { onClose } = {}) {
 
     body.replaceChildren(...[
       h('p', { class: 'muted store-intro' }, 'Скачайте только то, что нужно. Модули загружаются из репозитория проекта и работают офлайн.'),
+      (() => { // несколько обновлений сразу: одна кнопка на все
+        const ids = installed.filter(m => registry.needsUpdate(m.id) || UPD.progress.has(m.id)).map(m => m.id);
+        return ids.length > 1 ? h('div', { class: 'row-gap', style: { justifyContent: 'flex-end' } }, updateAllButton(app, ids)) : null;
+      })(),
       section('Установленные', installedRows),
       section('Можно установить', available),
       section('Скоро', soon),
@@ -227,8 +279,6 @@ export function openStore(app, { onClose } = {}) {
       btn.disabled = true;
       btn.replaceChildren('0%');
       try {
-        const updating = registry.isInstalled(item.id);
-        if (updating) return updateModule(app, item.id, p => (btn.textContent = Math.round(p * 100) + '%')); // скачивает и перезапускает страницу
         await registry.install(item.id, p => (btn.textContent = Math.round(p * 100) + '%'));
         toast(app.t('«{name}» скачан', { name: tr(item.name) }));
       } catch (e) {

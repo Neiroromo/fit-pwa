@@ -98,4 +98,5 @@ export default {
   'Записи с теми же ключами будут заменены данными из копии, остальные ваши данные останутся. Перед восстановлением можно сделать «Экспорт в файл».': 'Records with the same keys are replaced by the backup, your other data stays. You can use “Export to file” before restoring.',
   'Восстановить из копии': 'Restore from backup', 'В копии нет записей.': 'The backup has no records.', 'Настройки приложения': 'App settings', 'Общие данные': 'Shared data',
   'Данные восстановлены. Перезагрузка…': 'Data restored. Reloading…', 'Не удалось прочитать файл': 'Could not read the file',
+  'Модули обновлены. Перезагрузка…': 'Modules updated. Reloading…', 'Обновить все ({n})': 'Update all ({n})',
 };
