@@ -63,7 +63,6 @@ export default {
   'Добавить {size}': 'Add {size}',
 
   // импорт от ИИ
-  'Импорт от ИИ': 'Import from AI',
   'ИИ (ChatGPT, Gemini, Claude и другие) может составить программу тренировок или меню в виде файла. Дайте ему ссылку на инструкцию, получите JSON и загрузите его здесь: данные добавятся к вашим, ничего не перезапишется.': 'An AI (ChatGPT, Gemini, Claude and others) can prepare a workout program or a meal plan as a file. Give it the link to the instructions, get a JSON file and load it here: the data is added to yours, nothing is overwritten.',
   'Скопировать инструкцию для ИИ': 'Copy instructions for AI', 'Скопировать ссылку': 'Copy link',
   'Добавить в инструкцию мои данные (пол, возраст, рост, вес, цель по калориям)': 'Add my data to the instructions (sex, age, height, weight, calorie goal)',
@@ -73,7 +72,7 @@ export default {
   'Это не JSON. Скопируйте ответ ИИ целиком, без пояснений до и после блока.': 'This is not JSON. Copy the AI answer in full, without text before and after the block.',
   'Не удалось разобрать файл: {msg}': 'Could not read the file: {msg}',
   'Файл не похож на данные от ИИ: ожидается объект JSON.': 'The file does not look like AI data: a JSON object is expected.',
-  'Это не файл формата «fit-pwa-ai» (поле format). Возможно, это резервная копия приложения: её загружают в разделе «Импорт из файла».': 'This is not a “fit-pwa-ai” file (format field). It may be an app backup: load it with “Import from file”.',
+  'Неизвестный формат файла: ожидается резервная копия приложения или файл «fit-pwa-ai» (поле format).': 'Unknown file format: an app backup or a “fit-pwa-ai” file (format field) is expected.',
   'Неизвестная версия формата (поддерживается version: 1).': 'Unknown format version (version: 1 is supported).',
   'В файле нет ни упражнений, ни продуктов, ни тренировок, ни меню (разделы exercises, foods, workouts, mealPlan).': 'The file has no exercises, foods, workouts or meal plan (sections exercises, foods, workouts, mealPlan).',
   'Из файла нечего добавить: все элементы содержат ошибки (см. список ниже).': 'Nothing to add: all items contain errors (see the list below).',
@@ -91,4 +90,12 @@ export default {
   'Прошлые импорты': 'Past imports', 'записей: {n}': 'records: {n}', 'Снять метки': 'Remove badges', 'Метки сняты': 'Badges removed',
   'Убрать значок «ИИ», записи останутся': 'Remove the “AI” badge, the records stay', 'Отменить импорт': 'Undo import', 'Импорт отменён: записи удалены': 'Import undone: records deleted',
   'Создано ИИ': 'Created by AI',
+  'Импорт': 'Import', 'Выбрать файл': 'Choose a file', 'Или вставьте сюда содержимое файла': 'Or paste the file contents here',
+  'Загрузите файл: резервную копию приложения или файл с программой тренировок, меню, упражнениями и продуктами от ИИ. Тип определится сам: данные от ИИ только добавятся к вашим, а копию можно восстановить после проверки.': 'Load a file: an app backup or an AI file with a workout program, meal plan, exercises and foods. The type is detected automatically: AI data is only added to yours, and a backup can be restored after a check.',
+  'Как получить файл от ИИ': 'How to get a file from AI',
+  'ИИ (ChatGPT, Gemini, Claude и другие) может составить программу тренировок или меню в виде файла. Скопируйте инструкцию, вставьте её в чат с ИИ и опишите, что вам нужно. Полученный JSON загрузите здесь.': 'An AI (ChatGPT, Gemini, Claude and others) can prepare a workout program or a meal plan as a file. Copy the instructions, paste them into the AI chat and describe what you need. Load the resulting JSON here.',
+  'Резервная копия приложения': 'App backup', 'Записей: {n}': 'Records: {n}',
+  'Записи с теми же ключами будут заменены данными из копии, остальные ваши данные останутся. Перед восстановлением можно сделать «Экспорт в файл».': 'Records with the same keys are replaced by the backup, your other data stays. You can use “Export to file” before restoring.',
+  'Восстановить из копии': 'Restore from backup', 'В копии нет записей.': 'The backup has no records.', 'Настройки приложения': 'App settings', 'Общие данные': 'Shared data',
+  'Данные восстановлены. Перезагрузка…': 'Data restored. Reloading…', 'Не удалось прочитать файл': 'Could not read the file',
 };

@@ -76,7 +76,7 @@ export async function buildPlan(app, data) {
   const fatal = msg => ({ fatal: msg, rows, records: [], counts });
 
   if (!data || typeof data !== 'object' || Array.isArray(data)) return fatal('Файл не похож на данные от ИИ: ожидается объект JSON.');
-  if (data.format !== 'fit-pwa-ai') return fatal('Это не файл формата «fit-pwa-ai» (поле format). Возможно, это резервная копия приложения: её загружают в разделе «Импорт из файла».');
+  if (data.format !== 'fit-pwa-ai') return fatal('Неизвестный формат файла: ожидается резервная копия приложения или файл «fit-pwa-ai» (поле format).');
   if (data.version !== 1) return fatal('Неизвестная версия формата (поддерживается version: 1).');
   const by = isStr(data.generatedBy, 60) ? data.generatedBy.trim() : 'ИИ';
   const batch = 'ai-' + uid().slice(0, 8);
@@ -311,12 +311,12 @@ async function copyText(text) {
   return ok;
 }
 
-// ---------- окно «Импорт от ИИ» ----------
+// ---------- окно «Импорт»: файл от ИИ или резервная копия ----------
 export function openAiImport(app, { onClose } = {}) {
   const t = app.t;
   const out = h('div', { class: 'ai-out' });
   const hist = h('div', { class: 'ai-hist' });
-  const paste = h('textarea', { class: 'input seed', rows: '4', placeholder: 'Или вставьте сюда JSON от ИИ', spellcheck: 'false' });
+  const paste = h('textarea', { class: 'input seed', rows: '4', placeholder: 'Или вставьте сюда содержимое файла', spellcheck: 'false' });
   const file = h('input', { type: 'file', accept: 'application/json,.json,text/plain', hidden: true });
   const withData = h('input', { type: 'checkbox' });
   let plan = null;
@@ -357,6 +357,27 @@ export function openAiImport(app, { onClose } = {}) {
       h('p', { class: 'muted small' }, t('Существующие данные не изменяются. Добавленное помечается значком «ИИ», весь импорт можно отменить ниже.')));
   }
 
+  /** Резервная копия приложения (файл «Экспорт в файл»): показываем, что внутри, и восстанавливаем по кнопке. Записи с теми же ключами заменяются данными из копии. */
+  function showBackup(data) {
+    plan = null;
+    const names = { workouts: 'Тренировки', nutrition: 'Дневник питания', monitoring: 'Мониторинг', shared: 'Общие данные', app: 'Настройки приложения', _kv: 'Настройки приложения' };
+    const by = new Map();
+    for (const r of data.records) {
+      if (r.deleted) continue;
+      const k = names[String(r.c).split('/')[0]] ?? String(r.c).split('/')[0];
+      by.set(k, (by.get(k) ?? 0) + 1);
+    }
+    const total = [...by.values()].reduce((x, y) => x + y, 0);
+    out.replaceChildren(
+      h('div', { class: 'ai-sum' }, h('strong', null, t('Резервная копия приложения')),
+        data.exportedAt ? h('p', { class: 'muted small' }, document.createTextNode(new Date(data.exportedAt).toLocaleString())) : null,
+        h('p', null, document.createTextNode(`${t('Записей: {n}', { n: total })} · ${[...by].map(([k, n]) => `${t(k)}: ${n}`).join(', ')}`))),
+      h('p', { class: 'muted small' }, t('Записи с теми же ключами будут заменены данными из копии, остальные ваши данные останутся. Перед восстановлением можно сделать «Экспорт в файл».')),
+      total ? h('button', { class: 'btn primary wide', onClick: async () => {
+        try { await app.db.importAll(data); toast(t('Данные восстановлены. Перезагрузка…')); setTimeout(() => location.reload(), 800); } catch (e) { toast(e.message ? t(e.message) : t('Не удалось прочитать файл')); }
+      } }, icon('upload', 16), t('Восстановить из копии')) : h('p', { class: 'ai-err' }, t('В копии нет записей.')));
+  }
+
   async function doCommit() {
     if (!plan?.records.length) return;
     try {
@@ -372,6 +393,7 @@ export function openAiImport(app, { onClose } = {}) {
     out.replaceChildren(h('p', { class: 'muted' }, t('Проверяю…')));
     let data;
     try { data = JSON.parse(text.trim().replace(/^```(?:json)?\s*|\s*```$/g, '')); } catch { return out.replaceChildren(h('p', { class: 'ai-err' }, t('Это не JSON. Скопируйте ответ ИИ целиком, без пояснений до и после блока.'))); }
+    if (data?.app === 'fit-pwa' && Array.isArray(data.records)) return showBackup(data); // резервная копия приложения
     try { showPlan(await buildPlan(app, data)); } catch (e) { console.error(e); out.replaceChildren(h('p', { class: 'ai-err' }, t('Не удалось разобрать файл: {msg}', { msg: e.message }))); }
   }
 
@@ -389,22 +411,25 @@ export function openAiImport(app, { onClose } = {}) {
   }
 
   const m = modal({
-    title: 'Импорт от ИИ',
+    title: 'Импорт',
     wide: true,
     onClose,
     body: h('div', { class: 'form ai-form' },
-      h('p', { class: 'muted small' }, 'ИИ (ChatGPT, Gemini, Claude и другие) может составить программу тренировок или меню в виде файла. Дайте ему ссылку на инструкцию, получите JSON и загрузите его здесь: данные добавятся к вашим, ничего не перезапишется.'),
+      h('p', { class: 'muted small' }, 'Загрузите файл: резервную копию приложения или файл с программой тренировок, меню, упражнениями и продуктами от ИИ. Тип определится сам: данные от ИИ только добавятся к вашим, а копию можно восстановить после проверки.'),
       h('div', { class: 'row-gap wrap' },
-        h('button', { class: 'btn', onClick: async () => toast((await copyText(await buildPrompt(app, withData.checked))) ? t('Инструкция скопирована: вставьте её в чат с ИИ') : t('Не удалось скопировать')) }, icon('copy', 16), 'Скопировать инструкцию для ИИ'),
-        h('button', { class: 'btn', onClick: async () => toast((await copyText(baseUrl() + 'AGENT.md')) ? t('Ссылка скопирована') : t('Не удалось скопировать')) }, icon('copy', 16), 'Скопировать ссылку')),
-      h('label', { class: 'check' }, withData, h('span', null, 'Добавить в инструкцию мои данные (пол, возраст, рост, вес, цель по калориям)')),
-      h('hr', { class: 'ai-hr' }),
-      h('div', { class: 'row-gap wrap' },
-        h('button', { class: 'btn primary', onClick: () => file.click() }, icon('upload', 16), 'Выбрать файл от ИИ'),
+        h('button', { class: 'btn primary', onClick: () => file.click() }, icon('upload', 16), 'Выбрать файл'),
         file),
       paste,
-      h('button', { class: 'btn', onClick: () => paste.value.trim() ? check(paste.value) : toast(t('Вставьте JSON или выберите файл')) }, icon('check', 16), 'Проверить вставленное'),
-      out, hist),
+      h('button', { class: 'btn', onClick: () => (paste.value.trim() ? check(paste.value) : toast(t('Вставьте JSON или выберите файл'))) }, icon('check', 16), 'Проверить вставленное'),
+      out,
+      hist,
+      h('details', { class: 'ai-group' },
+        h('summary', null, 'Как получить файл от ИИ'),
+        h('p', { class: 'muted small' }, 'ИИ (ChatGPT, Gemini, Claude и другие) может составить программу тренировок или меню в виде файла. Скопируйте инструкцию, вставьте её в чат с ИИ и опишите, что вам нужно. Полученный JSON загрузите здесь.'),
+        h('div', { class: 'row-gap wrap' },
+          h('button', { class: 'btn', onClick: async () => toast((await copyText(await buildPrompt(app, withData.checked))) ? t('Инструкция скопирована: вставьте её в чат с ИИ') : t('Не удалось скопировать')) }, icon('copy', 16), 'Скопировать инструкцию для ИИ'),
+          h('button', { class: 'btn', onClick: async () => toast((await copyText(baseUrl() + 'AGENT.md')) ? t('Ссылка скопирована') : t('Не удалось скопировать')) }, icon('copy', 16), 'Скопировать ссылку')),
+        h('label', { class: 'check' }, withData, h('span', null, 'Добавить в инструкцию мои данные (пол, возраст, рост, вес, цель по калориям)')))),
   });
   drawHist();
   return m;

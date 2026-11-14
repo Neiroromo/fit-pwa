@@ -246,14 +246,6 @@ export function openProfile(app, anchor, startView = 'main') {
     },
 
     data: () => {
-      const file =h('input', { type: 'file', accept: 'application/json', hidden: true });
-      file.addEventListener('change', async () => {
-        try {
-          await app.db.importAll(JSON.parse(await file.files[0].text()));
-          toast('Данные восстановлены. Перезагрузка…');
-          setTimeout(() => location.reload(), 800);
-        } catch (e) { toast(e.message ? app.t(e.message) : 'Не удалось прочитать файл'); }
-      });
       return [
         head('Данные на устройстве'),
         h('div', { class: 'form' },
@@ -264,10 +256,8 @@ export function openProfile(app, anchor, startView = 'main') {
             a.click();
             URL.revokeObjectURL(a.href);
           } }, icon('download', 16), 'Экспорт в файл'),
-          h('button', { class: 'btn', onClick: () => file.click() }, icon('upload', 16), 'Импорт из файла'),
-          file,
-          // файл от ИИ-агента (программа тренировок, меню, новые упражнения и продукты): добавляется к данным, ничего не перезаписывает
-          h('button', { class: 'btn', onClick: () => { close(); openAiImport(app, { onClose: () => openProfile(app, anchor, 'data') }); } }, icon('bolt', 16), 'Импорт от ИИ'),
+          // один вход для всего: резервная копия приложения и файл от ИИ-агента (программа, меню, упражнения, продукты) определяются по содержимому
+          h('button', { class: 'btn', onClick: () => { close(); openAiImport(app, { onClose: () => openProfile(app, anchor, 'data') }); } }, icon('upload', 16), 'Импорт из файла'),
           h('button', { class: 'btn danger', onClick: async () => {
             if (!(await confirmDialog('Удалить ВСЕ данные на этом устройстве: записи всех модулей, историю и настройки? Данные в Google Диске не затрагиваются. Действие необратимо — сделайте резервную копию, если нужно.', { okText: 'Удалить всё', danger: true }))) return;
             await app.db.clearAll();
