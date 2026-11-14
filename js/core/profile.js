@@ -5,6 +5,7 @@ import { h, raw, icon, iconBtn, toast, dismissable, confirmDialog } from './ui.j
 import { LANGS, getSettings, saveSettings, translator } from './i18n.js';
 import { getUser as getGoogleUser, isSignedIn as googleSignedIn, wasLinked as googleLinked } from './google.js';
 import { getReminderSettings, saveReminderSettings, reminderOn } from './reminders.js';
+import { openAiImport } from './aiimport.js';
 
 /** Имя для показа: введённое пользователем как есть; если не задано (или осталось старое «Гость») — «Гость» на языке приложения. */
 export const shownName = p => {
@@ -265,6 +266,8 @@ export function openProfile(app, anchor, startView = 'main') {
           } }, icon('download', 16), 'Экспорт в файл'),
           h('button', { class: 'btn', onClick: () => file.click() }, icon('upload', 16), 'Импорт из файла'),
           file,
+          // файл от ИИ-агента (программа тренировок, меню, новые упражнения и продукты): добавляется к данным, ничего не перезаписывает
+          h('button', { class: 'btn', onClick: () => { close(); openAiImport(app, { onClose: () => openProfile(app, anchor, 'data') }); } }, icon('bolt', 16), 'Импорт от ИИ'),
           h('button', { class: 'btn danger', onClick: async () => {
             if (!(await confirmDialog('Удалить ВСЕ данные на этом устройстве: записи всех модулей, историю и настройки? Данные в Google Диске не затрагиваются. Действие необратимо — сделайте резервную копию, если нужно.', { okText: 'Удалить всё', danger: true }))) return;
             await app.db.clearAll();

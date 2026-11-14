@@ -1,0 +1,77 @@
+{
+  "format": "fit-pwa-ai",
+  "version": 1,
+  "generatedBy": "ChatGPT",
+  "createdAt": "2026-11-10",
+  "note": "Программа на 2 дня для новичка в зале, меню на 1 день около 2200 ккал.",
+  "exercises": [
+    {
+      "name": "Планка на предплечьях с подъёмом ноги",
+      "groups": [
+        "abs"
+      ],
+      "equipment": [
+        "body only"
+      ],
+      "muscles": [
+        "abdominals"
+      ],
+      "secondary": [
+        "glutes"
+      ],
+      "level": "beginner",
+      "steps": [
+        "Встаньте в планку на предплечьях.",
+        "Поднимите ногу, удержите 2 секунды, смените ногу."
+      ]
+    }
+  ],
+  "foods": [
+    {
+      "name": "Омлет с сыром",
+      "unit": "g",
+      "kcal": 190,
+      "protein": 12,
+      "fat": 14,
+      "carbs": 3,
+      "portion": {
+        "size": 200,
+        "name": "порция"
+      }
+    }
+  ],
+  "workouts": [
+    {
+      "name": "День 1: грудь и пресс",
+      "exercises": [
+        {
+          "name": "Жим штанги лёжа",
+          "sets": 4,
+          "comment": "8–10 повторений, отдых 90 с",
+          "warmup": true
+        },
+        {
+          "name": "Планка на предплечьях с подъёмом ноги",
+          "sets": 3,
+          "comment": "по 10 на ногу"
+        }
+      ]
+    }
+  ],
+  "mealPlan": [
+    {
+      "date": "2026-11-11",
+      "meal": "breakfast",
+      "items": [
+        {
+          "food": "Омлет с сыром",
+          "amount": 200
+        },
+        {
+          "food": "Хлеб ржаной",
+          "amount": 40
+        }
+      ]
+    }
+  ]
+}

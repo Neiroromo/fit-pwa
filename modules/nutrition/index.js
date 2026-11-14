@@ -191,7 +191,7 @@ export default {
       const info = x.quick ? ctx.t('быстрое добавление') : `${fmt(ctx, x.amount)} ${ctx.t(x.unit === 'ml' ? 'мл' : 'г')}`;
       const row = h('div', { class: 'nut-item' + (x.planned ? ' planned' : '') },
         h('button', { type: 'button', class: 'nut-item-main grow', title: 'Изменить', onClick: () => editItem(x, after) },
-          h('span', { class: 'ni-name' }, raw(x.name || ctx.t('Быстрое добавление')), x.planned ? h('span', { class: 'tag' }, 'в плане') : null),
+          h('span', { class: 'ni-name' }, raw(x.name || ctx.t('Быстрое добавление')), x.planned ? h('span', { class: 'tag' }, 'в плане') : null, x.ai ? h('span', { class: 'ai-badge', title: `${ctx.t('Создано ИИ')}: ${x.ai.by}` }, 'ИИ') : null),
           h('span', { class: 'ni-sub muted small' }, raw(extra ? `${info} · ${extra}` : info)),
           macroPills(x)),
         h('div', { class: 'ni-kcal' }, h('strong', null, raw(`${x.kcal}`)), h('span', { class: 'muted small' }, raw(ctx.t('ккал')))),

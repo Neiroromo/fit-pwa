@@ -1,0 +1,240 @@
+# Упражнения: группа «shoulders» (238)
+# название по-русски | название по-английски | оборудование
+«Ангелы у стены» | Wall Angels | body only
+Антигравитационный жим | Anti-Gravity Press | barbell
+Армейский жим в тренажёре | Machine Shoulder (Military) Press | machine
+Армейский жим гири в сторону одной рукой | One-Arm Kettlebell Military Press To The Side | kettlebells
+Армейский жим с ограничителей | Pin OHP | barbell
+Армейский жим с толчком | Push OHP | barbell
+Армейский жим с EZ-штангой | Military Press mit SZ-Bar | e-z curl bar
+Армейский жим со штангой сидя | Seated Barbell Military Press | barbell
+Армейский жим стоя | Standing Military Press | barbell
+Баланс в толчке | Jerk Balance | barbell
+Боевые канаты | Battling Ropes | other
+Броски медицинского мяча из-за головы двумя руками стоя | Standing Two-Arm Overhead Throw | medicine ball
+Бросок медбола назад снизу | Medicine Ball Scoop Throw | medicine ball
+Бросок медбола назад через голову | Backward Medicine Ball Throw | medicine ball
+Взрывной жим штанги стоя (Landmine Jammer) | Landmine Linear Jammer | barbell
+Взятие двух гирь на грудь | Two-Arm Kettlebell Clean | kettlebells
+Взятие на грудь и жим | Clean and Press | barbell
+Взятие на грудь и толчок гири одной рукой | One-Arm Kettlebell Clean and Jerk | kettlebells
+Взятие штанги на грудь и жим | Barbell Clean and press | dumbbell
+Вис прогнувшись | Arch Hang | pull-up bar
+Внешняя ротация на блоке | Cable External Rotation | cable machine
+Внешняя ротация плеча лежа на боку | Side-lying External Rotation | body only
+Внешняя ротация плеча на блоке | Shoulder External Rotation (Cable) | cable machine
+Внешняя ротация плеча с гантелью лежа | Shoulder External Rotation with Dumbbell | dumbbell
+Внутренняя ротация плеча лежа на боку | Side-laying interior rotation | barbell, bench, dumbbell
+Внутренняя ротация плеча на блоке | Cable Internal Rotation | cable
+Внутренняя ротация плеча на блоке | Shoulder Internal Rotation (Cable) | cable machine
+Внутренняя ротация плеча с эспандером | Internal Rotation with Band | bands
+Возвратный бросок из стойки | Return Push from Stance | medicine ball
+Вращение гири вокруг головы | Kettlebell Halo | kettlebells
+Вращение гири вокруг головы с разгибанием рук | Kettlebell Halo with Overhead Extension | kettlebells
+Вращения локтями | Elbow Circles | body only
+Вращения палки сзади (растяжка плеч) | Round The World Shoulder Stretch | other
+Вращения плеч с палкой или резинкой | Shoulder dislocates | body only
+Вращения плеча с гантелью | Dumbbell Shoulder Rotations | dumbbell
+Вращения плечами | Shoulder Circles | body only
+Вращения руками | Arm Circles | body only
+Высокая тяга | High Pull | body only
+Высокая тяга в наклоне | Bent High Pulls | dumbbell
+Глубокая растяжка плеч | Extreme Shoulder Stretch | body only
+Горизонт в группировке | Tuck planche | body only
+Горизонтальная тяга блока одной рукой в сторону | Lateral Rows on Cable, One Armed | cable machine
+Диагональная тяга нижнего блока одной рукой | unilateral cross body cable pull down | cable machine
+Диагональный жим | Diagonal Shoulder Press | bench
+Дьявольский жим | Devil’s Press | dumbbell
+Железный крест | Iron Cross | dumbbell
+Жим Арнольда | Arnold Shoulder Press | dumbbell
+Жим Арнольда с гантелями | Arnold Dumbbell Press | dumbbell
+Жим Арнольда с гирей | Kettlebell Arnold Press | kettlebells
+Жим Брэдфорда (жим Рокки) | Bradford/Rocky Presses | barbell
+Жим Брэдфорда с гантелями | Dumbbell Bradford press | dumbbell
+Жим Брэдфорда стоя | Standing Bradford Press | barbell
+Жим в тренажёре Смита сидё | Smith Press | bench
+Жим в тренажёре Смита стоя | Shoulder Press, on Multi Press | body only
+Жим вверх в рычажном тренажёре | Leverage Shoulder Press | machine
+Жим гантелей нейтральным хватом стоя | Standing Palms-In Dumbbell Press | dumbbell
+Жим гантелей по кругу | Kreis Press DB | dumbbell
+Жим гантелей сидя | Dumbbell Shoulder Press | dumbbell
+Жим гантелей сидя | Seated Dumbbell Press | dumbbell
+Жим гантелей сидя | Shoulder Press, Dumbbells | dumbbell
+Жим гантелей сидя на наклонной скамье | Incline OHP DB | dumbbell
+Жим гантелей стоя | Standing Dumbbell Press | dumbbell
+Жим гантели одной рукой нейтральным хватом стоя | Standing Palm-In One-Arm Dumbbell Press | dumbbell
+Жим гантели одной рукой стоя | Single-arm dumbbell shoulder press | dumbbell
+Жим гири сидя | Kettlebell Seated Press | kettlebells
+Жим двух гирь стоя | Two-Arm Kettlebell Military Press | kettlebells
+Жим на блочном тренажере сидя | Seated Cable Shoulder Press | cable
+Жим на трапециевидные мышцы | Trap press | barbell, bench, dumbbell
+Жим над головой в блочном тренажёре | Cable Shoulder Press | cable
+Жим одной гантели на плечо | Dumbbell One-Arm Shoulder Press | dumbbell
+Жим палки стоя | Standing Dowel Shoulder press | barbell
+Жим плеч в тренажёре | Shoulder Press, on Machine | body only
+Жим с эспандером стоя | Shoulder Press - With Bands | bands
+Жим штанги из-за головы стоя | Standing Barbell Press Behind Neck | barbell
+Жим штанги над головой стоя в тренажёре Смита | Smith Machine Overhead Shoulder Press | machine
+Жим штанги сидя | Barbell Shoulder Press | barbell
+Жим штанги стоя | Overhead Barbell Press | barbell
+Жим штанги стоя | Shoulder Press, Barbell | barbell
+Жимовой швунг | Push Press | barbell
+Изометрическая растяжка передней дельты сидя | Seated Front Deltoid | body only
+Изометрический жим над головой | Overhead Press Isometric | barbell
+Индийские отжимания | Hindu Pushups | body only
+Кубинский жим | Cuban Press | dumbbell
+Линейный жим одной рукой в тренажере | Single-Arm Linear Jammer | barbell
+Махи в наклоне сидя на заднюю дельту | Seated Bent-Over Rear Delt Raise | dumbbell
+Махи в сторону на блоке с наклоном корпуса | Lean-Away Cable Lateral Raise | cable machine
+Махи в сторону на нижнем блоке за спиной | Behind the Back Cable Lateral Raise | cable machine
+Махи в сторону на нижнем блоке одной рукой | Cable Lateral Raises (Single Arm) | cable machine
+Махи в сторону у нижнего блока стоя | Standing Low-Pulley Deltoid Raise | cable
+Махи в стороны | Lateral Raises | dumbbell
+Махи в стороны (изометрия) | Lateral Raise Isometric | dumbbell
+Махи в стороны в кроссовере вперед | Side lateral raise - Front (Cable) | cable machine
+Махи в стороны в кроссовере назад | Side lateral raise - Back (Cable) | cable machine
+Махи в стороны в тренажёре | Machine Lateral Raise | mat
+Махи в стороны в тренажёре | Machine Side Lateral Raises | body only
+Махи в стороны на блоке сидя | Cable Seated Lateral Raise | cable
+Махи в стороны с переводом вперёд | Lateral-to-Front Raises | dumbbell
+Махи в стороны с переходом в подъемы перед собой | Side Laterals to Front Raise | dumbbell
+Махи в стороны с эспандером | Lateral Raise - With Bands | bands
+Махи гантелью в сторону одной рукой стоя | One-Arm Side Laterals | dumbbell
+Махи гантелью одной рукой на наклонной скамье | One-Arm Incline Lateral Raise | dumbbell
+Махи гантелями в наклоне | Bent-over Lateral Raises | bench, dumbbell
+Махи гантелями в наклоне | Rear Delt Raises | dumbbell
+Махи гантелями в наклоне с упором головой в скамью | Bent Over Dumbbell Rear Delt Raise With Head On Bench | dumbbell
+Махи гантелями в стороны | Dumbbell Raise | dumbbell
+Махи гантелями в стороны и вперед | Shoulder Raise Side and Front DB | dumbbell
+Махи гантелями в стороны лёжа животом на наклонной скамье | Dumbbell Lying Rear Lateral Raise | dumbbell
+Махи гантелями в стороны сидя | Seated Side Lateral Raise | dumbbell
+Махи гантелями в стороны сидя в наклоне | Seated Dumbbell Side Lateral | dumbbell
+Махи гантелями в стороны стоя | Side Lateral Raise | dumbbell
+Махи гантелями в частичной амплитуде | Power Partials | dumbbell
+Махи на заднюю дельту лёжа | Lying Rear Delt Raise | dumbbell
+Махи на заднюю дельту с упором грудью | Chest-Supported Rear Delt Raise | bench, dumbbell
+Махи одной рукой лёжа на животе | Lying One-Arm Lateral Raise | dumbbell
+Махи одной рукой с гантелью в наклоне лёжа на скамье | Dumbbell Lying One-Arm Rear Lateral Raise | dumbbell
+Махи под углом 45° | 45° lateral raises | dumbbell
+Махи рукой в сторону в верхнем блоке | High-Cable Lateral Raise | cable machine
+Маятниковые движения плечом с гантелью | Shoulder Dumbbell Pendular Exercise | dumbbell
+Наружная ротация в блоке | External Rotation with Cable | cable
+Наружная ротация с гантелью | External Rotation | dumbbell
+Наружная ротация с эспандером | External Rotation with Band | bands
+Обратные махи с санями | Sled Reverse Flye | other
+Обратные махи стоя | Reverse Fly Standing | cable machine
+Обратные разведения в тренажёре | Reverse Machine Flyes | machine
+Обратные разведения в тренажёре «Бабочка» | Pec deck rear delt fly | body only
+Обратные разведения с гантелями и супинацией | Reverse Flyes With External Rotation | dumbbell
+Обратные разведения с гантелями на наклонной скамье | Reverse Flyes | dumbbell
+Отведения одной рукой в сторону на нижнем блоке в наклоне | Bent Over Low-Pulley Side Lateral | cable
+Отжимания в стойке на руках | Handstand Push-Ups | body only
+Отжимания в стойке на руках | Handstand Pushup | body only
+Отжимания в стойке на руках с ногами на боксе | Box Handstand Push-up | body only
+Отжимания от стула | Chair dips | body only
+Отжимания псевдо-планш | Pseudo Planche Push-up | body only
+Отработка вывода штанги на грудь | Rack Delivery | barbell
+Отработка движений рук стоя на колене | Kneeling Arm Drill | body only
+Пара-жим гири одной рукой | One-Arm Kettlebell Para Press | kettlebells
+Перекрёстная растяжка плеча | Cross-Body Stretch | body only
+Пиратские корабли с гирей | Kettlebell Pirate Ships | kettlebells
+Повороты блина перед собой | Car Drivers | barbell
+Повороты головы | Head turns | body only
+Подъём блина перед собой | Front Plate Raise | other
+Подъём бревна (стронгмен) | Log Lift | other
+Подъём гантелей перед собой на наклонной скамье | Front Incline Dumbbell Raise | dumbbell
+Подъём гантели перед собой двумя руками | Single Dumbbell Raise | dumbbell
+Подъём одной руки вперед в кроссовере | Front Cable Raise | cable
+Подъём перед собой в кроссовере | Front Raise (Cable) | cable machine
+Подъём перед собой на блоке с короткой рукоятью | Cable Front Raise with a small bar | cable machine
+Подъём плеч с гантелями на наклонной скамье | Dumbbell Incline Shoulder Raise | dumbbell
+Подъём плеч со штангой на наклонной скамье | Barbell Incline Shoulder Raise | barbell
+Подъём цирковой гантели | Circus Bell | other
+Подъем штанги перед собой над головой стоя | Standing Front Barbell Raise Over Head | barbell
+Подъёмы блина перед собой | Front Raises with Plates | body only
+Подъёмы гантелей в плоскости лопатки | Dumbbell Scaption | dumbbell
+Подъёмы двух гантелей перед собой | Front Two-Dumbbell Raise | dumbbell
+Подъёмы перед собой | Front Raises | barbell, dumbbell
+Подъемы плеч | Shoulder Raise | body only
+Подъемы плеч с гантелями | Shoulder Raise (Dumbbell) | dumbbell
+Подъемы прямых рук на наклонной скамье | Straight Raises on Incline Bench | barbell
+Подъемы прямых рук с гантелями перед собой над головой | Standing Dumbbell Straight-Arm Front Delt Raise Above Head | dumbbell
+Подъемы прямых рук с SZ-грифом на блоке | Straight Bar Cable Front Raise | cable machine, e-z curl bar
+Подъемы рук на наклонной скамье в тренажёре Смита | Smith Incline Shoulder Raise | barbell
+Подъёмы рук перед собой с эспандером | Banded Front Raise | resistance band
+Поочередный жим гантелей стоя | Standing Alternating Dumbbell Press | dumbbell
+Поочерёдный жим гирь | Alternating Kettlebell Press | kettlebells
+Попеременные подъёмы гантелей перед собой | Front Dumbbell Raise | dumbbell
+Попеременные подъёмы на дельты (вперёд и в стороны) | Alternating Deltoid Raise | dumbbell
+Попеременный жим гантелей стоя («Пила») | See-Saw Press (Alternating Side Press) | dumbbell
+Попеременный жим гирь | Kettlebell Seesaw Press | kettlebells
+Попеременный жим плечами в кроссовере | Alternating Cable Shoulder Press | cable
+Потягивание вверх | Upward Stretch | body only
+Протяжка в тренажёре Смита | Upright Row, on Multi Press | body only
+Протяжка с гантелями стоя | Upright Row w/ Dumbbells | dumbbell
+Протяжка со штангой стоя | Upright Barbell Row | barbell
+Протяжка со штангой EZ-грифом | Upright Row, SZ-bar | e-z curl bar
+Разведение на заднюю дельту на блоке одной рукой | Cable Rear-Delt Fly (single arm) | cable machine
+Разведения на задние дельты в кроссовере | Cable Rear Delt Fly | cable
+Разведения на заднюю дельту с эспандером | Back Flyes - With Bands | bands
+Разминка плеч с эспандером | Banded Shoulder Drills | resistance band
+Распятие | Crucifix | other
+Растягивание эспандера перед собой | Band Pull Apart | bands
+Растягивание эспандера с внешней ротацией | Band pull-apart with external rotation | resistance band
+Растяжка «Блок мясника» | Butchers Block Stretch | bench
+Растяжка «Спящий медведь» | Sleeper Stretch | body only
+Растяжка верха тела на стуле | Chair Upper Body Stretch | other
+Растяжка дельт | Delt Stretch | body only
+Растяжка запястья в сторону | Side Wrist Pull | body only
+Растяжка левой стороны шеи | Left neck stretch | body only
+Растяжка на наружную ротацию | External Rotation Stretch | barbell
+Растяжка плеч в горизонтальном сгибании | Horizontal Shoulder Flexion Stretch | body only
+Растяжка плеча | Shoulder Stretch | body only
+Растяжка правой стороны шеи | Right neck stretch | body only
+Растяжка разгибателей плеча сидя | Seated Shoulder Extension Stretch | body only
+Растяжка сгибания плеча у стены | Shoulder Flexion Wall Stretch | body only
+Рывок гири в ножницы одной рукой | One-Arm Kettlebell Split Snatch | kettlebells
+Рывок гири одной рукой | One-Arm Kettlebell Snatch | kettlebells
+Рывок двух гирь | Double Kettlebell Snatch | kettlebells
+Сгибания ног лёжа на полу (слайдеры) | Floor Glider Hamstring Curls | body only
+Скольжения руками по стене для зубчатых мышц | Serratus Wall Slide Stretch | body only
+Статическое удержание на брусьях | Isometria alle parallele | body only
+Стойка на руках | Handstand | body only
+Стойка на руках у стены | Wall Handstand | body only
+Суставная гимнастика для шеи (CARs) | Neck CARs | body only
+Толчок гири в ножницы одной рукой | One-Arm Kettlebell Split Jerk | kettlebells
+Толчок гири одной рукой | One-Arm Kettlebell Jerk | kettlebells
+Толчок двух гирь | Double Kettlebell Jerk | kettlebells
+Толчок штанги | Clean and Jerk | barbell
+Толчок штанги | Jerk OL | barbell
+Толчок штанги классический | Clean and Jerk OL | barbell
+Трастеры с гирями | Kettlebell Thruster | kettlebells
+Турецкий подъём с гирей (выпад) | Kettlebell Turkish Get-Up (Lunge style) | kettlebells
+Турецкий подъём с гирей (присед) | Kettlebell Turkish Get-Up (Squat style) | kettlebells
+Тяга гантелей в наклоне на заднюю дельту | Dumbbell rear delt row | dumbbell
+Тяга к лицу | Face Pull | cable
+Тяга к лицу в кроссовере в форме буквы Y | Shoulder Y-pull cable | cable machine
+Тяга канатной рукояти на заднюю дельту в блоке | Cable Rope Rear-Delt Rows | cable
+Тяга нижнего блока к шее | Low Pulley Row To Neck | cable
+Тяга одной гантели к подбородку | Dumbbell One-Arm Upright Row | dumbbell
+Тяга Т-грифа одной рукой сбоку | Perpendicular Unilateral Landmine Row | barbell
+Тяга штанги к подбородку одной рукой в тренажёре Смита | Smith Machine One-Arm Upright Row | machine
+Тяга штанги на задние дельты | Barbell Rear Delt Row | barbell
+Удержание в позе «Щука» (на полу) | Pike Hold (Floor) | body only
+Удержание горизонтального упора (Планш) | Planche Lean Hold | body only
+Упор на прямых руках на перекладине с поддержкой ногами | Feet-assisted Straight-bar Support | body only
+Упражнение «Водитель» | Bus Drivers | body only
+Упражнение на вращательную манжету плеча лёжа | Lying Rotator Cuff Exercise | dumbbell
+Ходьба назад с санями над головой | Sled Overhead Backward Walk | other
+Швунг гири одной рукой | One-Arm Kettlebell Push Press | kettlebells
+Швунг двух гирь | Two-Arm Kettlebell Jerk | kettlebells
+Швунг жимовой с двумя гирями | Double Kettlebell Push Press | kettlebells
+Шраги | Shoulder Shrug | body only
+Шраги «Сильвербэк» со штангой | Barbell Silverback Shrug | barbell
+Шраги на блоке внутрь | Cable Shrug-In | cable machine
+Шраги с гантелями | Shrugs, Dumbbells | dumbbell
+Шраги со штангой | Shrugs, Barbells | barbell
+Push Press - Behind the Neck | Push Press - Behind the Neck | barbell
+Y-подъёмы гантелей на наклонной скамье | Incline DB Y-Raise | dumbbell
+YTW-подъёмы | YTW Raises | body only
+YTWL Exercise | YTWL Exercise | dumbbell, bench

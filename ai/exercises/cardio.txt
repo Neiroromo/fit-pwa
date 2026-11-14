@@ -1,0 +1,52 @@
+# Упражнения: группа «cardio» (50)
+# название по-русски | название по-английски | оборудование
+3D-разминка выпадами | 3D lunge warmup | dumbbell
+Бег | Jogging | body only
+Бег | Run | body only
+Бег в 1-й и 2-й зонах | Zone 2 Running | body only
+Бег на беговой дорожке | Run - Treadmill | body only
+Бег с высоким подниманием колен | High knees | body only
+Бокс | Boxing | body only
+Велотренажер | Stationary Bike | body only
+Велотренажор | Cycling | body only
+Велотренировка | Cycling cardio session | body only
+Восстановительные погружения | Recovery Bobbing | body only
+Вращение головой с удержанием у бортика | Wall-Hold Rotation | body only
+Высокие прыжки с подъемом колен | High Knee Skips HD | body only
+Гимнастика Радио Тайсо | Radio Taiso | body only
+Гребной тренажер | Rowing Machine | body only
+Диафрагмальное дыхание | Diaphragmatic Breathing | body only
+Заминочное плавание | Cool-Down Swim | body only
+Захлест голени назад | Talons fesses | body only
+Интервальная ходьба | Alternate Walking | body only
+Интервальный бег | Run - Interval Training | body only
+Кардио на беговой дорожке | Treadmill Cardio | body only
+Кардио на велотренажере | Stationary bike cardio | body only
+Легкое непрерывное плавание (Кроль) | Easy Continuous Swim (Freestyle) | body only
+Плавание | Schwimmen | body only
+Плавание в контролируемом быстром темпе | Controlled Brisk Swim | body only
+Плавание на боку с дыханием с доской | Side-Kick Breathing (Kickboard) | body only
+Плавание с доской (работа ногами) | Kick with Board | body only
+Подвесные сведения | Suspended crossess | body only
+Прыжки «Джампинг Джек» | Jumping Jack HD | body only
+Прыжки на бокс | box jumps | body only
+Прыжки с высоким подниманием колен | High Knee Jumps | body only
+Прыжки со скакалкой — стандартные | Skipping - Standard | body only
+Работа с боевыми канатами | Battle Ropes | body only
+Работа с боксёрским мешком | Bag training | body only
+Скакалка: базовые прыжки | Jump rope: basic jumps | body only
+Спринты в плавании по 50 м | Swimming 50m sprints | body only
+Тест «Бронко» | Bronco | body only
+Тренажёр-лестница | ClimbMill | body only
+Удары медболом об пол | Ball Slams | body only
+Управляемая или свободная медитация | Guided or free meditation | body only
+Упражнение для плавания на выдох и положение тела | Exhale and Body-position Swim Drill | body only
+Упражнение на выдох в воду | Bobbing Exhale Drill | body only
+Упражнение на лыжном тренажере | Ski Machine | body only
+Упражнение на плавание: «гребок с разворотом» | Stroke-and-Roll Drill | body only
+Ходьба | Walking | body only
+Ходьба или бег на месте | March or jog in place | body only
+Ходьба спиной вперед на беговой дорожке | Retro Treadmill Walking | body only
+Шаговые махи в стороны | Step Jack | body only
+Эллипс | Elliptical | body only
+Blaze (ВИИТ) | Blaze | bench, dumbbell, kettlebells

@@ -1,0 +1,162 @@
+# Упражнения: группа «chest» (160)
+# название по-русски | название по-английски | оборудование
+«Вокруг света» с гантелями | Around The Worlds | dumbbell
+Алмазные отжимания | Diamond push ups | body only
+Бабочка (тренажёр пек-дек) | Butterfly | machine
+Бабочка узким хватом | Butterfly Narrow Grip | body only
+Бёрпи | Burpees | body only
+Бёрпи без отжиманий | No push-up burpees | body only
+Бёрпи на 4 счета | 4-count burpees | body only
+Броски медб��ла от груди (серия) | Chest Push (multiple response) | medicine ball
+Бросок медбола от груди | Medicine Ball Chest Pass | medicine ball
+Бросок медбола от груди (одиночный) | Chest Push (single response) | medicine ball
+Бросок медбола от груди из трёхточечной стойки | Chest Push from 3 point stance | medicine ball
+Бросок медбола от груди на бегу | Chest Push with Run Release | medicine ball
+Вариация с гантелью для верха груди | DB Upper Chest Variation | dumbbell
+Взрывные отжимания | Explosive Push-Ups | body only
+Гекс-жим с гантелями | Dumbbell Hex Press | dumbbell
+Глубокая растяжка грудных | Extreme Pec Stretch | body only
+Глубокое дыхание (стоя или сидя) | Deep breathing (standing or seated) | body only
+Динамическая растяжка грудных мышц | Dynamic Chest Stretch | body only
+Жим в кроссовере на наклонной скамье | Incline Cable Chest Press | cable
+Жим в кроссовере одной рукой (наклон вверх) | Cable Chest Press - Incline | cable machine
+Жим в кроссовере одной рукой (наклон вниз) | Cable Chest Press - Decline | cable machine
+Жим в кроссовере сидя | Cable Chest Press | cable
+Жим в кроссовере стоя | Standing Cable Chest Press | cable
+Жим в тренажёре лёжа | Flat Machine Press | bench
+Жим в тренажере на наклонной скамье | Incline Bench Press - MP | body only
+Жим в тренажере Смита на скамье с большим наклоном | High-Incline Smith Machine Press | body only
+Жим в тренажёре Смита на скамье с обратным наклоном | Decline Smith Press | machine
+Жим в тренажёре Хаммер с обратным наклоном | Hammerstrength Decline Chest Press | body only
+Жим гантелей лёжа | Benchpress Dumbbells | bench, dumbbell
+Жим гантелей лёжа | Dumbbell Bench Press | dumbbell
+Жим гантелей лёжа без упора ногами | No Leg Drive Dumbbell Chest Press | bench, dumbbell
+Жим гантелей лежа на наклонной скамье | Incline Bench Press - Dumbbell | dumbbell, bench
+Жим гантелей лёжа на скамье с обратным наклоном | Decline Bench Press Dumbbell | bench, dumbbell
+Жим гантелей лёжа на скамье с обратным наклоном | Decline Dumbbell Bench Press | dumbbell
+Жим гантелей лёжа нейтральным хватом | Dumbbell Bench Press with Neutral Grip | dumbbell
+Жим гантелей лёжа обратным хватом | DB Underhand bench press | bench, dumbbell
+Жим гантелей на наклонной скамье | Incline Dumbbell Press | dumbbell
+Жим гантелей на наклонной скамье нейтральным хватом | Hammer Grip Incline DB Bench Press | dumbbell
+Жим гантелей на наклонной скамье нейтральным хватом | Incline Dumbbell Bench With Palms Facing In | dumbbell
+Жим гантели лёжа одной рукой | One Arm Dumbbell Bench Press | dumbbell
+Жим гири лёжа на полу со скрещёнными ногами | Leg-Over Floor Press | kettlebells
+Жим гири одной рукой лёжа на полу | One-Arm Kettlebell Floor Press | kettlebells
+Жим Ларсена | Larsen Press | barbell
+Жим лёжа с эспандером | Bench Press - With Bands | bands
+Жим на наклонной скамье в тренажёре Legend | Legend Incline Bench Press | body only
+Жим одной гири лёжа на полу с увеличенной амплитудой | Extended Range One-Arm Kettlebell Floor Press | kettlebells
+Жим от груди в рычажном тренажёре | Leverage Chest Press | machine
+Жим от груди в рычажном тренажёре (наклонная) | Leverage Incline Chest Press | machine
+Жим от груди в рычажном тренажёре (обратный наклон) | Leverage Decline Chest Press | machine
+Жим от груди в рычажном тренажёре сидя | Leverage Machine Chest Press | body only
+Жим от груди в тренажёре | Chest Press | body only
+Жим от груди в тренажёре | Machine Bench Press | machine
+Жим от груди в тренажёре Legend | Legend Chest Press | body only
+Жим от груди сидя в тренажере | Seated Bench Press | bench
+Жим Свенда | Svend Press | other
+Жим цепей лежа | Chain Press | other
+Жим штанги «Гильотина» | Barbell Guillotine Bench Press | barbell
+Жим штанги к шее | Neck Press | barbell
+Жим штанги лёжа | Bench Press | barbell, bench
+Жим штанги лёжа в тренажёре Смита | Smith Machine Bench Press | machine
+Жим штанги лежа на наклонной скамье | Incline Bench Press - Barbell | barbell, bench
+Жим штанги лёжа на скамье с обратным наклоном | Decline Barbell Bench Press | barbell
+Жим штанги лёжа на скамье с обратным наклоном | Decline Bench Press Barbell | barbell, bench
+Жим штанги лёжа обратным хватом | Reverse Grip Bench Press | barbell, bench
+Жим штанги лёжа с ограничителей | Pin Bench Press BB | barbell
+Жим штанги лёжа с паузой | Pause Bench | barbell, bench
+Жим штанги лёжа средним хватом | Barbell Bench Press - Medium Grip | barbell
+Жим штанги лёжа широким хватом | Wide-Grip Barbell Bench Press | barbell
+Жим штанги на наклонной скамье (средний хват) | Barbell Incline Bench Press - Medium Grip | barbell
+Жим штанги на наклонной скамье в тренажёре Смита | Smith Machine Incline Bench Press | machine
+Жим штанги на скамье с обратным наклоном в тренажёре Смита | Smith Machine Decline Press | machine
+Жим штанги на скамье с обратным наклоном широким хватом | Wide-Grip Decline Barbell Bench Press | barbell
+Жим штанги с небольшим наклоном в тренажёре Смита | Smith Machine Slight Incline Press | body only
+Изометрические дворники в планке | Isometric Wipers | body only
+Изометрические сдавливания на грудь | Isometric Chest Squeezes | body only
+Изометрический жим лёжа | Bench Press Isometric | barbell, bench
+Медвежья походка 2 | Bear Walk 2 | body only
+Наклонный жим лежа | Supino inclinado | body only
+Отводение локтей назад | Elbows Back | body only
+Отжимание одной рукой | Single-Arm Push-Up | body only
+Отжимания | Push-Up | body only
+Отжимания (узкая и широкая постановка рук) | Pushups (Close and Wide Hand Positions) | body only
+Отжимания в лопатках от скамьи | Incline Shoulder Press Up | bench
+Отжимания в подвесных петлях | Suspended Push-Up | other
+Отжимания на брусьях | Dips | body only
+Отжимания на гантелях | Dumbbell Push-Up | dumbbell
+Отжимания на паралетсах | Push-Ups | Parallettes | body only
+Отжимания на упорах | Deficit Push ups | body only
+Отжимания обратным хватом от перекладины | Incline Push-Up Reverse Grip | body only
+Отжимания от возвышенности | Incline Push-Up | body only
+Отжимания от пола | Pushups | body only
+Отжимания от скамьи | Push-Ups | Incline | bench
+Отжимания по кругу (циферблат) | Clock Push-Up | body only
+Отжимания с ногами на возвышенности | Decline Push-Up | body only
+Отжимания с ногами на возвышенности | Push-Ups | Decline | bench
+Отжимания с ногами на фитболе | Push-Ups With Feet On An Exercise Ball | exercise ball
+Отжимания с отягощением | Weighted push-ups | body only
+Отжимания с падением | Drop Push | other
+Отжимания с перенесением веса в стороны | Side to Side Push Ups | body only
+Отжимания с переходом в боковую планку | Push Up to Side Plank | body only
+Отжимания с поднятыми ногами | Push-Ups With Feet Elevated | body only
+Отжимания с хлопком | Clap Push-UP | body only
+Отжимания средним хватом от перекладины | Incline Push-Up Medium | body only
+Отжимания Тайсона | Tyson push-ups | body only
+Отжимания узким хватом | Close-grip Press-ups | body only
+Отжимания широким хватом | Push-Up Wide | body only
+Отжимания широким хватом от перекладины | Incline Push-Up Wide | body only
+Планка на прямых руках | High plank | body only
+Плиометрические отжимания | Plyo Push-up | body only
+Плиометрические отжимания от возвышенности | Incline Push-Up Depth Jump | other
+Плиометрические отжимания с гирей | Plyo Kettlebell Pushups | kettlebells
+Подъём перед собой и пуловер | Front Raise And Pullover | barbell
+Попеременный жим гирь с пола | Alternating Floor Press | kettlebells
+Пулловер с гантелью поперёк скамьи | Cross-Bench Dumbbell Pullovers | dumbbell
+Пуллover со штангой на скамье с обратным наклоном широким хватом | Wide-Grip Decline Barbell Pullover | barbell
+Пуловер с гантелью на прямых руках | Straight-Arm Dumbbell Pullover | dumbbell
+Пуловер с гантелью согнутыми руками | Bent-Arm Dumbbell Pullover | dumbbell
+Разведение гантелей лёжа | Dumbbell Flyes | dumbbell
+Разведение гантелей лёжа | Fly With Dumbbells | dumbbell
+Разведение гантелей лёжа на скамье с обратным наклоном | Decline Dumbbell Flyes | dumbbell
+Разведение гантелей на скамье с обратным наклоном | Fly With Dumbbells, Decline Bench | bench, dumbbell
+Разведение одной рукой с гантелью лёжа | One-Arm Flat Bench Dumbbell Flye | dumbbell
+Разведение рук со своим весом | Bodyweight Flyes | e-z curl bar
+Разведения в кроссовере в наклоне | Bent over Cable Flye | cable machine
+Растяжка в глубоком приседе с разворотом («Небосвод») | Squat Sky Reach Stretch | body only
+Растяжка грудных мышц в дверном проёме | Doorway Pectoral Stretch | body only
+Растяжка грудных мышц и передней дельты | Chest And Front Of Shoulder Stretch | other
+Растяжка грудных мышц на фитболе | Chest Stretch on Stability Ball | exercise ball
+Растяжка грудных мышц с руками за головой | Behind Head Chest Stretch | other
+Растяжка с вращением туловища | Torso rotation stretch | body only
+Русские отжимания | Russian Push Ups | body only
+Сведение рук в кроссовере | Cable Crossover | cable
+Сведение рук в кроссовере | Fly With Cable | cable machine
+Сведение рук в кроссовере («Железный крест») | Cable Iron Cross | cable
+Сведение рук в кроссовере лёжа на скамье | Flat Bench Cable Flyes | cable
+Сведение рук в кроссовере на наклонной скамье | Incline Cable Flye | cable
+Сведение рук в кроссовере сидя | Seated Cable chest fly | cable machine
+Сведение рук в нижнем блоке | Low Pulley Cable Fly | cable machine
+Сведение рук в нижнем блоке кроссовера | Low Cable Crossover | cable
+Сведение рук в нижнем блоке кроссовера (NB) | Low-Cable Cross-Over - NB | cable machine
+Сведение рук в тренажёре | Machine chest fly | body only
+Сведение рук в тренажёре «Бабочка» | Pec Deck | body only
+Сведение рук на блоке на верх груди | Cable Fly Upper Chest | cable machine
+Сведение рук на блоке на низ груди | Cable Fly Lower Chest | cable machine
+Сведение рук на блоке на середину груди | Cable Fly Middle Chest | cable machine
+Сведение рук на кроссовере одной рукой | Single-Arm Cable Crossover | cable
+Сведение рук с гантелями на наклонной скамье | Incline Dumbbell Fly | dumbbell, bench
+Сведение рук с гантелями на наклонной скамье | Incline Dumbbell Flyes | dumbbell
+Сведения в кроссовере под разными углами | Omni Cable Cross-over | cable machine, e-z curl bar
+Скручивания на верхнюю часть косых мышц | Upper External Oblique | pull-up bar
+Статическое удержание гантелей на наклонной скамье | Incline Static Hold | dumbbell
+Толчки боксерского мешка | Heavy Bag Thrust | other
+Тяга саней лицом вперед с жимом | Forward Drag with Press | other
+Удержание упора на кольцах | Ring Support Hold | body only
+Широкие отжимания | Wide Push-Up | body only
+Cable Press Around | Cable Press Around | cable machine
+Cross Over - With Bands | Cross Over - With Bands | bands
+Dips - Chest Version | Dips - Chest Version | other
+Incline Dumbbell Flyes - With A Twist | Incline Dumbbell Flyes - With A Twist | dumbbell
+Inverted Rows | Inverted Rows | body only

@@ -20,6 +20,9 @@ function sanitize(v, int) {
 }
 
 /** Числовое поле: буквы и символы не вводятся, при выходе проверяется диапазон. */
+/** Значок «ИИ» у блюда, созданного по файлу от ИИ-агента. */
+export const aiTag = (ctx, x) => (x?.ai ? ctx.ui.h('span', { class: 'ai-badge', title: `${ctx.t('Создано ИИ')}: ${x.ai.by}` }, 'ИИ') : null);
+
 export function numField(ctx, { value = '', ph = '', range, int = false, onInput, cls = '' }) {
   const i = ctx.ui.h('input', { class: 'input num ' + cls, inputmode: int ? 'numeric' : 'decimal', placeholder: ph, value, autocomplete: 'off', maxlength: '8' });
   i.addEventListener('keydown', e => {
@@ -416,7 +419,7 @@ export async function openPicker(ctx, { date, meal, mealName, meals = [], onDone
     const items = q ? foods.filter(x => matches(x.name, q)) : s[tab];
     fill(list, items.length ? items.map(x => h('div', { class: 'food-item' },
       h('button', { type: 'button', class: 'food-main', onClick: () => choose(x) },
-        h('span', { class: 'grow' }, h('strong', null, raw(x.name), x.recipe ? h('span', { class: 'tag' }, 'рецепт') : null), h('span', { class: 'muted small block' }, raw(foodLine(ctx, x))))),
+        h('span', { class: 'grow' }, h('strong', null, raw(x.name), x.recipe ? h('span', { class: 'tag' }, 'рецепт') : null, aiTag(ctx, x)), h('span', { class: 'muted small block' }, raw(foodLine(ctx, x))))),
       iconBtn('star', x.fav ? 'Убрать из избранного' : 'В избранное', async () => { await toggleFav(ctx, x); foods = await listFoods(ctx); draw(); }, 'fav' + (x.fav ? ' on' : '')),
       icon('plus', 18))) : [h('p', { class: 'muted' }, foods.length ? (q ? 'Среди своих блюд ничего не найдено' : tab === 'fav' ? 'В избранное блюда добавляются звёздочкой' : 'Пока пусто') : 'Своих блюд пока нет: выберите из справочника, найдите товар или создайте блюдо.')]);
   };
@@ -547,7 +550,7 @@ export async function openFoodsManager(ctx, { onChange } = {}) {
       cb.addEventListener('change', () => { if (cb.checked) picked.add(x.id); else picked.delete(x.id); draw(); });
       return h('div', { class: 'food-item static' },
         h('label', { class: 'check' }, cb),
-        h('span', { class: 'grow' }, h('strong', null, raw(x.name), x.recipe ? h('span', { class: 'tag' }, 'рецепт') : null),
+        h('span', { class: 'grow' }, h('strong', null, raw(x.name), x.recipe ? h('span', { class: 'tag' }, 'рецепт') : null, aiTag(ctx, x)),
           h('span', { class: 'muted small block' }, raw(foodLine(ctx, x)
             + (x.portion ? ` · ${ctx.t('порция')} ${x.portion.size} ${unitName(ctx, x.unit)}${x.portion.name ? ' (' + ctx.t(x.portion.name) + ')' : ''}` : '')))),
         iconBtn('star', x.fav ? 'Убрать из избранного' : 'В избранное', async () => { await toggleFav(ctx, x); reload(); }, 'fav' + (x.fav ? ' on' : '')),

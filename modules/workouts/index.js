@@ -77,7 +77,7 @@ export default {
         };
         const content = h('div', { class: 'wk-content' },
           h('div', { class: 'grow', onClick: () => showEditor(t) },
-            h('strong', null, t.name),
+            h('strong', null, t.name, t.ai ? h('span', { class: 'ai-badge', title: `${ctx.t('Создано ИИ')}: ${t.ai.by}` }, 'ИИ') : null),
             h('span', { class: 'muted small block' },
               `${t.exercises.length} ${plural(t.exercises.length, 'упражнение', 'упражнения', 'упражнений')}` + (last ? ctx.t(' · последняя: {date}', { date: fmt.date(last) }) : ''))),
           t.draft ? null : iconBtn('share', 'Поделиться тренировкой', () => openShare(ctx, t)),

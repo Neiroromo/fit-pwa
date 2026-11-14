@@ -1,0 +1,41 @@
+# Упражнения (каталог приложения)
+
+Формат строки: название по-русски | название по-английски | оборудование
+Для тренировки достаточно написать название в точности как здесь (по-русски или по-английски).
+
+- exercises/legs.txt — группа legs, 490 шт.
+- exercises/arms.txt — группа arms, 284 шт.
+- exercises/back.txt — группа back, 262 шт.
+- exercises/shoulders.txt — группа shoulders, 238 шт.
+- exercises/abs.txt — группа abs, 189 шт.
+- exercises/chest.txt — группа chest, 160 шт.
+- exercises/cardio.txt — группа cardio, 50 шт.
+- exercises/glutes.txt — группа glutes, 22 шт.
+- exercises/neck.txt — группа neck, 8 шт.
+
+# Продукты (справочник приложения)
+
+Формат строки: название | ккал | белки г | жиры г | углеводы г — на 100 г (напитки — на 100 мл).
+Продукт из списка можно использовать в меню по названию без описания: приложение возьмёт значения само. Нет в списке — опишите его в разделе foods.
+
+- foods/vegetables-and-vegetable-products.txt — Vegetables and Vegetable Products, 621 шт.
+- foods/baked-products.txt — Baked Products, 417 шт.
+- foods/fruits-and-fruit-juices.txt — Fruits and Fruit Juices, 341 шт.
+- foods/poultry-products.txt — Poultry Products, 316 шт.
+- foods/lamb-veal-and-game-products.txt — Lamb, Veal, and Game Products, 278 шт.
+- foods/beverages.txt — Beverages, 261 шт.
+- foods/finfish-and-shellfish-products.txt — Finfish and Shellfish Products, 255 шт.
+- foods/beef-products.txt — Beef Products, 250 шт.
+- foods/dairy-and-egg-products.txt — Dairy and Egg Products, 239 шт.
+- foods/sweets.txt — Sweets, 221 шт.
+- foods/pork-products.txt — Pork Products, 214 шт.
+- foods/soups-sauces-and-gravies.txt — Soups, Sauces, and Gravies, 202 шт.
+- foods/legumes-and-legume-products.txt — Legumes and Legume Products, 198 шт.
+- foods/cereal-grains-and-pasta.txt — Cereal Grains and Pasta, 187 шт.
+- foods/fats-and-oils.txt — Fats and Oils, 154 шт.
+- foods/sausages-and-luncheon-meats.txt — Sausages and Luncheon Meats, 150 шт.
+- foods/snacks.txt — Snacks, 123 шт.
+- foods/nut-and-seed-products.txt — Nut and Seed Products, 111 шт.
+- foods/breakfast-cereals.txt — Breakfast Cereals, 102 шт.
+- foods/spices-and-herbs.txt — Spices and Herbs, 62 шт.
+- foods/meals-entrees-and-side-dishes.txt — Meals, Entrees, and Side Dishes, 54 шт.

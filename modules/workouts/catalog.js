@@ -204,7 +204,7 @@ export function openPicker(ctx, { onPick, current, query }) {
       h('div', { class: 'muted small' }, ctx.t('Найдено: {n}', { n: all.length })),
       ...shown.map(ex => h('button', { class: 'ex-item', onClick: () => showDetail(ex) },
         ex.img?.[0] ? h('img', { src: ex.img[0], alt: '', loading: 'lazy' }) : h('span', { class: 'ex-noimg' }, icon('dumbbell', 22)),
-        h('span', { class: 'grow' }, h('strong', null, raw(displayName(ex, lang))),
+        h('span', { class: 'grow' }, h('strong', null, raw(displayName(ex, lang)), ex.ai ? h('span', { class: 'ai-badge', title: `${ctx.t('Создано ИИ')}: ${ex.ai.by}` }, 'ИИ') : null),
           h('span', { class: 'muted small block' }, raw([(ex.g ?? []).map(L.group).join(', '), (ex.e ?? []).map(L.equip).join(', ') || null].filter(Boolean).join(' · ')))))),
       all.length > shown.length ? h('button', { class: 'btn', onClick: () => { state.limit += 60; renderList(); } }, 'Показать ещё') : null,
       !all.length ? h('p', { class: 'muted empty' }, 'Ничего не найдено') : null,
