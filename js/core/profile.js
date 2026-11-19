@@ -208,6 +208,15 @@ export function openProfile(app, anchor, startView = 'main') {
       const log = h('pre', { class: 'muted small', style: { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } });
       const say = t => { log.textContent += (log.textContent ? '\n' : '') + t; };
       const g = () => import('./google.js');
+      const syncInfo = h('p', { class: 'muted small' });
+      const syncBtn = h('button', { class: 'btn primary' }, icon('swap', 16), 'Синхронизировать сейчас');
+      const showSync = async () => {
+        const sy = await import('./sync.js');
+        const last = sy.getLastSync();
+        const st = sy.getSyncState();
+        syncInfo.textContent = st.busy ? 'Синхронизация…' : st.error ? `Ошибка синхронизации: ${st.error}` : last ? `Последняя синхронизация: ${new Date(last.at).toLocaleString()} (получено ${last.pulled}, отправлено ${last.pushed})` : 'Синхронизация ещё не выполнялась.';
+        syncBtn.disabled = st.busy;
+      };
       const signBtn = h('button', { class: 'btn', onClick: null }, googleLogo(16), 'Войти через Google');
       const offBtn = h('button', { class: 'btn', hidden: true }, 'Отключить'); // виден только когда аккаунт подключён
       const refresh = async () => {
@@ -218,24 +227,33 @@ export function openProfile(app, anchor, startView = 'main') {
         status.textContent = m.isSignedIn() ? `Подключено: ${u?.email || 'аккаунт Google'} (сессия активна).` : m.wasLinked() ? 'Аккаунт подключён, но сессия закончилась. Нажмите «Войти через Google», чтобы продолжить.' : 'Не подключено.';
       };
       refresh();
+      showSync();
+      const offSync = [];
+      import('./sync.js').then(sy => offSync.push(sy.onSyncState(() => { if (pop.isConnected) showSync(); })));
       const run = fn => async () => {
         try { await fn(await g()); } catch (e) { say('Ошибка: ' + (e.message || e)); }
         refresh();
       };
       offBtn.onclick = run(async m => { m.signOut(); say('Отключено, доступ отозван.'); app.shell.renderProfile(); });
       signBtn.onclick = run(async m => { await m.signIn(); say('Вход выполнен.'); app.shell.renderProfile(); });
+      syncBtn.onclick = async () => {
+        try {
+          const res = await (await import('./sync.js')).syncNow(app, { manual: true });
+          if (res) {
+            say(`Синхронизировано: получено ${res.pulled}, отправлено ${res.pushed}.`);
+            if (res.pulled) { toast('Данные обновлены из Google Диска. Перезагрузка…'); setTimeout(() => location.reload(), 900); }
+          }
+        } catch (e) { say('Ошибка: ' + (e.message || e)); }
+        refresh(); showSync();
+      };
       return [
         head('Google'),
         h('div', { class: 'form' },
           status,
-          h('p', { class: 'muted small' }, 'Тестовый режим. Данные приложения хранятся в скрытой папке вашего Google Диска; остальные файлы приложению недоступны.'),
+          h('p', { class: 'muted small' }, 'Тестовый режим. Данные приложения хранятся в скрытой папке вашего Google Диска; остальные файлы приложению недоступны. Синхронизация идёт сама: после входа, через несколько секунд после правок и при возвращении в приложение. Если записи различаются, побеждает более свежая; удаления тоже синхронизируются.'),
           signBtn,
-          h('button', { class: 'btn', onClick: run(async m => {
-            const stamp = new Date().toISOString();
-            const meta = await m.putJson('connection-test.json', { app: 'fit-pwa', stamp });
-            const back = await m.getJson('connection-test.json');
-            say(`Записано и прочитано: ${back?.stamp === stamp ? 'совпадает ✓' : 'НЕ совпадает'}\nИзменён: ${meta.modifiedTime}\nФайлов в папке: ${(await m.listFiles()).length}`);
-          }) }, icon('database', 16), 'Проверить Диск (записать и прочитать)'),
+          syncInfo,
+          syncBtn,
           h('button', { class: 'btn danger', onClick: run(async m => {
             if (!(await confirmDialog('Удалить все данные приложения из вашего Google Диска? Данные на этом устройстве останутся. Действие необратимо.', { okText: 'Удалить с Диска', danger: true }))) return;
             say(`Удалено файлов на Диске: ${await m.deleteAllFiles()}`);
@@ -259,7 +277,7 @@ export function openProfile(app, anchor, startView = 'main') {
           // один вход для всего: резервная копия приложения и файл от ИИ-агента (программа, меню, упражнения, продукты) определяются по содержимому
           h('button', { class: 'btn', onClick: () => { close(); openAiImport(app, { onClose: () => openProfile(app, anchor, 'data') }); } }, icon('upload', 16), 'Импорт из файла'),
           h('button', { class: 'btn danger', onClick: async () => {
-            if (!(await confirmDialog('Удалить ВСЕ данные на этом устройстве: записи всех модулей, историю и настройки? Данные в Google Диске не затрагиваются. Действие необратимо — сделайте резервную копию, если нужно.', { okText: 'Удалить всё', danger: true }))) return;
+            if (!(await confirmDialog('Удалить ВСЕ данные на этом устройстве: записи всех модулей, историю и настройки? Данные в Google Диске не затрагиваются, и если Google подключён, при следующей синхронизации они вернутся с Диска (чтобы удалить их везде, удалите ещё и данные на Диске). Действие необратимо — сделайте резервную копию, если нужно.', { okText: 'Удалить всё', danger: true }))) return;
             await app.db.clearAll();
             toast('Данные удалены. Перезагрузка…');
             setTimeout(() => location.reload(), 800);

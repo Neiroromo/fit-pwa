@@ -84,6 +84,7 @@ async function boot() {
   app.shell.refreshBell();
   registry.subscribe(() => app.shell.renderNav());
   import('./core/google.js').then(g => g.restoreSession()).catch(() => {}); // вход в Google переживает перезагрузку страницы (тихо, без окна)
+  import('./core/sync.js').then(m => m.startSync(app)).catch(console.error); // синхронизация данных с Google Диском
   notifyUpdates(app).catch(console.error);
   startReminders(app, moduleContext); // напоминания модулей (см. core/reminders.js)
 

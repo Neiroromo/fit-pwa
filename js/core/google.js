@@ -1,6 +1,7 @@
 // Подключение к Google: вход (Google Identity Services, token model) и работа с Drive appDataFolder.
-// Токен живёт ~1 час и хранится только в памяти; refresh-токена в браузере нет — при необходимости
-// запрашивается заново (тихо, если пользователь уже дал согласие). Данные лежат в скрытой папке приложения
+// Токен живёт ~1 час; refresh-токена в браузере нет. Токен кладётся в localStorage на время его жизни (перезагрузка страницы
+// не требует входа), а после истечения запрашивается заново тихо — первым же нажатием пользователя (браузер не даёт открыть
+// окно Google без жеста) — если согласие уже дано. Данные лежат в скрытой папке приложения
 // (scope drive.appdata): приложение не видит остальной Диск, а пользователь не может случайно испортить файлы.
 //
 // Client ID публичный (не секрет). Разрешённые origin заданы в Google Cloud Console.
@@ -8,10 +9,15 @@
 export const CLIENT_ID = '238703702723-e50dvetph6q7nci560pi4hhbbac7poku.apps.googleusercontent.com';
 const SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
 const HINT_KEY = 'fitpwa-google-linked'; // только флаг «входили раньше»; сам токен не сохраняется
+const TOKEN_KEY = 'fitpwa-google-token'; // {t, exp}: access-токен (scope только drive.appdata) на оставшееся время жизни
 const USER_KEY = 'fitpwa-google-user';   // {name, email}: показывается в профиле, пока аккаунт подключён
 
 let token = null;
 let expiresAt = 0;
+try { // токен с прошлой загрузки страницы, если ещё не истёк
+  const st = JSON.parse(localStorage.getItem('fitpwa-google-token'));
+  if (st?.t && st.exp > Date.now() && localStorage.getItem('fitpwa-google-linked') === '1') { token = st.t; expiresAt = st.exp; }
+} catch { /* нет сохранённого токена */ }
 let gisLoading = null;
 let client = null;
 let pending = null; // {resolve, reject} текущего запроса токена
@@ -66,6 +72,7 @@ async function ensureClient() {
       token = r.access_token;
       expiresAt = Date.now() + (Number(r.expires_in) || 3600) * 1000 - 60000;
       store.set('1');
+      try { localStorage.setItem(TOKEN_KEY, JSON.stringify({ t: token, exp: expiresAt })); } catch { /* приватный режим */ }
       // имя и почту берём из Drive (about.get) — отдельный scope для профиля не нужен
       api('drive/v3/about?fields=user(displayName,emailAddress,photoLink)')
         .then(async a => setUser({ name: a.user?.displayName || '', email: a.user?.emailAddress || '', photo: await loadPhoto(a.user?.photoLink) }))
@@ -101,15 +108,22 @@ export async function signIn({ interactive = true } = {}) {
  * После перезагрузки страницы токена в памяти нет, хотя вход был: пробуем восстановить сессию тихо (без окна), если согласие уже дано.
  * Не получилось (например, закончилась сессия Google) — ничего страшного: в профиле будет «Нужно войти заново».
  */
-export async function restoreSession() {
+export function restoreSession() {
   if (!wasLinked() || isSignedIn()) return;
-  try { await signIn({ interactive: false }); } catch { /* нужен интерактивный вход */ }
+  const events = ['pointerdown', 'keydown'];
+  const go = () => {
+    events.forEach(e => removeEventListener(e, go, true));
+    if (isSignedIn()) return;
+    signIn({ interactive: false }).catch(() => { /* нужен интерактивный вход: в профиле будет «Нужно войти заново» */ });
+  };
+  events.forEach(e => addEventListener(e, go, { capture: true })); // окно Google можно открыть только из жеста пользователя
 }
 
 export function signOut() {
   const t = token;
   token = null; expiresAt = 0;
   store.set(null);
+  try { localStorage.removeItem(TOKEN_KEY); } catch { /* ничего */ }
   setUser(null);
   if (t && window.google?.accounts?.oauth2) google.accounts.oauth2.revoke(t, () => {});
 }
@@ -117,7 +131,7 @@ export function signOut() {
 async function api(path, { method = 'GET', headers = {}, body, raw = false, retry = true } = {}) {
   const t = isSignedIn() ? token : await signIn({ interactive: false });
   const res = await fetch(`https://www.googleapis.com/${path}`, { method, body, headers: { ...headers, Authorization: `Bearer ${t}` } });
-  if (res.status === 401 && retry) { token = null; return api(path, { method, headers, body, raw, retry: false }); }
+  if (res.status === 401 && retry) { token = null; try { localStorage.removeItem(TOKEN_KEY); } catch { /* ничего */ } return api(path, { method, headers, body, raw, retry: false }); }
   if (!res.ok) throw new Error(`Google Drive: ${res.status} ${(await res.text()).slice(0, 200)}`);
   return raw ? res : res.json();
 }
@@ -168,3 +182,7 @@ export async function deleteAllFiles() {
   for (const f of files) await api(`drive/v3/files/${f.id}`, { method: 'DELETE', raw: true });
   return files.length;
 }
+
+/** Файлы приложения в appDataFolder: [{id, name, modifiedTime}] */
+export const listAppFiles = listFiles;
+export async function getJsonById(id) { return (await api(`drive/v3/files/${id}?alt=media`, { raw: true })).json(); }
